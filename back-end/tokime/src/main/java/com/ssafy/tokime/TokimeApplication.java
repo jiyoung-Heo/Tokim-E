@@ -1,13 +1,13 @@
-package com.ssafy.tokeme;
+package com.ssafy.tokime;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TokemeApplication {
+public class TokimeApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TokemeApplication.class, args);
+		SpringApplication.run(TokimeApplication.class, args);
 	}
 
 }

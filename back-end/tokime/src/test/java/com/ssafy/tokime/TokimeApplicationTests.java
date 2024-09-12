@@ -1,10 +1,10 @@
-package com.ssafy.tokeme;
+package com.ssafy.tokime;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TokemeApplicationTests {
+class TokimeApplicationTests {
 
 	@Test
 	void contextLoads() {
