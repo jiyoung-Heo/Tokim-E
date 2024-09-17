@@ -1,6 +1,6 @@
 package com.ssafy.tokime.dto;
 
-import com.edu.koplay.model.Parent;
+import com.ssafy.tokime.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
