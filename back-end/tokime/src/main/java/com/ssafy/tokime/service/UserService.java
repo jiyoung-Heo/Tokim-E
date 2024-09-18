@@ -28,13 +28,13 @@ public class UserService {
     }
 
     public void signOut() {
-        var cookie = new javax.servlet.http.Cookie(COOKIE_NAME, null);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-
-        response.addCookie(cookie);
+//        var cookie = new javax.servlet.http.Cookie(COOKIE_NAME, null);
+//        cookie.setHttpOnly(true);
+//        cookie.setSecure(true);
+//        cookie.setPath("/");
+//        cookie.setMaxAge(0);
+//
+//        response.addCookie(cookie);
     }
 
     public void deleteUser(String email) {
