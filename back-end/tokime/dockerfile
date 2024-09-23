@@ -25,4 +25,4 @@ COPY --from=build /app/build/libs/*.jar app.jar
 CMD ["java", "-jar", "app.jar"]
 
 # 9. 컨테이너 포트 설정 (Spring Boot의 기본 포트)
-EXPOSE 8080
+EXPOSE 9090
