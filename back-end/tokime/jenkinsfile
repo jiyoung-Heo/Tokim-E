@@ -1,0 +1,54 @@
+	pipeline {
+		environment { 
+			dockerImage = ''
+		}
+		
+		agent any 
+		
+		stages {
+			stage('GitHub Repository Clone') { 
+				steps {
+				  
+					git branch: 'backend', credentialsId: 'git-access-token', url: 'https://lab.ssafy.com/s11-bigdata-dist-sub1/S11P21B207.git'
+				  
+				}
+			}
+			
+			stage('Build image') {
+				steps {
+					script {
+						dockerimage = docker.build("jiyoungheo/tokime", "./back-end/tokime")
+					}
+				}
+			}
+			
+			stage('Push image') {
+				steps {
+					script {
+						withDockerRegistry(credentialsId: 'dockerhub-accesstoken') {
+							dockerimage.push()
+						}
+					}
+				}
+			}
+
+			stage('EC2 connect') {
+				steps {
+					sshagent(['ssh-key']) {
+					    withCredentials([string(credentialsId: 'dockerhub-password', variable: 'DOCKERHUB_PASSWORD')]) {
+						sh """
+							ssh -o StrictHostKeyChecking=no ubuntu@j11b207.p.ssafy.io '
+							docker stop tokime-back
+							docker rm tokime-back
+							docker rmi jiyoungheo/tokime-back
+							docker login -u jiyoungheo.dev@gmail.com -p $DOCKERHUB_PASSWORD
+							docker pull jiyoungheo/tokime-back
+							docker run -d --name tokime-back jiyoungheo/tokime
+							'
+						"""
+					    }
+					}
+				}
+			}
+		}
+	}
