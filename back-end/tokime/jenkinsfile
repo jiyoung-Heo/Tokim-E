@@ -17,7 +17,7 @@
 			stage('Build image') {
 				steps {
 					script {
-						dockerimage = docker.build("jiyoungheo/tokime", "./back-end/tokime")
+						dockerimage = docker.build("jiyoungheo/tokime-back", "./back-end/tokime")
 					}
 				}
 			}
@@ -43,7 +43,7 @@
 							docker rmi jiyoungheo/tokime-back
 							docker login -u jiyoungheo.dev@gmail.com -p $DOCKERHUB_PASSWORD
 							docker pull jiyoungheo/tokime-back
-							docker run -d --name tokime-back jiyoungheo/tokime
+							docker run -d --name tokime-back jiyoungheo/tokime-back
 							'
 						"""
 					    }
