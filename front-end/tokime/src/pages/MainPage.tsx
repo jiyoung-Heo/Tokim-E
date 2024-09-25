@@ -1,3 +1,4 @@
+// src/pages/MainPage.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -16,7 +17,7 @@ function MainPage() {
           <Link to="/land-terms">토지 용어 사전</Link>
         </li>
         <li>
-          <Link to="/my-page">마이페이지</Link>
+          <Link to="/risk-map">위험 지도</Link>
         </li>
         <li>
           <Link to="/investment">투자 예정지</Link>
