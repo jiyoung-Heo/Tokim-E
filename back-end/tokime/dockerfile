@@ -8,12 +8,14 @@ WORKDIR /app
 
 # 3. 소스 코드를 Docker 이미지로 복사
 COPY . .
+RUN echo "" > /app/.env
 
 # 4. Gradle을 사용해 애플리케이션 빌드 (여기서는 bootJar를 사용)
 RUN gradle bootJar --no-daemon
 
 # 5. 빌드된 애플리케이션을 실행하기 위한 OpenJDK 17 기반의 경량 이미지
 FROM openjdk:17-jdk-alpine
+
 
 # 6. 작업 디렉토리 설정
 WORKDIR /app
