@@ -43,7 +43,7 @@ pipeline {
 							docker rmi jiyoungheo/tokime-front
 							docker login -u jiyoungheo.dev@gmail.com -p $DOCKERHUB_PASSWORD
 							docker pull jiyoungheo/tokime-front
-							docker run -d -p 3000:3000 --name tokime-front jiyoungheo/tokime-front
+							docker run -d -p 3000:3000 -v /home/ubuntu/tokime/frontend/.env:/app/.env --name tokime-front jiyoungheo/tokime-front
 							'
 						"""
 					    }
