@@ -11,6 +11,7 @@ import InvestmentPage from '../pages/InvestmentPage';
 import InvestmentRegisterPage from '../pages/InvestmentRegisterPage';
 import InvestmentDetailPage from '../pages/InvestmentDetailPage'; // 투자 예정지 상세 페이지 추가
 import LandPurchaseQuiz from '../pages/LandPurchaseQuiz';
+import RiskMap from '../pages/RiskMap'; // 새로 추가
 
 function AppRouter() {
   return (
@@ -32,6 +33,8 @@ function AppRouter() {
         element={<InvestmentDetailPage />} // 투자 예정지 상세 페이지 추가
       />
       <Route path="/land-purchase-quiz" element={<LandPurchaseQuiz />} />
+      <Route path="/risk-map" element={<RiskMap />} />{' '}
+      {/* 위험 지도 라우터 추가 */}
     </Routes>
   );
 }
