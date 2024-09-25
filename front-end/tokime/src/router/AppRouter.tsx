@@ -8,6 +8,8 @@ import LandTerms from '../pages/LandTerms';
 import LandTermDetail from '../pages/LandTermDetail';
 import MyPage from '../pages/MyPage';
 import InvestmentPage from '../pages/InvestmentPage';
+import InvestmentRegisterPage from '../pages/InvestmentRegisterPage';
+import InvestmentDetailPage from '../pages/InvestmentDetailPage'; // 투자 예정지 상세 페이지 추가
 import LandPurchaseQuiz from '../pages/LandPurchaseQuiz';
 
 function AppRouter() {
@@ -24,6 +26,11 @@ function AppRouter() {
       <Route path="/land-terms/:term" element={<LandTermDetail />} />
       <Route path="/my-page" element={<MyPage />} />
       <Route path="/investment" element={<InvestmentPage />} />
+      <Route path="/investment-register" element={<InvestmentRegisterPage />} />
+      <Route
+        path="/investment-detail"
+        element={<InvestmentDetailPage />} // 투자 예정지 상세 페이지 추가
+      />
       <Route path="/land-purchase-quiz" element={<LandPurchaseQuiz />} />
     </Routes>
   );

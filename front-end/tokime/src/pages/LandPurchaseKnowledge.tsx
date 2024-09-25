@@ -1,73 +1,53 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // useNavigate 훅 임포트
 import styled from 'styled-components';
+import LandPurchaseProcedureTab from '../components/Tabs/LandPurchaseProcedureTab';
+import EssentialKnowledgeTab from '../components/Tabs/EssentialKnowledgeTab';
 
-// `TabButtonProps`의 타입 명시
-interface TabButtonProps {
-  active: boolean;
-}
-
-// 스타일 정의
 const Tabs = styled.div`
   display: flex;
   justify-content: space-around;
   margin-bottom: 20px;
 `;
 
-const TabButton = styled.button<TabButtonProps>`
-  background-color: ${(props) => (props.active ? '#007bff' : '#f3f7fb')};
-  color: ${(props) => (props.active ? '#fff' : '#000')};
+// '$active'를 사용하여 DOM에 전달되지 않도록 함
+const TabButton = styled.button<{ $active: boolean }>`
+  background-color: ${(props) => (props.$active ? '#007bff' : '#f3f7fb')};
+  color: ${(props) => (props.$active ? '#fff' : '#000')};
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 `;
 
-const TabContent = styled.div`
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 5px;
-  border: 1px solid #ddd;
-`;
-
 function LandPurchaseKnowledge() {
   const [activeTab, setActiveTab] = useState<string>('purchaseProcedure');
-
-  const handleQuizRedirect = () => {
-    window.location.href = '/land-purchase-quiz';
-  };
+  const navigate = useNavigate(); // useNavigate 훅 사용
 
   return (
     <div>
       <Tabs>
         <TabButton
-          active={activeTab === 'purchaseProcedure'}
+          $active={activeTab === 'purchaseProcedure'} // '$active' 사용
           onClick={() => setActiveTab('purchaseProcedure')}
         >
           구매 절차
         </TabButton>
         <TabButton
-          active={activeTab === 'essentialKnowledge'}
+          $active={activeTab === 'essentialKnowledge'} // '$active' 사용
           onClick={() => setActiveTab('essentialKnowledge')}
         >
           필수 상식
         </TabButton>
       </Tabs>
 
-      {activeTab === 'purchaseProcedure' && (
-        <TabContent>
-          {/* 구매 절차 내용 */}
-          <p>구매 절차에 대한 내용입니다.</p>
-        </TabContent>
-      )}
+      {activeTab === 'purchaseProcedure' && <LandPurchaseProcedureTab />}
+      {activeTab === 'essentialKnowledge' && <EssentialKnowledgeTab />}
 
-      {activeTab === 'essentialKnowledge' && (
-        <TabContent>
-          {/* 필수 상식 내용 */}
-          <p>필수 상식에 대한 내용입니다.</p>
-        </TabContent>
-      )}
-
-      <button type="button" onClick={handleQuizRedirect}>
+      <button
+        type="button"
+        onClick={() => navigate('/land-purchase-quiz')} // navigate로 페이지 이동
+      >
         토지구매상식 문제 풀어보기
       </button>
     </div>
