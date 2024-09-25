@@ -43,7 +43,7 @@
 							docker rmi jiyoungheo/tokime-back
 							docker login -u jiyoungheo.dev@gmail.com -p $DOCKERHUB_PASSWORD
 							docker pull jiyoungheo/tokime-back
-							docker run -d -p 9090:9090 --name tokime-back jiyoungheo/tokime-back
+							docker run -d -p 9090:9090 --env-file /tokime/backend/.env:/app/.env --name tokime-back jiyoungheo/tokime-back
 							'
 						"""
 					    }
