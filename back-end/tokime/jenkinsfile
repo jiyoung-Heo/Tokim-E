@@ -17,7 +17,7 @@
 			stage('Build image') {
 				steps {
 					script {
-						dockerimage = docker.build("jiyoungheo/tokime-back", "./back-end/tokime")
+						dockerimage = docker.build("jiyoungheo/tokime-back:v1", "./back-end/tokime")
 					}
 				}
 			}
@@ -40,10 +40,10 @@
 							ssh -o StrictHostKeyChecking=no ubuntu@j11b207.p.ssafy.io '
 							docker stop tokime-back
 							docker rm tokime-back
-							docker rmi -f jiyoungheo/tokime-back
+							docker rmi -f jiyoungheo/tokime-back:v1
 							docker login -u jiyoungheo.dev@gmail.com -p $DOCKERHUB_PASSWORD
-							docker pull jiyoungheo/tokime-back
-							docker run -d -p 9090:9090 -v /home/ubuntu/tokime/backend/.env:/app/.env --name tokime-back jiyoungheo/tokime-back
+							docker pull jiyoungheo/tokime-back:v1
+							docker run -d -p 9090:9090 -v /home/ubuntu/tokime/backend/.env:/app/.env --name tokime-back jiyoungheo/tokime-back:v1
 							'
 						"""
 					    }
