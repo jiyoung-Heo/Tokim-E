@@ -12,29 +12,100 @@ import InvestmentRegisterPage from '../pages/InvestmentRegisterPage';
 import InvestmentDetailPage from '../pages/InvestmentDetailPage'; // 투자 예정지 상세 페이지 추가
 import LandPurchaseQuiz from '../pages/LandPurchaseQuiz';
 import RiskMap from '../pages/RiskMap'; // 새로 추가
+import Layout from '../components/layouts/layout'; // Layout 추가
 
 function AppRouter() {
   return (
     <Routes>
-      <Route path="/" element={<StartPage />} />
-      <Route path="/main" element={<MainPage />} />
-      <Route path="/address-search" element={<AddressSearch />} />
+      <Route path="/" element={<StartPage />} /> {/* 하단탭과 사이드바 없음 */}
+      <Route
+        path="/main"
+        element={
+          <Layout>
+            <MainPage />
+          </Layout>
+        }
+      />
+      <Route
+        path="/address-search"
+        element={
+          <Layout>
+            <AddressSearch />
+          </Layout>
+        }
+      />
       <Route
         path="/land-purchase-knowledge"
-        element={<LandPurchaseKnowledge />}
+        element={
+          <Layout>
+            <LandPurchaseKnowledge />
+          </Layout>
+        }
       />
-      <Route path="/land-terms" element={<LandTerms />} />
-      <Route path="/land-terms/:term" element={<LandTermDetail />} />
-      <Route path="/my-page" element={<MyPage />} />
-      <Route path="/investment" element={<InvestmentPage />} />
-      <Route path="/investment-register" element={<InvestmentRegisterPage />} />
+      <Route
+        path="/land-terms"
+        element={
+          <Layout>
+            <LandTerms />
+          </Layout>
+        }
+      />
+      <Route
+        path="/land-terms/:term"
+        element={
+          <Layout>
+            <LandTermDetail />
+          </Layout>
+        }
+      />
+      <Route
+        path="/my-page"
+        element={
+          <Layout>
+            <MyPage />
+          </Layout>
+        }
+      />
+      <Route
+        path="/investment"
+        element={
+          <Layout>
+            <InvestmentPage />
+          </Layout>
+        }
+      />
+      <Route
+        path="/investment-register"
+        element={
+          <Layout>
+            <InvestmentRegisterPage />
+          </Layout>
+        }
+      />
       <Route
         path="/investment-detail"
-        element={<InvestmentDetailPage />} // 투자 예정지 상세 페이지 추가
+        element={
+          <Layout>
+            <InvestmentDetailPage />
+          </Layout>
+        }
       />
-      <Route path="/land-purchase-quiz" element={<LandPurchaseQuiz />} />
-      <Route path="/risk-map" element={<RiskMap />} />{' '}
-      {/* 위험 지도 라우터 추가 */}
+      <Route
+        path="/land-purchase-quiz"
+        element={
+          <Layout>
+            <LandPurchaseQuiz />
+          </Layout>
+        }
+      />
+      <Route
+        path="/risk-map"
+        element={
+          <Layout>
+            <RiskMap />
+          </Layout>
+        }
+      />
     </Routes>
   );
 }

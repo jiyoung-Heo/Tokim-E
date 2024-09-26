@@ -12,7 +12,7 @@ const GlobalStyle = createGlobalStyle`
     width: 100%;
     height: 100%;
     background-color: #f3f7fb;  /* 전체 배경을 지정 */
-    font-family: 'KoddiUD OnGothic', sans-serif;
+    font-family: 'KoddiUD OnGothic';
     color: black;
     line-height: 1.5;
     overflow-x: hidden;
