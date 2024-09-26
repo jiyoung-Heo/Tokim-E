@@ -17,7 +17,7 @@ pipeline {
 			stage('Build image') {
 				steps {
 					script {
-						dockerimage = docker.build("jiyoungheo/tokime-front", "./front-end/tokime")
+						dockerimage = docker.build("jiyoungheo/tokime-front:v1", "./front-end/tokime")
 					}
 				}
 			}
@@ -40,10 +40,10 @@ pipeline {
 							ssh -o StrictHostKeyChecking=no ubuntu@j11b207.p.ssafy.io '
 							docker stop tokime-front
 							docker rm tokime-front
-							docker rmi jiyoungheo/tokime-front
+							docker rmi jiyoungheo/tokime-front:v1
 							docker login -u jiyoungheo.dev@gmail.com -p $DOCKERHUB_PASSWORD
-							docker pull jiyoungheo/tokime-front
-							docker run -d -p 3000:3000 --name tokime-front jiyoungheo/tokime-front
+							docker pull jiyoungheo/tokime-front:v1
+							docker run -d -p 3000:3000 -v /home/ubuntu/tokime/frontend/.env:/app/.env --name tokime-front jiyoungheo/tokime-front:v1
 							'
 						"""
 					    }
