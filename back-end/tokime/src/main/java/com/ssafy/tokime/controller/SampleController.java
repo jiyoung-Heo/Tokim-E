@@ -32,7 +32,7 @@ public class SampleController {
 
             List<AvatarDTO> dtos = allAvatars.stream().map(AvatarDTO::new).collect(Collectors.toList());
 
-            return ResponseEntity.ok().body(dtos);
+            return ResponseEntity.ok().body("반갑습니다?");
             //return null;
         } catch (Exception e) {
             ResponseDTO<AvatarDTO> response = ResponseDTO.<AvatarDTO>builder().error(e.getMessage()).build();
