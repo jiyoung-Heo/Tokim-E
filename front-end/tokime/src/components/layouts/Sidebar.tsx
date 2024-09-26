@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import sidebarIcon from '../../assets/sidebar-icon.svg'; // 사이드바 아이콘 임포트
+import sidebarIcon from '../../assets/images/icon/sidebar-icon.svg'; // 사이드바 아이콘 임포트
 
 const SidebarContainer = styled.div<{ $isOpen: boolean }>`
   position: fixed;
