@@ -16,7 +16,7 @@ const SidebarContainer = styled.div<{ $isOpen: boolean }>`
   top: 0;
   right: ${(props) => (props.$isOpen ? '0' : '-300px')};
   width: 180px;
-  height: calc(100% - 75 px);
+  height: calc(100% - 75px);
   background-color: white;
   transition: right 0.3s ease-in-out;
   z-index: 1000;
@@ -78,14 +78,14 @@ const UserInfo = styled.div`
 
 const UserName = styled.p`
   font-size: 14px;
-  margin-top: 10px;
-  margin-bottom: 15px; /* 간격을 15px로 설정 */
+  margin-bottom: 10px; /* 추가: 로그인 해주세요 텍스트 밑에 10px 마진 */
 `;
 
 const Icon = styled.img`
   width: 24px;
   height: 24px;
   margin-right: 5px;
+  cursor: pointer;
 `;
 
 const Divider = styled.hr`
@@ -120,9 +120,9 @@ const ButtonText = styled.span`
 
 function Sidebar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // 초기값 true -> 로그인 상태 변경
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const score = isLoggedIn ? 50 : 0; // 로그인하지 않았을 때 score를 0으로 설정
+  const score = isLoggedIn ? 50 : 0; // 로그인 여부에 따라 점수 설정
   const navigate = useNavigate();
 
   const kakaoLoginUrl = `${process.env.REACT_APP_CUSTOM_KEY}/oauth2/authorization/kakao`;
@@ -159,6 +159,10 @@ function Sidebar() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+  };
+
+  const handleNavigateToLogin = () => {
+    navigate('/login-required'); // LoginRequiredPage로 이동
   };
 
   return (
@@ -203,7 +207,15 @@ function Sidebar() {
           <>
             <GaugeWrapper>
               <Graph score={score} />
-              <UserName>로그인 해주세요.</UserName>
+              {/* 로그인 해주세요 텍스트와 아이콘에 클릭 이벤트 추가 */}
+              <Icon
+                src={sidebarUser}
+                alt="유저 아이콘"
+                onClick={handleNavigateToLogin}
+              />
+              <UserName onClick={handleNavigateToLogin}>
+                로그인 해주세요
+              </UserName>
             </GaugeWrapper>
 
             <UserInfo>
@@ -214,6 +226,7 @@ function Sidebar() {
               <Divider />
               <Icon src={sidebarPhone} alt="전화번호 아이콘" />
               <p>010-xxxx-xxxx</p>
+              <Divider />
             </UserInfo>
 
             {/* 카카오 로그인 버튼 */}
