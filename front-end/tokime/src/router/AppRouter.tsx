@@ -11,6 +11,7 @@ import InvestmentPage from '../pages/InvestmentPage';
 import InvestmentRegisterPage from '../pages/InvestmentRegisterPage';
 import InvestmentDetailPage from '../pages/InvestmentDetailPage'; // 투자 예정지 상세 페이지 추가
 import LandPurchaseQuiz from '../pages/LandPurchaseQuiz';
+import LoginRequiredPage from '../pages/LoginRequiredPage';
 import RiskMap from '../pages/RiskMap'; // 새로 추가
 import Layout from '../components/layouts/layout'; // Layout 추가
 
@@ -18,6 +19,8 @@ function AppRouter() {
   return (
     <Routes>
       <Route path="/" element={<StartPage />} /> {/* 하단탭과 사이드바 없음 */}
+      <Route path="/login-required" element={<LoginRequiredPage />} />{' '}
+      {/* 하단탭과 사이드바 없음 */}
       <Route
         path="/main"
         element={
