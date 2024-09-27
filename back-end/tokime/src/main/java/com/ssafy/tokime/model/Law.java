@@ -36,5 +36,5 @@ public class Law {
     private Long lawDistrict;
 
     @Column(nullable = false)
-    private Date lawImplementDate;
+    private Date lawImplementAt;
 }
