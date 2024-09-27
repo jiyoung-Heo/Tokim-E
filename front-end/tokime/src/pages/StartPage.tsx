@@ -105,7 +105,7 @@ function StartPage() {
       </Button>
 
       <Button $bgColor="#FFFFFF" onClick={handleGuestLogin}>
-        <Icon src={TokimeIcon} alt="토키미 아이콘" />
+        <Icon src={TokimeIcon} alt="토킴이 아이콘" />
         <ButtonText>비회원으로 시작하기</ButtonText>
       </Button>
     </StartPageContainer>
