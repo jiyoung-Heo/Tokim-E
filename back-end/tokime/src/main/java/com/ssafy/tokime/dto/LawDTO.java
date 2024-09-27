@@ -15,14 +15,14 @@ public class LawDTO {
     private String lawContent;
     private String lawItemNumber;
     private String lawLandUse;
-    private Date lawImplementDate;
+    private Date lawImplementAt;
 
     public LawDTO(final Law entity){
         this.lawName = entity.getLawName();
         this.lawContent = entity.getLawContent();
         this.lawItemNumber = entity.getLawItemNumber();
         this.lawLandUse = entity.getLawLandUse();
-        this.lawImplementDate = entity.getLawImplementDate();
+        this.lawImplementAt = entity.getLawImplementAt();
     }
 
     public static Law toEntity(final LawDTO dto){
@@ -31,7 +31,7 @@ public class LawDTO {
                 .lawContent(dto.getLawContent())
                 .lawItemNumber(dto.getLawItemNumber())
                 .lawLandUse(dto.getLawLandUse())
-                .lawImplementDate(dto.getLawImplementDate())
+                .lawImplementAt(dto.getLawImplementAt())
                 .build();
     }
 }
