@@ -21,8 +21,8 @@ public class LawService {
     @Autowired
     public LawService(LawRepository lawRepository){this.lawRepository = lawRepository;}
 
-    public List<Law> selectAllLawByDistrict(Long district){
-        List<Law> laws = lawRepository.findAllByDistrict(district);
+    public List<Law> selectAllLawByDistrict(Long lawDistrict){
+        List<Law> laws = lawRepository.findAllByLawDistrict(lawDistrict);
 
         if (laws.isEmpty()) {
             throw new NoSuchElementException("해당하는 조례가 없습니다.");
