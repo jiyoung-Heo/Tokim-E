@@ -1,12 +1,18 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 import KakaoIcon from '../assets/images/icon/kakao.svg'; // 이미지 import
 import GoogleIcon from '../assets/images/icon/Google.png'; // 이미지 import
-import TokimeIcon from '../assets/images/icon/Tokime.png'; // 이미지 import
 import LogoImage from '../assets/images/Tokimlogo.png'; // 로고 이미지 import
 
+// 페이지 전체의 스타일 설정
+const LoginPageStyle = createGlobalStyle`
+  body {
+    background-color: white;
+  }
+`;
+
 // 이미지와 버튼 스타일 정의
-const StartPageContainer = styled.div`
+const LoginRequiredPageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -15,25 +21,25 @@ const StartPageContainer = styled.div`
 `;
 
 const Logo = styled.img`
-  width: 120px;
-  height: auto;
-  margin-top: 125px;
+  width: 170px;
+  height: 170px;
+  margin-bottom: 75px;
 `;
 
 const Title = styled.h1`
-  font-size: 20px;
-  margin-top: 20px;
-  margin-bottom: 10px;
-  font-weight: 800; /* 굵기 강제 설정 */
+  font-size: 26px;
+  margin-bottom: 25px;
+  font-weight: 700;
   text-align: center;
 `;
 
 const SubTitle = styled.p`
   font-size: 15px;
   text-align: center;
-  color: #555;
-  margin-bottom: 30px;
+  color: #797982;
+  top: 60px;
   font-weight: 400;
+  margin-bottom: 25px;
 `;
 
 const Button = styled.button<{ $bgColor: string }>`
@@ -64,10 +70,10 @@ const Icon = styled.img`
   width: 24px;
   height: 24px;
   position: absolute;
-  left: 10px; /* 왼쪽에서 10px 떨어짐 */
+  left: 10px;
 `;
 
-function StartPage() {
+function LoginRequiredPage() {
   const kakaoLoginUrl = `${process.env.REACT_APP_CUSTOM_KEY}/oauth2/authorization/kakao`;
   const googleLoginUrl = `${process.env.REACT_APP_CUSTOM_KEY}/oauth2/authorization/google`;
 
@@ -79,37 +85,26 @@ function StartPage() {
     window.location.href = googleLoginUrl;
   };
 
-  const handleGuestLogin = () => {
-    window.location.href = '/main';
-  };
-
   return (
-    <StartPageContainer>
-      <Logo src={LogoImage} alt="토킴 로고" />
+    <>
+      <LoginPageStyle />
+      <LoginRequiredPageContainer>
+        <SubTitle>로그인 후 더 많은 기능이 준비되어 있어요 !</SubTitle>
+        <Title>로그인하고 계속하기</Title>
+        <Logo src={LogoImage} alt="토킴 로고" />
 
-      <Title>토지 개발은 토킴이</Title>
-      <SubTitle>
-        토지 정보부터 사기 위험도까지,
-        <br />
-        구매 매물 정보를 분석하고 안전하게 구매하세요!
-      </SubTitle>
+        <Button $bgColor="#FEE500" onClick={handleKakaoLogin}>
+          <Icon src={KakaoIcon} alt="카카오 아이콘" />
+          <ButtonText>카카오로 로그인</ButtonText>
+        </Button>
 
-      <Button $bgColor="#FEE500" onClick={handleKakaoLogin}>
-        <Icon src={KakaoIcon} alt="카카오 아이콘" />
-        <ButtonText>카카오로 시작하기</ButtonText>
-      </Button>
-
-      <Button $bgColor="#FFFFFF" onClick={handleGoogleLogin}>
-        <Icon src={GoogleIcon} alt="구글 아이콘" />
-        <ButtonText>구글로 시작하기</ButtonText>
-      </Button>
-
-      <Button $bgColor="#FFFFFF" onClick={handleGuestLogin}>
-        <Icon src={TokimeIcon} alt="토킴이 아이콘" />
-        <ButtonText>비회원으로 시작하기</ButtonText>
-      </Button>
-    </StartPageContainer>
+        <Button $bgColor="#FFFFFF" onClick={handleGoogleLogin}>
+          <Icon src={GoogleIcon} alt="구글 아이콘" />
+          <ButtonText>구글로 로그인</ButtonText>
+        </Button>
+      </LoginRequiredPageContainer>
+    </>
   );
 }
 
-export default StartPage;
+export default LoginRequiredPage;
