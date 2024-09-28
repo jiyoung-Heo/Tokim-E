@@ -9,14 +9,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LikeWordDTO {
-    private Long LikewordId;
 
-    // 즐겨찾기 목록은 "1,2,3,4"이런 방식으로 저장됨
-    // 백에서 해당 문자열을 [1,2,3,4]로 변환해서 사용함
-    private String wordList;
+    private Long LikewordId;
+    // 사용자 id
+    private Long userId;
+    // 즐겨찾기 한 단어의 id
+    private Long temdId;
 
     public LikeWordDTO(Likeword likeWord) {
         this.LikewordId = likeWord.getLikewordId();
-        this.wordList = likeWord.getWordList();
+        this.temdId = likeWord.getTermId();
     }
 }
