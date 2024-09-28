@@ -56,6 +56,45 @@ public class UserController{
             return ResponseEntity.badRequest().body(response);
         }
     }
+
+    @GetMapping("/quiz")
+    public ResponseEntity<?> getQuizScore() {
+        try {
+            //            String email = getAuthenticationData();
+            String email = "test";
+            User user = userService.getUserInfo(email);
+
+            Long quizScore = user.getQuizScore();
+            ResponseDTO<Long> response = ResponseDTO.<Long>builder().data(List.of(quizScore)).build();
+//            UserDTO dto = new UserDTO(user);
+//            ResponseDTO<UserDTO> response = ResponseDTO.<UserDTO>builder().data(List.of(dto)).build();
+            return ResponseEntity.ok().body(response);
+
+        } catch (Exception e) {
+            logger.error("Error while retrieving score information", e);
+            ResponseDTO<UserDTO> response = ResponseDTO.<UserDTO>builder().error(e.getMessage()).build();
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @PutMapping("/quiz")
+    public ResponseEntity<?> updateQuizScore(@RequestBody Long quizScore){
+        try {
+//            String email = getAuthenticationData();
+            String email = "test";
+
+            User user = userService.updateQuizScore(email, quizScore);
+
+            UserDTO dto = new UserDTO(user);
+            ResponseDTO<UserDTO> response = ResponseDTO.<UserDTO>builder().data(List.of(dto)).build();
+
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            logger.error("Error while updating quiz score", e);
+            ResponseDTO<Void> response = ResponseDTO.<Void>builder().error(e.getMessage()).build();
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
     // 인증해서 데이터 가져오기
 //    private String getAuthenticationData() {
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

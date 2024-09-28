@@ -22,4 +22,9 @@ public class UserFacadeService {
     public User getUserInfo(String email){return userService.selectUserInfoByEmail(email);}
 
     // 토지 점수 수정 Quiz 부분과 연계
+    public User updateQuizScore(String email, Long quizScore){
+        User user = userService.selectUserInfoByEmail(email);
+        user.setQuizScore(quizScore);
+        return user;
+    }
 }
