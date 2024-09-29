@@ -25,63 +25,6 @@ public class WordController {
     @Autowired
     private WordService wordService;
 
-    // 임시
-    // 용어사전 내용을 처리하기 위한 메서드
-    @RequestMapping("/save")
-    public ResponseEntity<?> saveWords() {
-
-        String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("words.csv")).getFile();
-        try (FileInputStream file = new FileInputStream(new File(filePath));
-             InputStreamReader isr = new InputStreamReader(file);
-             BufferedReader br = new BufferedReader(isr)){
-            String line;
-            boolean isFirest = false;
-            int a = 0;
-            int b = 0;
-            int c = 0;
-            while ((line = br.readLine()) != null) {
-                String[] words = line.split(",\"•");
-                if (! isFirest) {
-                    isFirest = ! isFirest;
-                    continue;
-                }
-                if (words.length == 1) {
-                    words = words[0].split(",•");
-                }
-                if (words.length == 1) {
-                    words = words[0].split(" • ");
-                }
-                if (words.length == 1) {
-                    words = words[0].split(",\"");
-                }
-                if (words.length == 2) {
-                    if (words[1].contains("v")) {
-                        String[] temp = words[1].split("v");
-                        words = new String[] {words[0], temp[0], temp[1]};
-                    }
-                }
-                // 여기까지는 ok, 2인 경우는 모두 법률이 없는 상황
-
-                LandtermDTO landknowledgeDTO = new LandtermDTO();
-                landknowledgeDTO.setTermId((long) 0); // 기본값
-                landknowledgeDTO.setTermName(words[0]);
-                landknowledgeDTO.setTermDescribe(words[1]);
-                if (words.length > 2) {
-                    landknowledgeDTO.setTermLaw(words[2]);
-                } else {
-                    landknowledgeDTO.setTermLaw("");
-                }
-                // Entity 변환작엄
-                Landterm result = landknowledgeDTO.toEntity(landknowledgeDTO);
-                wordService.saveLandTerm(result);
-            }
-
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-        return ResponseEntity.ok().build();
-    }
-
     // 모든 단어를 가져오는 메서드
     // 전부 단어값만 가져옴
     // 검색기능이 있을 경우 해당 단어를 포함하는 값으로 가져옴
