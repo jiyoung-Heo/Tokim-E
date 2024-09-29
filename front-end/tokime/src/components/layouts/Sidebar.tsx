@@ -25,7 +25,7 @@ const SidebarContainer = styled.div<{ $isOpen: boolean }>`
 // 사이드바 아이콘 정의
 const SidebarIcon = styled.img<{ $isOpen: boolean }>`
   position: fixed;
-  top: 20px;
+  top: 47px;
   right: 20px;
   width: 40px;
   height: 40px;
