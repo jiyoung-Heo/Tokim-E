@@ -1,5 +1,6 @@
 package com.ssafy.tokime.dto;
 
+import com.ssafy.tokime.model.Land;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,4 +23,22 @@ public class LandDTO {
     private String landRoad;
     private Integer landPrice;
     private Integer landDanger;
+
+    public Land toEntity(){
+        return Land.builder()
+                .landId(landId)
+                .landDistrictCode(landDistrictCode)
+                        .landAddress(landAddress)
+                .landDistrict(landDistrict)
+                .landScale(landScale)
+                .landUse(landUse)
+                .landUseStatus(landUseStatus)
+                .landGradient(landGradient)
+                .landRoad(landRoad)
+                .landPrice(landPrice)
+                .landDanger(landDanger)
+                .build();
+    }
+
+
 }
