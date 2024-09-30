@@ -12,8 +12,9 @@ import InvestmentRegisterPage from '../pages/InvestmentRegisterPage';
 import InvestmentDetailPage from '../pages/InvestmentDetailPage'; // 투자 예정지 상세 페이지 추가
 import LandPurchaseQuiz from '../pages/LandPurchaseQuiz';
 import LoginRequiredPage from '../pages/LoginRequiredPage';
-import RiskMap from '../pages/RiskMap'; // 새로 추가
+import RiskMapPage from '../pages/RiskMapPage'; // 새로 추가
 import Layout from '../components/layouts/layout'; // Layout 추가
+import RiskMapReportPage from '../pages/RiskMapReportPage';
 
 function AppRouter() {
   return (
@@ -105,7 +106,15 @@ function AppRouter() {
         path="/risk-map"
         element={
           <Layout>
-            <RiskMap />
+            <RiskMapPage />
+          </Layout>
+        }
+      />
+      <Route
+        path="/risk-map/report"
+        element={
+          <Layout>
+            <RiskMapReportPage />
           </Layout>
         }
       />
