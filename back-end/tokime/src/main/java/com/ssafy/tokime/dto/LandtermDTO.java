@@ -20,7 +20,6 @@ public class LandtermDTO {
         this.termName = landterm.getTermName();
         this.termDescribe = landterm.getTermDescribe();
         this.termLaw = landterm.getTermLaw();
-
     }
 
     public static Landterm toEntity(final LandtermDTO dto) {
