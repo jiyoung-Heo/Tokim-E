@@ -5,6 +5,8 @@ import com.ssafy.tokime.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Transactional
 @Service
 public class UserFacadeService {
@@ -20,6 +22,9 @@ public class UserFacadeService {
 
     // 이메일로 유저 조회
     public User getUserInfo(String email){return userService.selectUserInfoByEmail(email);}
+
+    // 이메일로 유저 조회 후 생년월일 수정
+    public User modifyUserInfo(String email, Date birth){return userService.updateBirth(email, birth);}
 
     // 토지 점수 수정 Quiz 부분과 연계
     public User updateQuizScore(String email, Long quizScore){
