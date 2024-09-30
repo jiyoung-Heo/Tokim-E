@@ -68,8 +68,9 @@ const Icon = styled.img`
 `;
 
 function StartPage() {
-  const kakaoLoginUrl = `api/oauth2/authorization/kakao`;
-  const googleLoginUrl = `api/oauth2/authorization/google`;
+  const kakaoLoginUrl = `${process.env.REACT_APP_API_URL}/oauth2/authorization/kakao`;
+  const googleLoginUrl = `${process.env.REACT_APP_API_URL}/oauth2/authorization/google`;
+  console.log(process.env.REACT_APP_API_URL);
 
   const handleKakaoLogin = () => {
     window.location.href = kakaoLoginUrl;

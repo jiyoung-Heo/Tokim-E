@@ -1,19 +1,69 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import fetchKnowledgeByCategory from '../../api/LandPurchaseKnowledge'; // default import로 변경
+import landImage from '../../assets/images/land1.png'; // 이미지 임포트
 
 const TabContent = styled.div`
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 5px;
+  width: 300px;
+  height: 350px;
+  background-color: #ffffff;
+  border-radius: 20px;
   border: 1px solid #ddd;
+  box-shadow:
+    0px 4px 4px rgba(0, 0, 0, 0.25),
+    inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+  margin-top: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
 `;
 
-function EssentialKnowledgeTab() {
+const Image = styled.img`
+  width: 150px;
+  height: 150px;
+  margin-top: 30px;
+`;
+
+const Text = styled.p`
+  margin-top: 25px;
+  font-size: 14px;
+  font-family: 'KoddiUD OnGothic';
+  font-weight: 700;
+  text-align: center;
+`;
+
+function LandPurchaseProcedureTab() {
+  const [knowledge, setKnowledge] = useState<string | null>(null); // 상태 선언
+  const [loading, setLoading] = useState<boolean>(true); // 로딩 상태
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchKnowledgeByCategory(0); // 구매 절차에 해당하는 category 0 데이터 요청
+        console.log('구매 절차 API 응답:', data); // 콘솔에 API 응답 출력
+        setKnowledge(data);
+      } catch (error) {
+        console.error('데이터를 불러오는 중 오류 발생:', error);
+      } finally {
+        setLoading(false); // 로딩 상태 업데이트
+      }
+    };
+
+    fetchData(); // 데이터 요청 함수 호출
+  }, []);
+
+  if (loading) {
+    return <TabContent>로딩 중...</TabContent>; // 로딩 중일 때 표시
+  }
+
   return (
     <TabContent>
-      <p>필수 상식에 대한 내용입니다.</p>
+      <Image src={landImage} alt="Land" /> {/* 이미지 출력 */}
+      <Text>{knowledge || '구매 절차에 대한 정보가 없습니다.'}</Text>{' '}
+      {/* 받아온 데이터를 출력 */}
     </TabContent>
   );
 }
 
-export default EssentialKnowledgeTab;
+export default LandPurchaseProcedureTab;
