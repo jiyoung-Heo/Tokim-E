@@ -8,14 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*")
@@ -25,63 +19,6 @@ public class WordController {
     @Autowired
     private WordService wordService;
 
-    // 임시
-    // 용어사전 내용을 처리하기 위한 메서드
-    @RequestMapping("/save")
-    public ResponseEntity<?> saveWords() {
-
-        String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("words.csv")).getFile();
-        try (FileInputStream file = new FileInputStream(new File(filePath));
-             InputStreamReader isr = new InputStreamReader(file);
-             BufferedReader br = new BufferedReader(isr)){
-            String line;
-            boolean isFirest = false;
-            int a = 0;
-            int b = 0;
-            int c = 0;
-            while ((line = br.readLine()) != null) {
-                String[] words = line.split(",\"•");
-                if (! isFirest) {
-                    isFirest = ! isFirest;
-                    continue;
-                }
-                if (words.length == 1) {
-                    words = words[0].split(",•");
-                }
-                if (words.length == 1) {
-                    words = words[0].split(" • ");
-                }
-                if (words.length == 1) {
-                    words = words[0].split(",\"");
-                }
-                if (words.length == 2) {
-                    if (words[1].contains("v")) {
-                        String[] temp = words[1].split("v");
-                        words = new String[] {words[0], temp[0], temp[1]};
-                    }
-                }
-                // 여기까지는 ok, 2인 경우는 모두 법률이 없는 상황
-
-                LandtermDTO landknowledgeDTO = new LandtermDTO();
-                landknowledgeDTO.setTermId((long) 0); // 기본값
-                landknowledgeDTO.setTermName(words[0]);
-                landknowledgeDTO.setTermDescribe(words[1]);
-                if (words.length > 2) {
-                    landknowledgeDTO.setTermLaw(words[2]);
-                } else {
-                    landknowledgeDTO.setTermLaw("");
-                }
-                // Entity 변환작엄
-                Landterm result = landknowledgeDTO.toEntity(landknowledgeDTO);
-                wordService.saveLandTerm(result);
-            }
-
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-        return ResponseEntity.ok().build();
-    }
-
     // 모든 단어를 가져오는 메서드
     // 전부 단어값만 가져옴
     // 검색기능이 있을 경우 해당 단어를 포함하는 값으로 가져옴
@@ -89,25 +26,49 @@ public class WordController {
     public ResponseEntity<?> getWords(@RequestParam("keyword") String keyword) {
         List<LandtermDTO> words = new ArrayList<>();
         List<Landterm> result;
+        List<LandtermDTO> asdf = (List<LandtermDTO>) getWordLike().getBody();
         System.out.println("keyword: " + keyword);
         System.out.println(keyword.length());
         if (keyword.length() == 0) {
             // 없으면 전부 가져오면 됨
             result = wordService.getWordList();
-            for (int i = 0; i < result.size(); i++) {
-                System.out.println(result.get(i).getTermName());
-            }
         } else {
             // 키워드 검색 부분에 해당하는 부분만 가져옴
             result = wordService.getSearchWordList(keyword);
             if (result.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
+            // 특정 검색 리스트에서도 즐겨찾기한 녀석들이 있을거임, 확인
+            for (int i = 0; i < result.size(); i++) {}
         }
         // Entity -> DTO 변환
         for (Landterm word : result) {
             words.add(new LandtermDTO(word));
         }
+
+        // 가져온 것들이 즐겨찾기에 등록된 것들인지 표시정돈 해주기
+        if (keyword.length() == 0) { // 전체 조회일시 바로 index값으로 접근하면됨
+            for (int i = 0; i < asdf.size(); i++) {
+                long index = asdf.get(i).getTermId()-1;
+                words.get((int) index).setLikeCheck(true);
+            }
+        } else { // 특정 키워드로 검색해서 가져온 것들
+            // 키워드 목록과 즐찾목록 비교해서 일치하면 likecheck = ture로 바꿔주기
+            for (int x = 0; x < asdf.size(); x++) {
+                long number = asdf.get(x).getTermId();
+                for (int y = 0; y < words.size(); y++) {
+                    if (number == words.get(y).getTermId()) {
+                        // 즐찾 termId와 검색결과들의 termId 비교
+                        words.get(y).setLikeCheck(true);
+                        break;
+                    }
+                }
+            }
+        }
+
+
+
+
         return ResponseEntity.ok().body(words);
     }
 
@@ -141,6 +102,7 @@ public class WordController {
             for (Likeword word : words) {
                 Optional<Landterm> landterm = wordService.getWord(word.getTermId());
                 LandtermDTO temp = new LandtermDTO(landterm.get());
+                temp.setLikeCheck(true);
                 result.add(temp);
             }
             return ResponseEntity.ok().body(result);

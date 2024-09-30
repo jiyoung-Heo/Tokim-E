@@ -13,13 +13,13 @@ public class LandtermDTO {
     private String termName;
     private String termDescribe;
     private String termLaw;
+    private boolean likeCheck; // 즐찾인지 아닌지 표시하는 곳
 
     public LandtermDTO(Landterm landterm) {
         this.termId = landterm.getTermId();
         this.termName = landterm.getTermName();
         this.termDescribe = landterm.getTermDescribe();
         this.termLaw = landterm.getTermLaw();
-
     }
 
     public static Landterm toEntity(final LandtermDTO dto) {

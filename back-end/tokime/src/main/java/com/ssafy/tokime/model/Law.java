@@ -23,7 +23,7 @@ public class Law {
     @Column(nullable = false)
     private String lawName;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String lawContent;
 
     @Column(nullable = false)
