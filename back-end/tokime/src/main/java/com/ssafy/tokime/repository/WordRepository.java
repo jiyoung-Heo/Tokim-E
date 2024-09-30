@@ -14,7 +14,7 @@ public interface WordRepository extends JpaRepository<Landterm, Long> {
 
     // 단어만 다 가져옴
     // 임시로 500개까지만.. 이게 오류인진 모르겠음
-    @Query(value="select l from Landterm as l where l.termId <= 500")
+    @Query(value="select l from Landterm as l")
     List<Landterm> getWordList();
 
     // 특정 검색어에 해당하는 단어만 가져옴
