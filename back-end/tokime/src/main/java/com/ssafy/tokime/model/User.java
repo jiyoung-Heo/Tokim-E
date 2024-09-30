@@ -25,13 +25,13 @@ public class User {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false)
     private int phone;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private Date birth;
 
     @Column(nullable = false)
