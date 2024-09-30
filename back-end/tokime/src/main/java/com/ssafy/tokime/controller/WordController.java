@@ -33,7 +33,7 @@ public class WordController {
         List<LandtermDTO> asdf = (List<LandtermDTO>) getWordLike().getBody();
         System.out.println("keyword: " + keyword);
         System.out.println(keyword.length());
-        logger.error("들어온 값 keyword: " + keyword+" 값의 길이 : "+keyword.length());
+        logger.info("들어온 값 keyword: " + keyword+" 값의 길이 : "+keyword.length());
         if (keyword.length() == 0) {
             // 없으면 전부 가져오면 됨
             result = wordService.getWordList();
