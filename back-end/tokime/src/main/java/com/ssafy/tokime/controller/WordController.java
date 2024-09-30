@@ -25,6 +25,8 @@ public class WordController {
     @Autowired
     private WordService wordService;
 
+    static List<Landterm> landterms = new ArrayList<>();
+
     // 모든 단어를 가져오는 메서드
     // 전부 단어값만 가져옴
     // 검색기능이 있을 경우 해당 단어를 포함하는 값으로 가져옴
@@ -37,9 +39,6 @@ public class WordController {
         if (keyword.length() == 0) {
             // 없으면 전부 가져오면 됨
             result = wordService.getWordList();
-            for (int i = 0; i < result.size(); i++) {
-                System.out.println(result.get(i).getTermName());
-            }
         } else {
             // 키워드 검색 부분에 해당하는 부분만 가져옴
             result = wordService.getSearchWordList(keyword);
