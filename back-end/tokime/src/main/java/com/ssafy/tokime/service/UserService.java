@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -38,6 +39,12 @@ public class UserService {
     public User updateQuizScore(String email, Long quizScore) {
         User user = selectUserInfoByEmail(email);
         user.setQuizScore(quizScore);
+        return userRepository.save(user);
+    }
+
+    public User updateBirth(String email, Date birth){
+        User user = selectUserInfoByEmail(email);
+        user.setBirth(birth);
         return userRepository.save(user);
     }
 

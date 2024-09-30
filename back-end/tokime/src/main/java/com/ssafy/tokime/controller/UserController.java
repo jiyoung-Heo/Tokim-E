@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @CrossOrigin(origins = "*")
@@ -56,6 +57,25 @@ public class UserController{
             return ResponseEntity.badRequest().body(response);
         }
     }
+
+    @PutMapping("/")
+    private ResponseEntity<?> updateUserBirth(@RequestBody Date birth){
+        try {
+//            String email = getAuthenticationData();
+            String email = "test"; // getAuthenticationData()로 대체할 수 있음
+            User updatedUser = userService.modifyUserInfo(email, birth);
+
+            UserDTO dto = new UserDTO(updatedUser);
+            ResponseDTO<UserDTO> response = ResponseDTO.<UserDTO>builder().data(List.of(dto)).build();
+
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            logger.error("Error while updating user birth", e);
+            ResponseDTO<Void> response = ResponseDTO.<Void>builder().error(e.getMessage()).build();
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
 
     @GetMapping("/quiz")
     public ResponseEntity<?> getQuizScore() {
