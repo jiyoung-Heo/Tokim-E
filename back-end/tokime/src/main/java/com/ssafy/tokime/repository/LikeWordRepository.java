@@ -15,7 +15,7 @@ public interface LikeWordRepository extends JpaRepository<Likeword, Long> {
     List<Likeword> findAllByUserIdOrderByTermId(Long userId);
 
     //해다 사용자의 특정 용어 즐겨찾기 해제
-    @Query(value = "delete from Likeword where likewordId = :wordId and userId = :userID")
+    @Query(value = "delete from Likeword where termId = :wordId and userId = :userID")
     void deleteLikeWord(@Param("wordId") Long wordId, @Param("userID") Long userID);
 
 
