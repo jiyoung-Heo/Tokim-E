@@ -141,12 +141,13 @@ public class WordController {
     }
 
     // 즐겨찾기 해제 메서드
-    @DeleteMapping("/like/{likeWordId}")
-    public ResponseEntity<?> deleteWord(@PathVariable long likeWordId) {
+
+    @DeleteMapping("/like/{termId}")
+    public ResponseEntity<?> deleteWord(@PathVariable long termId) {
         // 추후 JWT을 디코딩해서 유저 id를 가져올 예정
         long userId = 1; // 여기를 JWT에서 가져옴, 추후 static 으로 뺄 예정
-
-        wordService.deleteLikeWord(userId, likeWordId);
+        System.out.println("삭제하고자 하는 용어 : "+termId+" 맞나? :"+likeCheck(termId));
+        wordService.deleteLikeWord(userId, termId);
         return ResponseEntity.ok().build();
     }
 
@@ -160,12 +161,4 @@ public class WordController {
         }
         return false;
     }
-
-
-
-
-
-
-
-
 }

@@ -4,6 +4,7 @@ import com.ssafy.tokime.model.Landterm;
 import com.ssafy.tokime.model.Likeword;
 import com.ssafy.tokime.repository.WordRepository;
 import com.ssafy.tokime.repository.LikeWordRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,8 +48,9 @@ public class WordService {
     }
 
     // 즐겨찾기 해제
+    @Transactional
     public void deleteLikeWord(Long userId, Long wordId) {
-        likeWordRepository.deleteLikeWord(userId, wordId);
+        likeWordRepository.deleteByUserIdAndTermId(userId, wordId);
     }
 
 }
