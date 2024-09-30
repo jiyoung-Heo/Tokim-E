@@ -4,6 +4,8 @@ import com.ssafy.tokime.dto.LandtermDTO;
 import com.ssafy.tokime.model.Landterm;
 import com.ssafy.tokime.model.Likeword;
 import com.ssafy.tokime.service.WordService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,8 @@ import java.util.Optional;
 public class WordController {
     @Autowired
     private WordService wordService;
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
 
     // 모든 단어를 가져오는 메서드
     // 전부 단어값만 가져옴
@@ -29,6 +33,7 @@ public class WordController {
         List<LandtermDTO> asdf = (List<LandtermDTO>) getWordLike().getBody();
         System.out.println("keyword: " + keyword);
         System.out.println(keyword.length());
+        logger.error("들어온 값 keyword: " + keyword+" 값의 길이 : "+keyword.length());
         if (keyword.length() == 0) {
             // 없으면 전부 가져오면 됨
             result = wordService.getWordList();
