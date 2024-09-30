@@ -143,7 +143,10 @@ public class WordController {
     // 즐겨찾기 해제 메서드
     @DeleteMapping("/like/{likeWordId}")
     public ResponseEntity<?> deleteWord(@PathVariable long likeWordId) {
-        wordService.deleteLikeWord(likeWordId);
+        // 추후 JWT을 디코딩해서 유저 id를 가져올 예정
+        long userId = 1; // 여기를 JWT에서 가져옴, 추후 static 으로 뺄 예정
+
+        wordService.deleteLikeWord(userId, likeWordId);
         return ResponseEntity.ok().build();
     }
 
