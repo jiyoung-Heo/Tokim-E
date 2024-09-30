@@ -47,8 +47,8 @@ public class WordService {
     }
 
     // 즐겨찾기 해제
-    public void deleteLikeWord(Long likeWordID) {
-        likeWordRepository.deleteById(likeWordID);
+    public void deleteLikeWord(Long userId, Long wordId) {
+        likeWordRepository.deleteLikeWord(userId, wordId);
     }
 
 }
