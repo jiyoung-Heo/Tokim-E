@@ -34,6 +34,15 @@ public class WordController {
         System.out.println("keyword: " + keyword);
         System.out.println(keyword.length());
         logger.info("들어온 값 keyword: " + keyword+" 값의 길이 : "+keyword.length());
+
+        // 예외처리를 위한 구문
+        if (keyword.contains(",")) {
+            keyword = keyword.split(",")[0];
+        }
+        if (keyword.contains("\"\"")) {
+            keyword = "";
+        }
+
         if (keyword.length() == 0) {
             // 없으면 전부 가져오면 됨
             result = wordService.getWordList();
