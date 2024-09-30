@@ -29,7 +29,7 @@ function LandDetailTab() {
     const fetchLandDetails = async () => {
       try {
         const response = await axios.get(
-          'http://j11b207.p.ssafy.io/api/land/search',
+          'https://j11b207.p.ssafy.io/api/land/search',
           {
             params: { district, address },
           },
