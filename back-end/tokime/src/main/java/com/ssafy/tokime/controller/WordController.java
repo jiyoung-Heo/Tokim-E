@@ -20,6 +20,7 @@ import java.util.Optional;
 public class WordController {
     @Autowired
     private WordService wordService;
+    private long userId;
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
 
@@ -79,10 +80,6 @@ public class WordController {
                 }
             }
         }
-
-
-
-
         return ResponseEntity.ok().body(words);
     }
 
@@ -93,6 +90,9 @@ public class WordController {
         Optional<Landterm> word = wordService.getWord(wordId);
         if (word.isPresent()) {
             LandtermDTO result = new LandtermDTO(word.get());
+            if (likeCheck(result.getTermId())) {
+                result.setLikeCheck(true);
+            }
             return ResponseEntity.ok().body(result);
         } else { // 관련 내용이 없음 -> 그럴 일은 없지만 정확한 처리를 위해
             return ResponseEntity.notFound().build();
@@ -145,6 +145,17 @@ public class WordController {
     public ResponseEntity<?> deleteWord(@PathVariable long likeWordId) {
         wordService.deleteLikeWord(likeWordId);
         return ResponseEntity.ok().build();
+    }
+
+    // 즐겨찾기한 용어인지 확인하는 메서드
+    public boolean likeCheck(long wordId) {
+        List<LandtermDTO> asdf = (List<LandtermDTO>) getWordLike().getBody();
+        for (LandtermDTO word : asdf) {
+            if (word.getTermId() == wordId) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
