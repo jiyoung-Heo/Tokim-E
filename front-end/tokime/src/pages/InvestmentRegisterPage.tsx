@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom'; // useNavigate 추가
 import LandInformationRegistrationTab from '../components/Tabs/LandInformationRegistrationTab';
 import ChecklistRegistrationTab from '../components/Tabs/ChecklistRegistrationTab';
 import StoryWritingRegistrationTab from '../components/Tabs/StoryWritingRegistrationTab';
@@ -22,7 +22,29 @@ const TabButton = styled.button<{ active: boolean }>`
 
 function InvestmentRegistrationPage() {
   const [activeTab, setActiveTab] = useState('landInfo');
-  const navigate = useNavigate(); // navigate 사용
+  const navigate = useNavigate(); // useNavigate 훅 사용
+
+  const handleNextFromLandInfo = () => {
+    setActiveTab('checklist'); // 체크리스트 등록 탭 활성화
+  };
+
+  const handleNextFromChecklist = () => {
+    setActiveTab('storyWriting'); // 사연 작성 등록 탭 활성화
+  };
+
+  const handlePreviousFromChecklist = () => {
+    setActiveTab('landInfo'); // 토지 정보 등록 탭 활성화
+  };
+
+  const handlePreviousFromStoryWriting = () => {
+    setActiveTab('checklist'); // 체크리스트 등록 탭 활성화
+  };
+
+  const handleRegister = () => {
+    // axios POST 요청을 보낼 수 있습니다.
+    // 추후에 구현할 부분
+    navigate('/investment'); // /investment 경로로 이동
+  };
 
   return (
     <div>
@@ -48,19 +70,21 @@ function InvestmentRegistrationPage() {
         </TabButton>
       </Tabs>
 
-      {activeTab === 'landInfo' && <LandInformationRegistrationTab />}
-      {activeTab === 'checklist' && <ChecklistRegistrationTab />}
-      {activeTab === 'storyWriting' && <StoryWritingRegistrationTab />}
-
-      <div style={{ marginTop: '20px' }}>
-        <button type="button" onClick={() => console.log('등록 완료')}>
-          등록
-        </button>
-        {/* window.history.back 대신 navigate 사용 */}
-        <button type="button" onClick={() => navigate(-1)}>
-          취소
-        </button>
-      </div>
+      {activeTab === 'landInfo' && (
+        <LandInformationRegistrationTab onNext={handleNextFromLandInfo} />
+      )}
+      {activeTab === 'checklist' && (
+        <ChecklistRegistrationTab
+          onNext={handleNextFromChecklist}
+          onPrevious={handlePreviousFromChecklist} // 이전 버튼 기능 추가
+        />
+      )}
+      {activeTab === 'storyWriting' && (
+        <StoryWritingRegistrationTab
+          onPrevious={handlePreviousFromStoryWriting} // 이전 버튼 기능 추가
+          onRegister={handleRegister} // 등록 버튼 기능 추가
+        />
+      )}
     </div>
   );
 }
