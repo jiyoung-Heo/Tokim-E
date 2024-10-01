@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.util.Date;
 import java.util.List;
@@ -53,18 +52,19 @@ public class InvestmentPlannedLand {
 
     @Column(columnDefinition = "TEXT")
     private String landStory;
-
     @Column
     private Integer plannedLandPyeong;
 
     @Column
     private Integer plannedLandPrice;
 
+    @Builder .Default
     @Column(nullable = false)
     private Integer checkedCount=0;
 
+    // 체크리스트와의 관계를 위한 중간 테이블
     @OneToMany(mappedBy = "investmentPlannedLand", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<InvestmentPlannedLandChecklist> checklists;
+    private List<ChecklistStatus> checklistMappings;
 
     public InvestmentPlannedLandDTO toDTO() {
         return InvestmentPlannedLandDTO.builder()
