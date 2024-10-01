@@ -1,6 +1,6 @@
 // LandDetailTab.tsx
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { getSearchLandInfo } from '../../api/landAxios';
 
 interface LandDetail {
   landId: string;
@@ -17,25 +17,25 @@ interface LandDetail {
   landDanger: number;
 }
 
-function LandDetailTab() {
+interface LandDetailTabProps {
+  district: string;
+  address: string;
+}
+
+function LandDetailTab({ district, address }: LandDetailTabProps) {
   const [landDetails, setLandDetails] = useState<LandDetail[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const district = '덕명동'; // 동 정보를 여기에 넣으세요
-  const address = '596-5'; // 지번 정보를 여기에 넣으세요
-
   useEffect(() => {
     const fetchLandDetails = async () => {
       try {
-        const response = await axios.get(
-          'https://j11b207.p.ssafy.io/api/land/search',
-          {
-            params: { district, address },
-          },
-        );
-        console.log(response.data); // 응답 데이터 출력
-        setLandDetails(response.data); // 데이터를 상태에 저장
+        const data = await getSearchLandInfo(district, address); // 수정된 부분
+        if (data) {
+          setLandDetails(data); // 데이터를 상태에 저장
+        } else {
+          setError('데이터를 가져오는 중 오류가 발생했습니다.');
+        }
       } catch (err) {
         setError('데이터를 가져오는 중 오류가 발생했습니다.');
       } finally {
@@ -43,7 +43,9 @@ function LandDetailTab() {
       }
     };
 
-    fetchLandDetails();
+    if (district && address) {
+      fetchLandDetails();
+    }
   }, [district, address]);
 
   if (loading) {
