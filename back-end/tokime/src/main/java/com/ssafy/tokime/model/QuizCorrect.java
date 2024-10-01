@@ -18,7 +18,7 @@ public class QuizCorrect {
 
     @ManyToOne
     @JoinColumn(name = "quiz_id", nullable = false)
-    private Quiz quizId;
+    private Quiz quiz;
 
     @Column(nullable = false)
     private String correctAnswer;
