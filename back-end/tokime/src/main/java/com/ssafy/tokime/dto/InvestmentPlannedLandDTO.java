@@ -1,5 +1,6 @@
 package com.ssafy.tokime.dto;
 
+import com.ssafy.tokime.model.InvestmentPlannedLand;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,4 +29,22 @@ public class InvestmentPlannedLandDTO {
     private Integer plannedLandPrice;
     private Integer checkedCount;
     private List<InvestmentPlannedLandChecklistDTO> checklists;
+
+    public InvestmentPlannedLand toEntity() {
+        return InvestmentPlannedLand.builder()
+                .investmentPlannedLandId(investmentPlannedLandId)
+                .landAddress(landAddress)
+                .landGradient(landGradient)
+                .landPrice(landPrice)
+                .landRoad(landRoad)
+                .landOwner(landOwner)
+                .landUseStatus(landUseStatus)
+                .landCreatedAt(landCreatedAt)
+                .landUpdatedAt(landUpdatedAt)
+                .landStory(landStory)
+                .plannedLandPyeong(plannedLandPyeong)
+                .plannedLandPrice(plannedLandPrice)
+                .checkedCount(checkedCount)
+                .build();
+    }
 }
