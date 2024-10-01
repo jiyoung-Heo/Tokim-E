@@ -25,7 +25,7 @@ public class InvestmentPlannedLandService {
     private final ChecklistRepository checklistRepository;
     private final ChecklistStatusRepository statusRepository;
 
-    // 투자 예정지 등록 여기에 체크리스트 상태도 넣어야할 듯
+    // 투자 예정지 등록
     public int registInvestmentPlannedLand(InvestmentPlannedLandDTO dto, String email) {
         // 로그인 유저
         User user = userRepository.findByEmail(email)
@@ -67,6 +67,7 @@ public class InvestmentPlannedLandService {
         return statusRepository.findByInvestmentPlannedLand(investmentPlannedLand);
     }
 
+    // checklist 저장하는것
     private void saveChecklists(List<Integer> checklistIds , InvestmentPlannedLand investmentPlannedLand) {
         for (Integer checklistId : checklistIds) {
 
@@ -92,6 +93,23 @@ public class InvestmentPlannedLandService {
                 return lands.stream()
                         .map(InvestmentPlannedLand::toDTO)
                         .collect(Collectors.toList());
+
+    }
+
+    //상세 조회
+    public InvestmentPlannedLandDTO investmentPlannedLandDetail(Long id, String email){
+        //id 는 투자예쩡지 id고 email은 현재로그인 유저 email
+        //email 에서 로그인 userId 추출해서 투자예정지 에있는 userId랑 같은지 확인작업거쳐야함
+        InvestmentPlannedLand investmentPlannedLand = investmentPlannedLandRepository.findById(id)
+                .orElseThrow(()->new RuntimeException("투자예정지를 찾을 수 없습니다."));
+
+        User user = userRepository.findByEmail(email).orElseThrow(()->new RuntimeException("email로 조회 했으나 존재 하지 않는 유저"));
+
+        if(user.getUserId()!=investmentPlannedLand.getUser().getUserId()){
+            throw new RuntimeException("접근 권한이 없습니다");
+        }
+
+        return investmentPlannedLand.toDTO(); //dto변환
 
     }
 
