@@ -28,7 +28,7 @@ public class LandDTO {
         return Land.builder()
                 .landId(landId)
                 .landDistrictCode(landDistrictCode)
-                        .landAddress(landAddress)
+                .landAddress(landAddress)
                 .landDistrict(landDistrict)
                 .landScale(landScale)
                 .landUse(landUse)
