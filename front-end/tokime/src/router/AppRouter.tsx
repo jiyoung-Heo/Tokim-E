@@ -15,6 +15,7 @@ import LoginRequiredPage from '../pages/LoginRequiredPage';
 import RiskMapPage from '../pages/RiskMapPage'; // 새로 추가
 import Layout from '../components/layouts/layout'; // Layout 추가
 import RiskMapReportPage from '../pages/RiskMapReportPage';
+import LandScorePage from '../pages/LandScorePage';
 
 function AppRouter() {
   return (
@@ -111,6 +112,14 @@ function AppRouter() {
         element={
           <Layout>
             <RiskMapReportPage />
+          </Layout>
+        }
+      />
+      <Route
+        path="/land-score"
+        element={
+          <Layout>
+            <LandScorePage />
           </Layout>
         }
       />
