@@ -103,7 +103,10 @@ function AddressSearch() {
         {activeTab === 'landInfo' && (
           <LandDetailTab district={district} address={address} />
         )}
-        {activeTab === 'riskMap' && <RiskMapTab />}
+        {activeTab === 'riskMap' && (
+          <RiskMapTab district={district} address={address} />
+        )}
+
         {/* {activeTab === 'riskMap' && (
           <RiskMapTab district={district} address={address} />
         )} */}
