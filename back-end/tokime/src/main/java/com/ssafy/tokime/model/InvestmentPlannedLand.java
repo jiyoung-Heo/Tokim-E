@@ -33,7 +33,7 @@ public class InvestmentPlannedLand {
     private String landGradient;
 
     @Column
-    private Long landPrice;
+    private Integer landPrice;
 
     @Column(length = 50)
     private String landRoad;
