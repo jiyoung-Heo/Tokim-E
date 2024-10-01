@@ -28,7 +28,7 @@ public class InvestmentPlannedLandDTO {
     private Integer plannedLandPyeong;
     private Integer plannedLandPrice;
     private Integer checkedCount;
-    private List<InvestmentPlannedLandChecklistDTO> checklists;
+    private List<Integer> checklistIds; ;
 
     public InvestmentPlannedLand toEntity() {
         return InvestmentPlannedLand.builder()
