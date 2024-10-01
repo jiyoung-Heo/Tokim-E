@@ -1,5 +1,6 @@
 package com.ssafy.tokime.model;
 
+import com.ssafy.tokime.dto.InvestmentPlannedLandDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -65,4 +66,22 @@ public class InvestmentPlannedLand {
     @OneToMany(mappedBy = "investmentPlannedLand", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<InvestmentPlannedLandChecklist> checklists;
 
+    public InvestmentPlannedLandDTO toDTO() {
+        return InvestmentPlannedLandDTO.builder()
+                .investmentPlannedLandId(this.investmentPlannedLandId)
+                .userId(this.user.getUserId()) // User ID 추가
+                .landAddress(this.landAddress)
+                .landGradient(this.landGradient)
+                .landPrice(this.landPrice)
+                .landRoad(this.landRoad)
+                .landOwner(this.landOwner)
+                .landUseStatus(this.landUseStatus)
+                .landCreatedAt(this.landCreatedAt)
+                .landUpdatedAt(this.landUpdatedAt)
+                .landStory(this.landStory)
+                .plannedLandPyeong(this.plannedLandPyeong)
+                .plannedLandPrice(this.plannedLandPrice)
+                .checkedCount(this.checkedCount)
+                .build();
+    }
 }
