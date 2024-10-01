@@ -53,6 +53,19 @@ public class InvestmentPlannedLandController {
 
     }
 
+    //삭제
+    @DeleteMapping("/{investmentPlannedLandId}")
+    public ResponseEntity<?> deleteInvestment(@PathVariable Long investmentPlannedLandId){
+        String email = getAuth();
+        try{
+            System.out.println(1);
+            investmentPlannedLandService.deleteinvestmentPlannedLand(investmentPlannedLandId,email);
+            return new ResponseEntity<>("삭제에 성공했습니다",HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>("삭제에 실패했습니다",HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
 
     private String getAuth() {
