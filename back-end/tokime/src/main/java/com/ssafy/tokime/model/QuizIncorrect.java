@@ -16,9 +16,10 @@ public class QuizIncorrect {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long quizIncorrectId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quiz_id", nullable = false)
-    private Quiz quizId;
+//    @Column(name = "quiz_Id")
+    private Quiz quiz;
 
     @Column(nullable = false)
     private String incorrectAnswer;
