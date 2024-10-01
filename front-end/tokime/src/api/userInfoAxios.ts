@@ -1,9 +1,9 @@
 import API from '../utils/API';
 
-export default async function logoutAxios() {
-  return API.get('/logout')
-    .then(() => {
-      return 'success';
+export default async function userInfoAxios() {
+  return API.get('/user')
+    .then((res) => {
+      return res.data[0];
     })
     .catch((e) => {
       console.log(e);
