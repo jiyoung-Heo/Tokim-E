@@ -1,5 +1,6 @@
 package com.ssafy.tokime.dto;
 
+import com.ssafy.tokime.model.InvestmentPlannedLand;
 import com.ssafy.tokime.model.InvestmentPlannedLandChecklist;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,8 +18,9 @@ public class InvestmentPlannedLandChecklistDTO {
     private Integer status;
     private String content;
 
-    public InvestmentPlannedLandChecklist toEntity() {
+    public InvestmentPlannedLandChecklist toEntity(InvestmentPlannedLand investmentPlannedLand) {
         return InvestmentPlannedLandChecklist.builder()
+                .investmentPlannedLand(investmentPlannedLand)
                 .checkListId(checkListId)
                 .status(status)
                 .content(content)
