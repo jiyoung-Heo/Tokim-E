@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -24,22 +26,22 @@ public class InvestmentPlannedLand {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column
+    @Column(length = 50)
     private String landAddress;
 
-    @Column
+    @Column(length = 50)
     private String landGradient;
 
     @Column
     private Long landPrice;
 
-    @Column
+    @Column(length = 50)
     private String landRoad;
 
-    @Column
+    @Column(length = 50)
     private String landOwner;
 
-    @Column
+    @Column(length = 50)
     private String landUseStatus;
 
     @Column(nullable = false)
@@ -59,5 +61,8 @@ public class InvestmentPlannedLand {
 
     @Column(nullable = false)
     private Integer checkedCount=0;
+
+    @OneToMany(mappedBy = "investmentPlannedLand", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<InvestmentPlannedLandChecklist> checklists;
 
 }
