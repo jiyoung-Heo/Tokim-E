@@ -7,26 +7,25 @@ import EssentialKnowledgeTab from '../components/Tabs/EssentialKnowledgeTab';
 // 페이지 제목 스타일
 const Title = styled.h2`
   position: absolute;
-  left: 40px;
-  top: 40px;
-  font-size: 20px;
+  left: 10vw; // 반응형으로 조정
+  top: 6.25vh; // 40px을 vh로 환산
+  font-size: 5.5vw; // 반응형 폰트 크기 (20px)
   font-weight: 700;
   font-family: 'KoddiUD OnGothic';
   color: #333333;
 `;
-
 // 탭 버튼을 감싸는 컨테이너
 const TabsContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 80px; // 탭 사이 간격 80px
-  width: 360px;
-  height: 39px;
+  gap: 22vw; // 반응형 간격 설정 (80px)
+  width: 100vw;
+  height: 6vh; // 반응형 높이 (39px)
   position: absolute;
-  top: 100px;
+  top: 15.6vh; // 100px을 vh로 환산
   left: 0;
-  border-bottom: 2px solid rgba(121, 121, 130, 0.1); // 기본 보더라인
+  border-bottom: 0.27vh solid rgba(121, 121, 130, 0.1); // 아주 미세하게 두께 조정
 `;
 
 // 탭 버튼 스타일
@@ -35,9 +34,9 @@ const TabButton = styled.button<{ $active: boolean }>`
   border: none;
   cursor: pointer;
   font-family: 'KoddiUD OnGothic';
-  font-size: 20px;
+  font-size: 5.5vw; // 반응형 폰트 크기 (20px)
   font-weight: 700;
-  line-height: 24px;
+  line-height: 7vh; // 반응형 라인 높이 (24px)
   letter-spacing: 0.5px;
   color: ${(props) => (props.$active ? '#333333' : '#797982')};
   position: relative;
@@ -51,24 +50,23 @@ const TabButton = styled.button<{ $active: boolean }>`
   &::after {
     content: '';
     position: absolute;
-    width: 130px; // 선택된 탭 하단 보더라인 길이
-    height: 2px;
+    width: 36vw; // 반응형 보더라인 길이 (130px)
+    height: 0.27vh; // 미세하게 두께 조정
     background-color: ${(props) => (props.$active ? '#27C384' : 'transparent')};
-    bottom: -8px;
+    bottom: 0.4vh; // 미세하게 위치 조정
     left: 50%;
     transform: translateX(-50%);
   }
 `;
-
 // 버튼 스타일
 const QuizButton = styled.button`
   position: absolute;
-  width: 300px;
-  height: 50px;
-  left: 32px;
-  top: 565px;
+  width: 83.3vw; // 반응형 너비 (300px)
+  height: 7.8vh; // 반응형 높이 (50px)
+  left: 8.8vw; // 반응형 left (32px)
+  top: 88.28vh; // 반응형 top (565px)
   background: #27c384;
-  border-radius: 20px;
+  border-radius: 3.125vh; // 반응형 보더 (20px)
   border: none;
   cursor: pointer;
 
@@ -76,8 +74,8 @@ const QuizButton = styled.button`
   font-family: 'KoddiUD OnGothic';
   font-style: normal;
   font-weight: 700;
-  font-size: 14px;
-  line-height: 17px;
+  font-size: 3.88vw; // 반응형 폰트 크기 (14px)
+  line-height: 2.65vh; // 반응형 라인 높이 (17px)
   display: flex;
   justify-content: center;
   align-items: center;
