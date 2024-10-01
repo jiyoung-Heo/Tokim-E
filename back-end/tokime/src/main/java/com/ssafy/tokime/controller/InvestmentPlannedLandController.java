@@ -39,6 +39,20 @@ public class InvestmentPlannedLandController {
         return investmentPlannedLandService.getInvestmentPlannedLandsByUserEmail(email);
     }
 
+    // 상세 조회
+    @GetMapping("/{investmentPlannedLandId}")
+    public ResponseEntity<InvestmentPlannedLandDTO> getInvestmentDetail(@PathVariable Long investmentPlannedLandId){
+        String email = getAuth();
+        try {
+            InvestmentPlannedLandDTO dto = investmentPlannedLandService.investmentPlannedLandDetail(investmentPlannedLandId,email);
+
+            return ResponseEntity.ok(dto); // 성공적으로 조회된 DTO 반환
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(null); // 오류 발생 시 null 반환
+        }
+
+    }
+
 
 
     private String getAuth() {
