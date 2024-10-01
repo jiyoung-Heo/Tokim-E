@@ -4,6 +4,7 @@ import com.ssafy.tokime.model.Land;
 import com.ssafy.tokime.model.Law;
 import com.ssafy.tokime.service.LandService;
 import com.ssafy.tokime.service.LawService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,11 +13,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/land")
+@RequiredArgsConstructor
 public class LandController {
-    @Autowired
-    private LandService landService;
-    @Autowired
-    private LawService lawService;
+    private final LandService landService;
+
+    private final LawService lawService;
 
     // 토지 전체조회
     @GetMapping

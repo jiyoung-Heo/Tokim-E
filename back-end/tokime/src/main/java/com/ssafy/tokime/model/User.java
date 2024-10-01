@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -38,6 +39,9 @@ public class User {
     private String provider;
 
     private Long quizScore;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<InvestmentPlannedLand> investmentPlannedLands;
 
     @Builder.Default
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
