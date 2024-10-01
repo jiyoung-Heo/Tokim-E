@@ -45,11 +45,37 @@ const Content = styled.div`
 
 function AddressSearch() {
   const [activeTab, setActiveTab] = useState('landInfo');
+  const [searchValue, setSearchValue] = useState('');
+  const [district, setDistrict] = useState('');
+  const [address, setAddress] = useState('');
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
+  };
+
+  const handleSearchSubmit = () => {
+    const parts = searchValue.split(' ');
+    if (parts.length >= 2) {
+      setDistrict(parts[0]);
+      setAddress(parts[1]);
+    } else {
+      setDistrict(parts[0]);
+      setAddress('');
+    }
+  };
 
   return (
     <>
       <SearchContainer>
-        <SearchInput type="text" placeholder="주소를 입력하세요." />
+        <SearchInput
+          type="text"
+          placeholder="주소를 입력하세요."
+          value={searchValue}
+          onChange={handleSearchChange}
+        />
+        <button type="button" onClick={handleSearchSubmit}>
+          검색
+        </button>
       </SearchContainer>
 
       <TabsContainer>
@@ -74,9 +100,16 @@ function AddressSearch() {
       </TabsContainer>
 
       <Content>
-        {activeTab === 'landInfo' && <LandDetailTab />}
+        {activeTab === 'landInfo' && (
+          <LandDetailTab district={district} address={address} />
+        )}
         {activeTab === 'riskMap' && <RiskMapTab />}
-        {activeTab === 'regionalInfo' && <OrdinanceInfoTab />}
+        {/* {activeTab === 'riskMap' && (
+          <RiskMapTab district={district} address={address} />
+        )} */}
+        {activeTab === 'regionalInfo' && (
+          <OrdinanceInfoTab district={district} address={address} />
+        )}
       </Content>
     </>
   );
