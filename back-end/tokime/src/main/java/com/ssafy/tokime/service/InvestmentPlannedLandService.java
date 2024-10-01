@@ -10,7 +10,9 @@ import com.ssafy.tokime.repository.ChecklistRepository;
 import com.ssafy.tokime.repository.ChecklistStatusRepository;
 import com.ssafy.tokime.repository.InvestmentPlannedLandRepository;
 import com.ssafy.tokime.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -110,6 +112,24 @@ public class InvestmentPlannedLandService {
         }
 
         return investmentPlannedLand.toDTO(); //dto변환
+
+    }
+
+    // 삭제
+    @Transactional
+    public void deleteinvestmentPlannedLand(Long id,String email){
+        InvestmentPlannedLand investmentPlannedLand = investmentPlannedLandRepository.findById(id)
+                .orElseThrow(()->new RuntimeException("투자예정지를 찾을 수 없습니다"));
+        User user = userRepository.findByEmail(email).orElseThrow(()->new RuntimeException("존재하지않는 유저입니다"));
+        if(user.getUserId()!=investmentPlannedLand.getUser().getUserId()){
+            throw new RuntimeException("삭제할 권한이 없습니다.");
+        }
+        System.out.println("111111111111111111111111");
+        // 체크리스트 삭제
+        statusRepository.deleteByInvestmentPlannedLand(investmentPlannedLand);
+        System.out.println("222222222222222222222222");
+        // 투자예정지 삭제
+        investmentPlannedLandRepository.delete(investmentPlannedLand);
 
     }
 
