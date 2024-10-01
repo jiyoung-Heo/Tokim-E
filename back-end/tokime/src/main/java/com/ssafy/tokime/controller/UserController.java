@@ -7,6 +7,8 @@ import com.ssafy.tokime.service.facade.UserFacadeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -28,8 +30,7 @@ public class UserController{
     @DeleteMapping("/")
     public ResponseEntity<?> removeUser(){
         try{
-//            String email = getAuthenticationData();
-            String email = "test";
+            String email = getAuthenticationData();
             userService.removeUser(email);
 
             return ResponseEntity.ok().build();
@@ -44,8 +45,7 @@ public class UserController{
     @GetMapping("/")
     private ResponseEntity<?> getUserInfo(){
         try {
-//            String email = getAuthenticationData();
-            String email = "test";
+            String email = getAuthenticationData();
             User user = userService.getUserInfo(email);
             UserDTO dto = new UserDTO(user);
             ResponseDTO<UserDTO> response = ResponseDTO.<UserDTO>builder().data(List.of(dto)).build();
@@ -61,8 +61,7 @@ public class UserController{
     @PutMapping("/")
     private ResponseEntity<?> updateUserBirth(@RequestBody Date birth){
         try {
-//            String email = getAuthenticationData();
-            String email = "test"; // getAuthenticationData()로 대체할 수 있음
+            String email = getAuthenticationData();
             User updatedUser = userService.modifyUserInfo(email, birth);
 
             UserDTO dto = new UserDTO(updatedUser);
@@ -80,8 +79,7 @@ public class UserController{
     @GetMapping("/quiz")
     public ResponseEntity<?> getQuizScore() {
         try {
-            //            String email = getAuthenticationData();
-            String email = "test";
+            String email = getAuthenticationData();
             User user = userService.getUserInfo(email);
 
             Long quizScore = user.getQuizScore();
@@ -100,8 +98,7 @@ public class UserController{
     @PutMapping("/quiz")
     public ResponseEntity<?> updateQuizScore(@RequestBody Long quizScore){
         try {
-//            String email = getAuthenticationData();
-            String email = "test";
+            String email = getAuthenticationData();
 
             User user = userService.updateQuizScore(email, quizScore);
 
@@ -116,8 +113,8 @@ public class UserController{
         }
     }
     // 인증해서 데이터 가져오기
-//    private String getAuthenticationData() {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        return authentication.getName();
-//    }
+    private String getAuthenticationData() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
+    }
 }
