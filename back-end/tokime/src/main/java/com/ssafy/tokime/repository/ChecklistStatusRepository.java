@@ -9,4 +9,6 @@ import java.util.List;
 public interface ChecklistStatusRepository extends JpaRepository<ChecklistStatus,Long> {
     List<ChecklistStatus> findByInvestmentPlannedLand(InvestmentPlannedLand investmentPlannedLand);
 
+    void deleteByInvestmentPlannedLand(InvestmentPlannedLand investmentPlannedLand);
+
 }
