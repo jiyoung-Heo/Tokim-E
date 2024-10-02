@@ -27,7 +27,7 @@ public class UserController{
     }
 
     // 유저 탈퇴
-    @DeleteMapping("/")
+    @DeleteMapping("")
     public ResponseEntity<?> removeUser(){
         try{
             String email = getAuthenticationData();
@@ -42,7 +42,7 @@ public class UserController{
     }
     
     // 유저 정보 조회
-    @GetMapping("/")
+    @GetMapping("")
     private ResponseEntity<?> getUserInfo(){
         try {
             String email = getAuthenticationData();
@@ -58,7 +58,7 @@ public class UserController{
         }
     }
 
-    @PutMapping("/")
+    @PutMapping("")
     private ResponseEntity<?> updateUserBirth(@RequestBody Date birth){
         try {
             String email = getAuthenticationData();
