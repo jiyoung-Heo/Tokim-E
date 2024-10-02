@@ -25,7 +25,7 @@ public class WordController {
     @Autowired
     private WordService wordService;
     private long userId;
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final Logger logger = LoggerFactory.getLogger(WordController.class);
 
     //사용자의 정보 가져오기
     @Autowired
