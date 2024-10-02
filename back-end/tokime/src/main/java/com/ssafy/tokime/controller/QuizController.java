@@ -86,9 +86,15 @@ public class QuizController {
 
 
         // 2. 또래 평균
-        int birth = user.getBirth().getYear()+1900;
-        List<Long> scoreList = userService.getQuizScores(birth, birth+1);
-        quiz.setAgeAverage(getAverage(scoreList));
+        List<Long> scoreList = new ArrayList<>();
+        if (user.getBirth() != null) {
+            int birth = user.getBirth().getYear()+1900;
+            scoreList = userService.getQuizScores(birth, birth+1);
+            quiz.setAgeAverage(getAverage(scoreList));
+        } else { //
+            quiz.setAgeAverage(0L);
+        }
+
 
         // 사용자 전부의 점수를 가져옴
         scoreList = userService.getAllQuizScores();
@@ -103,7 +109,12 @@ public class QuizController {
 
         } else {
             // 3. 사용자의 점수와 또래 평균 차이
-            quiz.setAgeGap(quiz.getQuizScore()-quiz.getAgeAverage());
+            if (user.getBirth() != null) {
+                quiz.setAgeGap(quiz.getQuizScore()-quiz.getAgeAverage());
+            } else {
+                quiz.setAgeGap(0L);
+            }
+
 
             // 5. 상위 n%
             // 상위 n%는 중복값을 제거

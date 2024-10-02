@@ -53,6 +53,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userEntity.setName(oAuth2Response.getName());
             userEntity.setProvider(oAuth2Response.getProvider());
             userEntity.setBirth(oAuth2Response.getBirthYear());
+            userEntity.setQuizScore(-1L); // default값 적용
             userRepository.save(userEntity);
 
             UserDTO userDTO = new UserDTO();
