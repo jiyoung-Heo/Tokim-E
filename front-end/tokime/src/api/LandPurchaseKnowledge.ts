@@ -1,11 +1,9 @@
-import axios from 'axios';
-
-const BASE_URL = 'https://j11b207.p.ssafy.io/api'; // API URL
+import API from '../utils/API';
 
 // 특정 카테고리별 지식을 가져오는 함수
-const fetchKnowledgeByCategory = async (category: number) => {
+export const fetchKnowledgeByCategory = async (category: number) => {
   try {
-    const response = await axios.get(`${BASE_URL}/knowledge`, {
+    const response = await API.get('/knowledge', {
       params: { knowledgeCategory: category },
     });
     return response.data;
@@ -15,4 +13,4 @@ const fetchKnowledgeByCategory = async (category: number) => {
   }
 };
 
-export default fetchKnowledgeByCategory; // default export로 변경
+export default fetchKnowledgeByCategory;
