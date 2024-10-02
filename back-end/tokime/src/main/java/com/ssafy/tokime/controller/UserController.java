@@ -63,7 +63,7 @@ public class UserController{
     }
 
     @PutMapping("")
-    private ResponseEntity<?> updateUserBirth(@RequestBody String birth){
+    private ResponseEntity<?> updateUserBirth(@RequestParam(name = "birth") String birth){
         SimpleDateFormat format = new SimpleDateFormat("yyyy");
         try {
             String email = getAuthenticationData();
