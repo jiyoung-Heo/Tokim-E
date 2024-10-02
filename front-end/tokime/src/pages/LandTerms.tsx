@@ -4,14 +4,12 @@ import { Link } from 'react-router-dom';
 import searchIcon from '../assets/images/icon/search.svg';
 import { getAllTerms } from '../api/termAxios'; // API 서비스 호출
 
-// 컨테이너 스타일 정의
 const Container = styled.div`
   width: 100%;
   height: 100vh;
   background: #f3f7fb;
 `;
 
-// 제목 스타일 정의
 const Title = styled.h2`
   position: absolute;
   left: 11.11vw;
@@ -22,7 +20,6 @@ const Title = styled.h2`
   color: #333333;
 `;
 
-// 부제 스타일 정의
 const SubTitle = styled.div`
   position: absolute;
   left: 4.17vw;
@@ -33,7 +30,6 @@ const SubTitle = styled.div`
   font-family: 'KoddiUD OnGothic';
 `;
 
-// 검색 박스 스타일 정의
 const SearchBox = styled.div`
   position: absolute;
   width: 94.44vw;
@@ -53,7 +49,6 @@ const SearchIcon = styled.img`
   height: 24px;
 `;
 
-// 검색 입력창 스타일 정의
 const SearchInput = styled.input`
   border: none;
   font-size: 16px;
@@ -65,7 +60,7 @@ const SearchInput = styled.input`
   font-family: 'KoddiUD OnGothic';
 
   &::placeholder {
-    color: rgba(39, 195, 132, 0.5); // placeholder 텍스트 색상 설정 (50% 투명도)
+    color: rgba(39, 195, 132, 0.5);
   }
   &:focus {
     outline: none;
@@ -73,7 +68,6 @@ const SearchInput = styled.input`
   }
 `;
 
-// 용어 목록 스타일 정의
 const TermContainer = styled.div`
   position: absolute;
   width: 94.44vw;
@@ -86,7 +80,25 @@ const TermContainer = styled.div`
     0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 10px;
   padding: 3.13vh;
-  overflow-y: scroll;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const TermList = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+  gap: 33px;
+
+  position: absolute;
+  top: 4.69vh;
+  left: 8.33vw;
+  width: 75vw;
+  height: 46.88vh;
+  overflow-y: auto;
+  box-sizing: border-box;
 `;
 
 const Term = styled(Link)`
@@ -94,16 +106,14 @@ const Term = styled(Link)`
   font-size: 18px;
   font-weight: 700;
   color: #333333;
-  margin-bottom: 5.16vh;
-  font-family: 'KoddiUD OnGothic';
   text-decoration: none;
+  font-family: 'KoddiUD OnGothic';
 
   &:hover {
     color: #27c384;
   }
 `;
 
-// 알파벳 네비게이션 스타일 정의
 const AlphabetNavContainer = styled.div`
   display: flex;
   overflow-x: auto;
@@ -128,19 +138,15 @@ const AlphabetNavContainer = styled.div`
 const AlphabetButton = styled.div<{ isSelected: boolean }>`
   flex: 0 0 auto;
   padding: 8px;
-  margin-left: 17px; // 아이콘 사이 간격 설정
+  margin-left: 17px;
   border-radius: 4px;
   font-size: 16px;
   font-family: 'KoddiUD OnGothic';
   font-weight: 700;
   text-align: center;
   line-height: 24px;
-  color: ${(props) => (props.isSelected ? '#333333' : 'rgba(51, 51, 51, 0.8)')};
+  color: ${(props) => (props.isSelected ? '#27c384' : '#333333')};
   cursor: pointer;
-
-  &:hover {
-    color: #27c384;
-  }
 `;
 
 const alphabets = [
@@ -160,62 +166,59 @@ const alphabets = [
   '하',
 ];
 
-// 메인 컴포넌트
 const LandTerms = () => {
-  const [searchTerm, setSearchTerm] = useState(''); // 검색어 상태
-  const [allTerms, setAllTerms] = useState<any[]>([]); // 전체 용어 리스트
-  const [filteredTerms, setFilteredTerms] = useState<any[]>([]); // 필터링된 용어 리스트
-  const [loading, setLoading] = useState(true); // 로딩 상태
-  const [selectedAlphabet, setSelectedAlphabet] = useState('가'); // 선택된 알파벳
+  const [searchTerm, setSearchTerm] = useState('');
+  const [allTerms, setAllTerms] = useState<any[]>([]);
+  const [filteredTerms, setFilteredTerms] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedAlphabet, setSelectedAlphabet] = useState('');
 
-  const termContainerRef = useRef<HTMLDivElement>(null); // 스크롤 참조
+  const termContainerRef = useRef<HTMLDivElement>(null);
 
-  // 전체 용어 조회
   const fetchTerms = async () => {
     try {
-      const data = await getAllTerms(''); // 모든 용어 불러오기
-      console.log('전체 API 응답 데이터:', data); // 응답 데이터 확인
-      setAllTerms(data); // 전체 데이터를 저장
-      setFilteredTerms(data); // 초기 필터링 데이터는 전체 데이터
+      const data = await getAllTerms('');
+      setAllTerms(data);
+      setFilteredTerms(data);
     } catch (error) {
       console.error('용어를 불러오는데 실패했습니다:', error);
     } finally {
-      setLoading(false); // 로딩 완료
+      setLoading(false);
     }
   };
 
-  // 페이지 로드 시 전체 용어 조회
   useEffect(() => {
-    fetchTerms(); // 초기에는 전체 조회
+    fetchTerms();
   }, []);
 
-  // 알파벳 선택에 따라 용어 필터링
   useEffect(() => {
-    const filtered = allTerms.filter((term) =>
-      term.termName.startsWith(selectedAlphabet),
-    );
-    console.log('필터링된 용어:', filtered); // 필터링된 용어 확인
-    setFilteredTerms(filtered); // 필터링된 데이터를 업데이트
-
-    // 선택된 알파벳의 첫 번째 용어로 스크롤
-    if (termContainerRef.current && filtered.length > 0) {
-      termContainerRef.current.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      });
+    if (selectedAlphabet === '') {
+      setFilteredTerms(allTerms);
+    } else {
+      const filtered = allTerms.filter((term) =>
+        term.termName.startsWith(selectedAlphabet),
+      );
+      setFilteredTerms(filtered);
     }
   }, [selectedAlphabet, allTerms]);
 
-  // 검색어가 변경될 때마다 클라이언트 측에서 추가 필터링
+  const handleAlphabetClick = (alphabet: string) => {
+    if (selectedAlphabet === alphabet) {
+      setSelectedAlphabet('');
+    } else {
+      setSelectedAlphabet(alphabet);
+    }
+  };
+
   useEffect(() => {
     const filtered = allTerms.filter((term) =>
       term.termName.includes(searchTerm),
     );
-    setFilteredTerms(filtered); // 검색어 필터링된 데이터를 업데이트
+    setFilteredTerms(filtered);
   }, [searchTerm, allTerms]);
 
   if (loading) {
-    return <div>로딩 중...</div>; // 로딩 상태일 때 표시
+    return <div>로딩 중...</div>;
   }
 
   return (
@@ -223,41 +226,40 @@ const LandTerms = () => {
       <Title>토지 용어 사전</Title>
       <SubTitle>어떤 용어를 검색할까요?</SubTitle>
 
-      {/* 알파벳 네비게이션 */}
       <AlphabetNavContainer>
         {alphabets.map((alphabet) => (
           <AlphabetButton
             key={alphabet}
             isSelected={selectedAlphabet === alphabet}
-            onClick={() => setSelectedAlphabet(alphabet)}
+            onClick={() => handleAlphabetClick(alphabet)}
           >
             {alphabet}
           </AlphabetButton>
         ))}
       </AlphabetNavContainer>
 
-      {/* 검색 박스 */}
       <SearchBox>
         <SearchIcon src={searchIcon} alt="search" />
         <SearchInput
           type="text"
           placeholder="용어 검색"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)} // 검색어 입력 시 상태 업데이트
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
       </SearchBox>
 
-      {/* 용어 목록 */}
       <TermContainer ref={termContainerRef}>
-        {filteredTerms.length > 0 ? (
-          filteredTerms.map((term) => (
-            <Term to={`/land-terms/${term.termId}`} key={term.termId}>
-              {term.termName}
-            </Term>
-          ))
-        ) : (
-          <div>검색 결과가 없습니다.</div>
-        )}
+        <TermList>
+          {filteredTerms.length > 0 ? (
+            filteredTerms.map((term) => (
+              <Term to={`/land-terms/${term.termId}`} key={term.termId}>
+                {term.termName}
+              </Term>
+            ))
+          ) : (
+            <div>검색 결과가 없습니다.</div>
+          )}
+        </TermList>
       </TermContainer>
     </Container>
   );

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
+import { getSelectedTerm } from '../api/termAxios'; // API 호출
 
 // 스타일 정의
 const Container = styled.div`
@@ -19,11 +20,10 @@ const Title = styled.h2`
   color: #333333;
 `;
 
-// 용어 상세 설명 영역
 const TermDetailContainer = styled.div`
   position: absolute;
   width: 340px;
-  height: 182px;
+  height: auto;
   left: 9px;
   top: 95px;
   background: #ffffff;
@@ -50,11 +50,10 @@ const TermDescription = styled.div`
   color: #000000;
 `;
 
-// 관련 법률 및 규제 정보
 const RelatedLawsContainer = styled.div`
   position: absolute;
   width: 340px;
-  height: 110px;
+  height: auto;
   left: 9px;
   top: 290px;
   background: #ffffff;
@@ -74,7 +73,6 @@ const RelatedLawsTitle = styled.div`
   margin-bottom: 10px;
 `;
 
-// 관련 뉴스 영역
 const RelatedNewsTitle = styled.div`
   position: absolute;
   width: 182px;
@@ -106,30 +104,31 @@ const NewsItem = styled.div`
 
 // 용어 상세 컴포넌트
 function LandTermDetail() {
-  const { term } = useParams<{ term: string }>(); // useParams로 term을 가져옴
+  const { term } = useParams<{ term: string }>(); // useParams로 termId 가져오기
   const [termData, setTermData] = useState<any>(null);
-
-  // 예시 데이터 - 실제로는 API 요청으로 불러와야 함
-  const mockData = {
-    termName: '가로구역 최고높이 제한구역',
-    termDescribe:
-      '건축 허가권자가 「건축법」의 규정에 따라 건축위원회의 심의를 거쳐 가로구역(도로 로 둘러싸인 일단의 지역)을 단위로 건축물의 최고높이를 지정공고한 지역을 말한다.',
-    relatedLaws: '제1장 총칙 제1조 (목적)...',
-    news: [
-      "청주 원도심 상업지역 건축물 높이 '최고 130 ...",
-      "서울 '신월7동 1구역' 재개발 높이완화...최고 15층",
-      "법원 '동해 천곡동 60m 고도제한 지정 적법'",
-    ],
-  };
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // API 요청으로 term 정보를 가져옴
-    // 예: fetchTermData(term)
-    setTermData(mockData); // 실제로는 API 데이터로 대체
+    const fetchTermData = async () => {
+      try {
+        const data = await getSelectedTerm(Number(term)); // API로 용어 상세 정보 가져오기
+        setTermData(data); // API로 받은 데이터 저장
+      } catch (error) {
+        console.error('용어 데이터를 불러오는데 실패했습니다.', error);
+      } finally {
+        setLoading(false); // 로딩 완료
+      }
+    };
+
+    fetchTermData();
   }, [term]);
 
-  if (!termData) {
+  if (loading) {
     return <div>용어 정보를 불러오는 중입니다...</div>;
+  }
+
+  if (!termData) {
+    return <div>해당 용어 정보를 찾을 수 없습니다.</div>;
   }
 
   return (
@@ -144,16 +143,20 @@ function LandTermDetail() {
 
       {/* 관련 법률 및 규제 정보 */}
       <RelatedLawsContainer>
-        <RelatedLawsTitle>관련법률 및 규제정보</RelatedLawsTitle>
-        <div>{termData.relatedLaws}</div>
+        <RelatedLawsTitle>관련 법률 및 규제 정보</RelatedLawsTitle>
+        <div>{termData.termLaw}</div>
       </RelatedLawsContainer>
 
       {/* 관련 뉴스 */}
       <RelatedNewsTitle>관련 뉴스</RelatedNewsTitle>
       <NewsContainer>
-        {termData.news.map((newsItem: string, index: number) => (
-          <NewsItem key={index}>{newsItem}</NewsItem>
-        ))}
+        {termData.news && termData.news.length > 0 ? (
+          termData.news.map((newsItem: string, index: number) => (
+            <NewsItem key={index}>{newsItem}</NewsItem>
+          ))
+        ) : (
+          <NewsItem>관련 뉴스가 없습니다.</NewsItem>
+        )}
       </NewsContainer>
     </Container>
   );
