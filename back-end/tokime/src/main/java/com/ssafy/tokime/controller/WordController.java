@@ -125,20 +125,19 @@ public class WordController {
 
         List<Likeword> words = wordService.getLikeWordList(userId);
         logger.info("찾은 단어의 갯수 : "+words.size());
-        if (words.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        } else {
+        List<LandtermDTO> result = new ArrayList<>();
+        if (! words.isEmpty()) {
             // 여기까지 오면 즐겨찾기한 단어들의 id만 갖고있는 상태
             // 이걸로 모든 단어들을 다시 가져와야함
-            List<LandtermDTO> result = new ArrayList<>();
             for (Likeword word : words) {
                 Optional<Landterm> landterm = wordService.getWord(word.getTermId());
                 LandtermDTO temp = new LandtermDTO(landterm.get());
                 temp.setLikeCheck(true);
                 result.add(temp);
             }
-            return ResponseEntity.ok().body(result);
         }
+        return ResponseEntity.ok().body(result);
+
     }
 
     // 즐겨찾기 용어를 등록하는 메서드
