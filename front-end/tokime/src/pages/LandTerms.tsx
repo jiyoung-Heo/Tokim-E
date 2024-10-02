@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import searchIcon from '../assets/images/icon/search.svg';
-import { getAllTerms } from '../api/termService'; // API 서비스 호출
+import { getAllTerms } from '../api/termAxios'; // API 서비스 호출
 
 // 컨테이너 스타일 정의
 const Container = styled.div`
