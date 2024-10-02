@@ -22,23 +22,32 @@ public class LandController {
     // 토지 전체조회
     @GetMapping
     public List<Land> getAllLands() {
-
         return landService.getAllLands();
     }
 
     // 토지 검색 조회 district + address 필요
-    // 경우의 수
-    // ex)충청북도 괴산군 감물면 광전리
-    // 1. 아무것도 입력 안했을때
-    // 2. district 만 입력
-    // 2-1. district를 얼마나 상세히 입력하나
-    // 3. address 만 입력
-    // 4. 둘다 입력
+
     @GetMapping("/search")
     public ResponseEntity<List<Land>> searchLands(
-            @RequestParam String district,
-            @RequestParam String address) {
-        List<Land> lands = landService.searchLands(district, address);
+            @RequestParam(required = false) String district,
+            @RequestParam(required = false) String address) {
+
+        List<Land> lands;
+
+        // 입력값 검토 및 조건에 따라 검색 수행
+        if (district == null && address == null) {
+            return ResponseEntity.badRequest().body(null); // 아무것도 입력하지 않았을 때
+        } else if (district != null && !district.trim().isEmpty() && (address == null || address.trim().isEmpty())) {
+            // 2. district만 입력했을 때
+            lands = landService.searchByDistrict(district.trim());
+        } else if (address != null && !address.trim().isEmpty() && (district == null || district.trim().isEmpty())) {
+            // 3. address만 입력했을 때
+            lands = landService.searchByAddress(address.trim());
+        } else {
+            // 4. 둘 다 입력했을 때
+            lands = landService.searchLands(district.trim(), address.trim());
+        }
+
         return ResponseEntity.ok(lands);
     }
 
