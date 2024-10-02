@@ -38,6 +38,8 @@ public class User {
     @Column(nullable = false)
     private String provider;
 
+    // 퀴즈 평균의 정확성을 위해 한번도 풀지 않은 사용자의 점수는 -1로 설정
+    @Column(nullable = false, columnDefinition = "bigint default -1")
     private Long quizScore;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
