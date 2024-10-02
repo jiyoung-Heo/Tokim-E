@@ -66,9 +66,6 @@ public class InvestmentPlannedLand {
     @Column(nullable = false)
     private Integer checkedCount=0;
 
-    // 체크리스트와의 관계를 위한 중간 테이블
-    @OneToMany(mappedBy = "investmentPlannedLand", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ChecklistStatus> checklistMappings;
 
     public InvestmentPlannedLandDTO toDTO() {
         return InvestmentPlannedLandDTO.builder()

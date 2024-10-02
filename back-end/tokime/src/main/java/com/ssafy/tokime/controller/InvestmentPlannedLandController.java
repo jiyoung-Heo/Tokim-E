@@ -1,7 +1,9 @@
 package com.ssafy.tokime.controller;
 
 import com.ssafy.tokime.dto.ChecklistDTO;
+import com.ssafy.tokime.dto.ChecklistStatusDTO;
 import com.ssafy.tokime.dto.InvestmentPlannedLandDTO;
+import com.ssafy.tokime.model.ChecklistStatus;
 import com.ssafy.tokime.model.InvestmentPlannedLand;
 import com.ssafy.tokime.service.InvestmentPlannedLandService;
 import lombok.RequiredArgsConstructor;
@@ -57,16 +59,17 @@ public class InvestmentPlannedLandController {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(null); // 오류 발생 시 null 반환
         }
-
     }
 
+
+
     // 수정
-//    @PutMapping("/{investmentPlannedLandId}")
-//    public ResponseEntity<?> updateInvestment(@PathVariable Long investmentPlannedLandId, InvestmentPlannedLandDTO){
-//        String email =getAuth();
-//
-//
-//    }
+    @PutMapping("/{investmentPlannedLandId}")
+    public ResponseEntity<InvestmentPlannedLandDTO> updateInvestment(@PathVariable Long investmentPlannedLandId, @RequestBody InvestmentPlannedLandDTO dto) {
+        String email = getAuth(); // 인증된 사용자의 이메일 가져오기
+        InvestmentPlannedLandDTO updatedLand = investmentPlannedLandService.updateInvestmentPlannedLand(investmentPlannedLandId, dto, email);
+        return ResponseEntity.ok(updatedLand); // 수정된 투자 예정지 DTO 반환
+    }
 
     // 삭제
     @DeleteMapping("/{investmentPlannedLandId}")
@@ -76,7 +79,11 @@ public class InvestmentPlannedLandController {
             return new ResponseEntity<>("삭제에 성공했습니다",HttpStatus.OK);
 
     }
-
+    // 체크된 체크리스트 불러오기
+    @GetMapping("/checked/{investmentPlannedLandId}")
+    public List<ChecklistDTO> getCheckedChecklist(@PathVariable Long investmentPlannedLandId) {
+        return investmentPlannedLandService.getChecklistWithStatus(investmentPlannedLandId);
+    }
 
 
     private String getAuth() {
