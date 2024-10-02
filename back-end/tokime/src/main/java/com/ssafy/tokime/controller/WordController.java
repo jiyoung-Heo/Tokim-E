@@ -40,7 +40,6 @@ public class WordController {
     public ResponseEntity<?> getWords(@RequestParam("keyword") String keyword) {
         List<LandtermDTO> words = new ArrayList<>();
         List<Landterm> result;
-        List<LandtermDTO> asdf = (List<LandtermDTO>) getWordLike().getBody();
         System.out.println("keyword: " + keyword);
         System.out.println(keyword.length());
         logger.info("들어온 값 keyword: " + keyword+" 값의 길이 : "+keyword.length());
@@ -69,27 +68,31 @@ public class WordController {
         for (Landterm word : result) {
             words.add(new LandtermDTO(word));
         }
-
-        // 가져온 것들이 즐겨찾기에 등록된 것들인지 표시정돈 해주기
-        if (keyword.length() == 0) { // 전체 조회일시 바로 index값으로 접근하면됨
-            for (int i = 0; i < asdf.size(); i++) {
-                long index = asdf.get(i).getTermId()-1;
-                words.get((int) index).setLikeCheck(true);
-            }
-        } else { // 특정 키워드로 검색해서 가져온 것들
-            // 키워드 목록과 즐찾목록 비교해서 일치하면 likecheck = ture로 바꿔주기
-            for (int x = 0; x < asdf.size(); x++) {
-                long number = asdf.get(x).getTermId();
-                for (int y = 0; y < words.size(); y++) {
-                    if (number == words.get(y).getTermId()) {
-                        // 즐찾 termId와 검색결과들의 termId 비교
-                        words.get(y).setLikeCheck(true);
-                        break;
+        if (SecurityContextHolder.getContext().getAuthentication().getName().equals("anonymousUser")) {
+            return ResponseEntity.ok().body(words);
+        } else {
+            List<LandtermDTO> asdf = (List<LandtermDTO>) getWordLike().getBody();
+            // 가져온 것들이 즐겨찾기에 등록된 것들인지 표시정돈 해주기
+            if (keyword.length() == 0) { // 전체 조회일시 바로 index값으로 접근하면됨
+                for (int i = 0; i < asdf.size(); i++) {
+                    long index = asdf.get(i).getTermId()-1;
+                    words.get((int) index).setLikeCheck(true);
+                }
+            } else { // 특정 키워드로 검색해서 가져온 것들
+                // 키워드 목록과 즐찾목록 비교해서 일치하면 likecheck = ture로 바꿔주기
+                for (int x = 0; x < asdf.size(); x++) {
+                    long number = asdf.get(x).getTermId();
+                    for (int y = 0; y < words.size(); y++) {
+                        if (number == words.get(y).getTermId()) {
+                            // 즐찾 termId와 검색결과들의 termId 비교
+                            words.get(y).setLikeCheck(true);
+                            break;
+                        }
                     }
                 }
             }
+            return ResponseEntity.ok().body(words);
         }
-        return ResponseEntity.ok().body(words);
     }
 
     // 특정 단어의 상세 내용을 가져오는 메서드
@@ -113,6 +116,9 @@ public class WordController {
     public ResponseEntity<?> getWordLike() {
 
         // 추후 JWT을 디코딩해서 유저 id를 가져올 예정
+        if (SecurityContextHolder.getContext().getAuthentication().getName() == null) {
+            return ResponseEntity.noContent().build();
+        }
         long userId = getUserId(); // 여기를 JWT에서 가져옴, 추후 static 으로 뺄 예정
 
         List<Likeword> words = wordService.getLikeWordList(userId);
