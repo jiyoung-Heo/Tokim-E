@@ -42,9 +42,6 @@ public class User {
     @Column(nullable = false, columnDefinition = "bigint default -1")
     private Long quizScore;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<InvestmentPlannedLand> investmentPlannedLands;
-
     @Builder.Default
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean isDeleted = false;

@@ -46,7 +46,10 @@ public class UserController{
     private ResponseEntity<?> getUserInfo(){
         try {
             String email = getAuthenticationData();
+            logger.info(email);
             User user = userService.getUserInfo(email);
+            logger.info(user.toString());
+
             UserDTO dto = new UserDTO(user);
             ResponseDTO<UserDTO> response = ResponseDTO.<UserDTO>builder().data(List.of(dto)).build();
 
