@@ -1,6 +1,6 @@
 import API from '../utils/API';
 
-export default async function modifyUserAxios(birth: Date) {
+export default async function modifyUserBirthAxios(birth: string) {
   return API.put('/user', {
     birth,
   })
