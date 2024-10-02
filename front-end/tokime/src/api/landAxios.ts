@@ -1,5 +1,6 @@
 import API from '../utils/API';
 
+// 모든 토지 정보 가져오기
 export const getAllLandInfo = async () => {
   return API.get('/land')
     .then((res) => {
@@ -12,6 +13,7 @@ export const getAllLandInfo = async () => {
     });
 };
 
+// search 하는 토지 정보 조회
 export const getSearchLandInfo = async (
   district: string | null,
   address: string | null,
@@ -34,6 +36,7 @@ export const getSearchLandInfo = async (
     });
 };
 
+// search 한 토지 정보를 바탕으로 law 가져오기
 export const getLandLawInfo = async (landDistrictCode: string | null) => {
   // landDistrictCode가 없으면 호출하지 않음
   if (!landDistrictCode) {
@@ -47,57 +50,6 @@ export const getLandLawInfo = async (landDistrictCode: string | null) => {
     })
     .catch((e) => {
       console.log('land Search Error : ', e);
-      return null;
-    });
-};
-
-export const getAllInvestLand = async () => {
-  return API.get('/land/invest')
-    .then((res) => {
-      console.log(res.data);
-      return res.data;
-    })
-    .catch((e) => {
-      console.log('land Search Error : ', e);
-      return null;
-    });
-};
-
-export const getInvestDetail = async (investmentPlannedLandId: String) => {
-  return API.get(`/land/invest/${investmentPlannedLandId}`)
-    .then((res) => {
-      console.log(res.data);
-      return res.data;
-    })
-    .catch((e) => {
-      console.log('land Search Error : ', e);
-      return null;
-    });
-};
-
-export const updateInvestDetail = async (
-  investmentPlannedLandId: String,
-  updatedData: any,
-) => {
-  return API.put(`/land/invest/${investmentPlannedLandId}`, updatedData)
-    .then((res) => {
-      console.log('Update successful: ', res.data);
-      return res.data;
-    })
-    .catch((e) => {
-      console.log('Update Error: ', e);
-      return null;
-    });
-};
-
-export const deleteInvestDetail = async (investmentPlannedLandId: String) => {
-  return API.delete(`/land/invest/${investmentPlannedLandId}`)
-    .then((res) => {
-      console.log('Delete successful: ', res.data);
-      return res.data;
-    })
-    .catch((e) => {
-      console.log('Delete Error: ', e);
       return null;
     });
 };
