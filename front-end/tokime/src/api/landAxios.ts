@@ -12,7 +12,15 @@ export const getAllLandInfo = async () => {
     });
 };
 
-export const getSearchLandInfo = async (district: String, address: String) => {
+export const getSearchLandInfo = async (
+  district: string | null,
+  address: string | null,
+) => {
+  // district와 address 중 하나라도 없으면 호출하지 않음
+  if (!district || !address) {
+    console.log('District or address is missing. Skipping API call.');
+    return null;
+  }
   return API.get('/land/search', {
     params: { district, address },
   })
@@ -26,7 +34,12 @@ export const getSearchLandInfo = async (district: String, address: String) => {
     });
 };
 
-export const getLandLawInfo = async (landDistrictCode: String) => {
+export const getLandLawInfo = async (landDistrictCode: string | null) => {
+  // landDistrictCode가 없으면 호출하지 않음
+  if (!landDistrictCode) {
+    console.log('Land district code is missing. Skipping API call.');
+    return null;
+  }
   return API.get(`/land/bylaw/${landDistrictCode}`)
     .then((res) => {
       console.log(res.data);
