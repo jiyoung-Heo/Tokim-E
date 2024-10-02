@@ -27,8 +27,8 @@ public class LandknowledgeController {
     }
 
     // 지식 정보 조회
-    @GetMapping("/")
-    private ResponseEntity<?> getKnowledgeInfo(@RequestBody Long knowledgeCategory){
+    @GetMapping("")
+    private ResponseEntity<?> getKnowledgeInfo(@RequestParam Long knowledgeCategory){
         try{
             List<Landknowledge> landknowledges = landknowledgeService.getKnowledgeByCategory(knowledgeCategory);
             List<LandknowledgeDTO> dtos = landknowledges.stream().map(LandknowledgeDTO::new).collect(Collectors.toList());
