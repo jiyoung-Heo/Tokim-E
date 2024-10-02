@@ -98,7 +98,7 @@ const RiskMap: React.FC<RiskMapProps> = ({ district, address }) => {
     } else {
       const naverMapScript = document.createElement('script');
       naverMapScript.src =
-        'https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=geocoder,panorama';
+        'https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=%REACT_APP_NAVERMAP_API_KEY%&submodules=geocoder,panorama';
       naverMapScript.onload = initializeMap;
       document.head.appendChild(naverMapScript);
     }
