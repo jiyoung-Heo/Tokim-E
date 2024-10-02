@@ -22,11 +22,18 @@ public class LandController {
     // 토지 전체조회
     @GetMapping
     public List<Land> getAllLands() {
+
         return landService.getAllLands();
     }
 
-    // 토지 검색 조회 동 + 지번 필요
-    // 동은 like로 address는 정확한값
+    // 토지 검색 조회 district + address 필요
+    // 경우의 수
+    // ex)충청북도 괴산군 감물면 광전리
+    // 1. 아무것도 입력 안했을때
+    // 2. district 만 입력
+    // 2-1. district를 얼마나 상세히 입력하나
+    // 3. address 만 입력
+    // 4. 둘다 입력
     @GetMapping("/search")
     public ResponseEntity<List<Land>> searchLands(
             @RequestParam String district,
@@ -46,6 +53,5 @@ public class LandController {
         System.out.println(lawDistrict);
         return lawService.selectAllLawByDistrict(lawDistrict);
     }
-
 
 }
