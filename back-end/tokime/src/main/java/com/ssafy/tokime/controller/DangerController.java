@@ -41,7 +41,7 @@ public class DangerController {
 
     // 신고글 상세 조회
     @GetMapping("/{dangerId}")
-    public ResponseEntity<?> DangerDetail(@PathVariable Long dangerId) {
+    public ResponseEntity<?> DangerDetail(@PathVariable(name="dangerId") Long dangerId) {
         Optional<Danger> danger = dangerService.findDanger(dangerId);
         if (danger.isPresent()) {
             return ResponseEntity.ok().body(danger.get());
@@ -50,10 +50,11 @@ public class DangerController {
     }
 
     // 신고글 작성
-//    @PostMapping("")
-//    public ResponseEntity<?> addDanger(@RequestBody DangerDetailDTO dangerDetail) {
-//
-//    }
+    @PostMapping("")
+    public ResponseEntity<?> addDanger(@RequestBody Danger danger) {
+        dangerService.addDanger(danger);
+        return ResponseEntity.ok().build();
+    }
 
     // 신고글 수정
 
