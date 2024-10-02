@@ -1,24 +1,36 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+// 사용자 상태 타입 정의
+interface UserState {
+  name: string;
+  email: string;
+  phone: string;
+  quizScore: string;
+  birth: string;
+}
+
+// 초기 상태 정의
+const initialState: UserState = {
+  name: '',
+  email: '',
+  phone: '',
+  quizScore: '',
+  birth: '',
+};
 
 export const user = createSlice({
   name: 'user',
-  initialState: {
-    name: '',
-    email: '',
-    phone: '',
-    quizScore: '',
-    birth: '',
-  },
+  initialState,
   reducers: {
-    changeUser(state, idx) {
-      return idx.payload;
+    changeUser(state, action: PayloadAction<UserState>) {
+      return action.payload;
     },
-    setBirth(state, action) {
-      state.birth = action.payload;
+    setBirth(state, action: PayloadAction<string>) {
+      return { ...state, birth: action.payload };
     },
   },
 });
 
-export let { changeUser } = user.actions;
+export const { changeUser } = user.actions;
 
 export default user;
