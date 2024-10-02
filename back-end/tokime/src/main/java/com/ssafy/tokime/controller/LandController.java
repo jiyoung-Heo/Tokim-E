@@ -6,6 +6,9 @@ import com.ssafy.tokime.service.LandService;
 import com.ssafy.tokime.service.LawService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,8 +24,14 @@ public class LandController {
 
     // 토지 전체조회
     @GetMapping
-    public List<Land> getAllLands() {
-        return landService.getAllLands();
+    public ResponseEntity<List<Land>> getAllLands(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Land> landsPage = landService.getAllLands(pageable);
+
+        return ResponseEntity.ok(landsPage.getContent());
     }
 
     // 토지 검색 조회 district + address 필요
