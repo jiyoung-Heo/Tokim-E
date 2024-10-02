@@ -55,7 +55,7 @@ public class SecurityConfig {
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration configuration = new CorsConfiguration();
-                        configuration.setAllowedOrigins(Arrays.asList(serverConfig.getBack(), serverConfig.getFront(), "https://openapi.map.naver.com/openapi/v3/maps.js"));
+                        configuration.setAllowedOrigins(Arrays.asList(serverConfig.getBack(), serverConfig.getFront(), "https://openapi.map.naver.com", "https://openapi.map.naver.com/openapi/v3/maps.js"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
