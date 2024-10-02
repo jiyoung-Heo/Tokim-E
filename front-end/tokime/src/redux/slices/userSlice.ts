@@ -31,6 +31,6 @@ export const user = createSlice({
   },
 });
 
-export const { changeUser } = user.actions;
+export const { changeUser, setBirth } = user.actions;
 
 export default user;
