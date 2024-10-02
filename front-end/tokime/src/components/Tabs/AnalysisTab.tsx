@@ -131,7 +131,7 @@ const PercentText = styled.div`
 // 부드러운 꺾은선 그래프 스타일
 const ChartContainer = styled.div`
   width: 90%;
-  height: 150px;
+  height: 30vh; // 반응형 높이 설정
   margin-top: 10px;
 `;
 
@@ -151,6 +151,7 @@ const chartData = {
 
 const chartOptions = {
   responsive: true,
+  maintainAspectRatio: false, // 반응형 크기 조정
   scales: {
     y: {
       display: false, // y축 숨기기

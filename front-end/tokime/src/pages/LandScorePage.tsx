@@ -13,7 +13,7 @@ const TabsContainer = styled.div`
   position: absolute;
   top: 15.6vh; // 100px을 vh로 환산
   left: 0;
-  border-bottom: 0.27vh solid rgba(121, 121, 130, 0.1); // 아주 미세하게 두께 조정
+  border-bottom: 2px solid rgba(121, 121, 130, 0.1); // 아주 미세하게 두께 조정
   z-index: 10;
 `;
 
@@ -44,7 +44,7 @@ const TabButton = styled.button<{ $active: boolean }>`
     width: 40vw; // 뷰포트 너비 기준으로 반응형 설정
     height: 2px; // 고정된 보더라인 두께
     background-color: ${(props) => (props.$active ? '#27C384' : 'transparent')};
-    bottom: 2vh; // 보더라인을 아래에 위치
+    bottom: 11px; // 보더라인을 아래에 위치
     left: 50%;
     transform: translateX(-50%);
   }
