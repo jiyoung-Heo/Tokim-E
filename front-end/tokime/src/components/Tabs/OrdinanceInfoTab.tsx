@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { getLandLawInfo, getSearchLandInfo } from '../../api/landAxios';
 
 interface Ordinance {
   lawId: number;
@@ -10,25 +11,47 @@ interface Ordinance {
   lawImplementAt: string; // ISO 형식의 날짜 문자열
 }
 
-function OrdinanceInfoTab() {
+interface OrdinanceInfoTabProps {
+  district: string;
+  address: string;
+}
+
+function OrdinanceInfoTab({ district, address }: OrdinanceInfoTabProps) {
   const [ordinances, setOrdinances] = useState<Ordinance[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  const [loading, setLoading] = useState<boolean>(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // error 상태 변수 이름 변경
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          'https://j11b207.p.ssafy.io/api/land/bylaw/4833010300',
-        );
-        const data = await response.json();
-        setOrdinances(data);
+        // 1. 토지 정보를 가져옵니다.
+        const landInfo = await getSearchLandInfo(district, address);
+
+        if (landInfo) {
+          // 2. 가져온 데이터 중 landDistrictCode를 사용하여 조례 정보를 가져옵니다.
+          const landDistrictCode = landInfo[0]?.landDistrictCode; // 첫 번째 요소의 landDistrictCode를 사용
+
+          if (landDistrictCode) {
+            const lawData = await getLandLawInfo(landDistrictCode.toString());
+            setOrdinances(lawData); // 조례 정보 저장
+          } else {
+            setErrorMessage('해당 지역의 법령 정보가 없습니다.'); // 에러 메시지 상태 업데이트
+          }
+        } else {
+          setErrorMessage('주소를 먼저 입력해주세요.');
+        }
       } catch (error) {
         console.error('데이터를 가져오는 중 오류 발생:', error);
+        setErrorMessage('데이터를 가져오는 중 오류 발생'); // 에러 메시지 상태 업데이트
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [district, address]);
 
   const handleNext = () => {
     if (currentIndex < ordinances.length - 1) {
@@ -41,6 +64,14 @@ function OrdinanceInfoTab() {
       setCurrentIndex(currentIndex - 1);
     }
   };
+
+  if (loading) {
+    return <div>로딩 중...</div>;
+  }
+
+  if (errorMessage) {
+    return <div>{errorMessage}</div>; // 상태 업데이트된 에러 메시지 출력
+  }
 
   return (
     <div>
