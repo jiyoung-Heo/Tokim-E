@@ -69,9 +69,12 @@ public class UserController{
             String email = getAuthenticationData();
 
             Date birthDate = format.parse(birth);
+            logger.info(birthDate.toString());
             User updatedUser = userService.modifyUserInfo(email, birthDate);
 
             UserDTO dto = new UserDTO(updatedUser);
+            logger.info(dto.getBirth().toString());
+
             ResponseDTO<UserDTO> response = ResponseDTO.<UserDTO>builder().data(List.of(dto)).build();
 
             return ResponseEntity.ok().body(response);
@@ -103,7 +106,7 @@ public class UserController{
     }
 
     @PutMapping("/quiz")
-    public ResponseEntity<?> updateQuizScore(@RequestBody Long quizScore){
+    public ResponseEntity<?> updateQuizScore(@RequestParam(name="quizScore") Long quizScore){
         try {
             String email = getAuthenticationData();
 
