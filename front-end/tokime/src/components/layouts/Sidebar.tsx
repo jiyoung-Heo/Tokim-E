@@ -27,14 +27,15 @@ const SidebarContainer = styled.div<{ $isOpen: boolean }>`
 
 // 사이드바 아이콘 정의
 const SidebarIcon = styled.img<{ $isOpen: boolean }>`
-  position: relative; /* fixed에서 absolute로 변경 */
+  position: relative;
   top: 5vh;
   left: 90vw;
   width: 8vw;
   height: auto;
   cursor: pointer;
   z-index: 2000;
-  display: ${(props) => (props.$isOpen ? 'none' : 'block')};
+  visibility: ${(props) =>
+    props.$isOpen ? 'hidden' : 'visible'}; /* visibility로 가리기 */
 `;
 
 // 로고 스타일 정의
