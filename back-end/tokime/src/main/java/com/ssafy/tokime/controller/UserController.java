@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -62,10 +63,13 @@ public class UserController{
     }
 
     @PutMapping("")
-    private ResponseEntity<?> updateUserBirth(@RequestBody Date birth){
+    private ResponseEntity<?> updateUserBirth(@RequestBody String birth){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy");
         try {
             String email = getAuthenticationData();
-            User updatedUser = userService.modifyUserInfo(email, birth);
+
+            Date birthDate = format.parse(birth);
+            User updatedUser = userService.modifyUserInfo(email, birthDate);
 
             UserDTO dto = new UserDTO(updatedUser);
             ResponseDTO<UserDTO> response = ResponseDTO.<UserDTO>builder().data(List.of(dto)).build();
