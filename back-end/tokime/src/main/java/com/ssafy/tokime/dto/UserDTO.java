@@ -23,7 +23,9 @@ public class UserDTO {
     public UserDTO(final User entity) {
         this.name = entity.getName();
         this.email = entity.getEmail();
-        this.birth = format.format(entity.getBirth());
+        if(entity.getBirth() != null){
+            this.birth = format.format(entity.getBirth());
+        }
         this.phone = entity.getPhone();
         this.quizScore = entity.getQuizScore();
     }

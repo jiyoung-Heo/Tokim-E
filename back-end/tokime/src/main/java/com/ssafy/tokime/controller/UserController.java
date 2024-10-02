@@ -106,11 +106,11 @@ public class UserController{
     }
 
     @PutMapping("/quiz")
-    public ResponseEntity<?> updateQuizScore(@RequestParam(name="quizScore") Long quizScore){
+    public ResponseEntity<?> updateQuizScore(@RequestBody UserDTO userDTO){
         try {
             String email = getAuthenticationData();
 
-            User user = userService.updateQuizScore(email, quizScore);
+            User user = userService.updateQuizScore(email, userDTO.getQuizScore());
 
             UserDTO dto = new UserDTO(user);
             ResponseDTO<UserDTO> response = ResponseDTO.<UserDTO>builder().data(List.of(dto)).build();
