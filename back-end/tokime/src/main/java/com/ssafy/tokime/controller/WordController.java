@@ -74,6 +74,7 @@ public class WordController {
             getUserId();
             logger.info("로그인 한 상태임!"+user.getEmail());
             List<LandtermDTO> asdf = (List<LandtermDTO>) getWordLike().getBody();
+//            logger.info()
             // 가져온 것들이 즐겨찾기에 등록된 것들인지 표시정돈 해주기
             if (keyword.length() == 0) { // 전체 조회일시 바로 index값으로 접근하면됨
                 for (int i = 0; i < asdf.size(); i++) {
@@ -122,6 +123,7 @@ public class WordController {
             return ResponseEntity.noContent().build();
         }
         long userId = getUserId(); // 여기를 JWT에서 가져옴, 추후 static 으로 뺄 예정
+        logger.info("현재 사용자의 userId"+" "+userId);
 
         List<Likeword> words = wordService.getLikeWordList(userId);
         if (words.isEmpty()) {
