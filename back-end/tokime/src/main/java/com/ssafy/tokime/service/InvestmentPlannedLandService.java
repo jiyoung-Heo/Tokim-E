@@ -30,12 +30,11 @@ public class InvestmentPlannedLandService {
     private final ChecklistStatusRepository statusRepository;
 
     // 투자 예정지 등록
-    public int registInvestmentPlannedLand(InvestmentPlannedLandDTO dto, String email) {
+    public void registInvestmentPlannedLand(InvestmentPlannedLandDTO dto, String email) {
         // 로그인 유저
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("email로 조회 했으나 존재 하지 않는 유저"));
 
-        try {
             // 투자예정지 등록정보 entity로 변환
             InvestmentPlannedLand investmentPlannedLand = InvestmentPlannedLand.builder()
                     .user(user)
@@ -59,10 +58,6 @@ public class InvestmentPlannedLandService {
             // 체크리스트 상태 저장
             saveChecklists(dto.getChecklistIds(), investmentPlannedLand); // 체크리스트 ID로 수정
 
-            return 0; // 성공
-        } catch (Exception e) {
-            return 1; // 실패
-        }
     }
 
     // 첫 체크리스트 실행 시 가져오기
@@ -113,6 +108,10 @@ public class InvestmentPlannedLandService {
     // 투자 예정지 수정
     @Transactional
     public InvestmentPlannedLandDTO updateInvestmentPlannedLand(Long id, InvestmentPlannedLandDTO dto, String email) {
+        if (dto == null) {
+            throw new IllegalArgumentException("수정할 데이터가 필요합니다.");
+        }
+
         InvestmentPlannedLand investmentPlannedLand = investmentPlannedLandRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("투자 예정지를 찾을 수 없습니다."));
 
@@ -172,14 +171,7 @@ public class InvestmentPlannedLandService {
         return investmentPlannedLand.toDTO(); //dto변환
 
     }
-    // 수정
-//    @Transactional
-//    public InvestmentPlannedLandDTO updateinvestmentPlannedLand(Long id, InvestmentPlannedLandDTO dto){
-//        // id로 수정하려는거 찾고
-//        // 작성자 맞나 확인
-//        // 받아온 dto로 set 수정
-//
-//    }
+
 
     // 삭제
     @Transactional
