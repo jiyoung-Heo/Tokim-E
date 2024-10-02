@@ -27,9 +27,9 @@ const SidebarContainer = styled.div<{ $isOpen: boolean }>`
 
 // 사이드바 아이콘 정의
 const SidebarIcon = styled.img<{ $isOpen: boolean }>`
-  position: fixed;
-  top: 7.34vh;
-  right: 5.56vw;
+  position: relative; /* fixed에서 absolute로 변경 */
+  top: 5vh;
+  left: 90vw;
   width: 8vw;
   height: auto;
   cursor: pointer;

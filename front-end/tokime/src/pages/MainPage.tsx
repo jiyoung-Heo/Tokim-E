@@ -12,20 +12,16 @@ import CarouselImage1 from '../assets/images/icon/scoreicon.png'; // 캐러셀 �
 // 컨테이너 스타일 정의 (스크롤 방지 및 높이 조정)
 const Container = styled.div`
   width: 100vw;
-  min-height: 100vh; // 최소 높이를 100vh로 설정하여 스크롤 방지
   background: #f3f7fb;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 5vh;
   overflow-y: hidden; // 세로 스크롤 방지
 `;
 
 // 로고 스타일 (vw, vh 사용)
 const Logo = styled.img`
   width: 33vw;
-  height: auto;
-  margin-top: 3vh;
   margin-left: 6.94vw;
   align-self: flex-start;
 `;

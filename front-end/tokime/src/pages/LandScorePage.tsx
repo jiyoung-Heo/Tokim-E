@@ -44,7 +44,7 @@ const TabButton = styled.button<{ $active: boolean }>`
     width: 40vw; // 뷰포트 너비 기준으로 반응형 설정
     height: 2px; // 고정된 보더라인 두께
     background-color: ${(props) => (props.$active ? '#27C384' : 'transparent')};
-    bottom: 11px; // 보더라인을 아래에 위치
+    bottom: 12px; // 보더라인을 아래에 위치
     left: 50%;
     transform: translateX(-50%);
   }
