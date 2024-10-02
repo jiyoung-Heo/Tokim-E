@@ -90,16 +90,20 @@ public class QuizController {
         List<Long> scoreList = userService.getQuizScores(birth, birth+1);
         quiz.setAgeAverage(getAverage(scoreList));
 
+        // 사용자 전부의 점수를 가져옴
+        scoreList = userService.getAllQuizScores();
+        // 4. 토키미 전체 평균
+        quiz.setTotalAverage(getAverage(scoreList));
+
         if (quiz.getQuizScore() == -1) { // 상식퀴즈를 한번도 진행하지 않았다면 디폴트값으로 -1을 가짐
             // 퀴즈 푼 내역이 없으면 제공받을 수 있는 부분은 또래평균만 알 수 있음
+            // 나머지 값은 디폴트값으로
+            quiz.setTop(0L);
+            quiz.setAgeGap(0L);
+
         } else {
             // 3. 사용자의 점수와 또래 평균 차이
             quiz.setAgeGap(quiz.getQuizScore()-quiz.getAgeAverage());
-
-            // 사용자 전부의 점수를 가져옴
-            scoreList = userService.getAllQuizScores();
-            // 4. 토키미 전체 평균
-            quiz.setTotalAverage(getAverage(scoreList));
 
             // 5. 상위 n%
             // 상위 n%는 중복값을 제거
@@ -139,7 +143,6 @@ public class QuizController {
             if (temp == score) {
                 double result = (((double) (mid+1)/list.size()));
                 long r = (long) (result*100);
-                System.out.println("흠 "+r+" "+(result*100)+"%");
                 return r;
             }
             if (score > temp) {
