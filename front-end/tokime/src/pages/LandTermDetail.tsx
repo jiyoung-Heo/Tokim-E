@@ -8,97 +8,107 @@ const Container = styled.div`
   width: 100%;
   height: 100vh;
   background: #f3f7fb;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5vh 2vw;
+  box-sizing: border-box;
 `;
 
 const Title = styled.h2`
-  position: absolute;
-  left: 40px;
-  top: 40px;
-  font-size: 20px;
+  font-size: 5vw;
   font-weight: 700;
   font-family: 'KoddiUD OnGothic';
   color: #333333;
+  margin-bottom: 20px;
+  text-align: center;
 `;
 
+// 용어 정보 컨테이너
 const TermDetailContainer = styled.div`
-  position: absolute;
-  width: 340px;
-  height: auto;
-  left: 9px;
-  top: 95px;
+  width: 90vw; // 반응형을 위해 90vw로 설정
+  max-width: 340px;
+  height: 180px;
   background: #ffffff;
   border: 1px solid #000000;
   border-radius: 10px;
   padding: 15px;
   box-sizing: border-box;
+  overflow-y: auto; // 스크롤 추가
+  margin-bottom: 20px;
 `;
 
 const TermTitle = styled.div`
   font-family: 'KoddiUD OnGothic';
   font-weight: 700;
-  font-size: 20px;
-  line-height: 24px;
+  font-size: 5vw;
+  line-height: 6vw;
   color: #333333;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 `;
 
 const TermDescription = styled.div`
   font-family: 'KoddiUD OnGothic';
   font-weight: 400;
-  font-size: 16px;
-  line-height: 20px;
+  font-size: 4vw;
+  line-height: 5vw;
   color: #000000;
 `;
 
+// 관련 법률 및 규제 정보 컨테이너
 const RelatedLawsContainer = styled.div`
-  position: absolute;
-  width: 340px;
-  height: auto;
-  left: 9px;
-  top: 290px;
+  width: 90vw;
+  max-width: 340px;
+  height: 110px;
   background: #ffffff;
   box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
-  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
   border-radius: 10px;
   padding: 15px;
   box-sizing: border-box;
+  overflow-y: auto; // 스크롤 추가
+  margin-bottom: 20px;
 `;
 
 const RelatedLawsTitle = styled.div`
   font-family: 'KoddiUD OnGothic';
   font-weight: 700;
-  font-size: 13px;
+  font-size: 4vw;
   text-align: center;
   color: #333333;
   margin-bottom: 10px;
 `;
 
+// 관련 뉴스 타이틀
 const RelatedNewsTitle = styled.div`
-  position: absolute;
-  width: 182px;
-  height: 21px;
-  left: 9px;
-  top: 428px;
+  width: 90vw;
+  max-width: 340px;
   font-family: 'KoddiUD OnGothic';
   font-weight: 700;
-  font-size: 15px;
+  font-size: 4vw;
   color: #333333;
+  margin-bottom: 10px;
 `;
 
+// 관련 뉴스 컨테이너
 const NewsContainer = styled.div`
-  position: absolute;
-  width: 360px;
-  left: 0px;
-  top: 457px;
+  width: 90vw;
+  max-width: 340px;
+  height: 110px;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 10px;
+  box-sizing: border-box;
+  overflow-y: auto; // 스크롤 추가
+  margin-bottom: 20px;
 `;
 
 const NewsItem = styled.div`
   font-family: 'KoddiUD OnGothic';
   font-weight: 400;
-  font-size: 15px;
-  line-height: 18px;
+  font-size: 3.5vw;
+  line-height: 5vw;
   color: #333333;
-  padding: 8px 18px;
+  padding: 8px 0;
   border-bottom: 1px solid #bfbfbf;
 `;
 
