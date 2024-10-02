@@ -28,9 +28,12 @@ export const user = createSlice({
     setBirth(state, action: PayloadAction<string>) {
       return { ...state, birth: action.payload };
     },
+    setQuizScore(state, action: PayloadAction<string>) {
+      return { ...state, quizScore: action.payload };
+    },
   },
 });
 
-export const { changeUser, setBirth } = user.actions;
+export const { changeUser, setBirth, setQuizScore } = user.actions;
 
 export default user;
