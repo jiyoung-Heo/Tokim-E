@@ -1,9 +1,10 @@
 import API from '../utils/API';
 
-export default async function modifyUserQuizAxios(quizScore: number) {
-  return API.put('/user/quiz', { quizScore })
+export default async function userQuizAverageAxios() {
+  return API.get('/quiz/average')
     .then((res) => {
-      return res.data.data[0].quizScore;
+      console.log(res);
+      return res.data.data[0];
     })
     .catch((e) => {
       console.log(e);

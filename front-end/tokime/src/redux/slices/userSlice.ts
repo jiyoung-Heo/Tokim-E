@@ -5,7 +5,7 @@ interface UserState {
   name: string;
   email: string;
   phone: string;
-  quizScore: string;
+  quizScore: number;
   birth: string;
 }
 
@@ -14,7 +14,7 @@ const initialState: UserState = {
   name: '',
   email: '',
   phone: '',
-  quizScore: '',
+  quizScore: 0,
   birth: '',
 };
 
@@ -28,9 +28,12 @@ export const user = createSlice({
     setBirth(state, action: PayloadAction<string>) {
       return { ...state, birth: action.payload };
     },
+    setQuizScore(state, action: PayloadAction<number>) {
+      return { ...state, quizScore: action.payload };
+    },
   },
 });
 
-export const { changeUser, setBirth } = user.actions;
+export const { changeUser, setBirth, setQuizScore } = user.actions;
 
 export default user;

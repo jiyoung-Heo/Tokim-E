@@ -1,9 +1,9 @@
 import API from '../utils/API';
 
-export default async function modifyUserQuizAxios(quizScore: number) {
-  return API.put('/user/quiz', { quizScore })
+export default async function userQuizListAxios() {
+  return API.get('/quiz')
     .then((res) => {
-      return res.data.data[0].quizScore;
+      return res.data;
     })
     .catch((e) => {
       console.log(e);
