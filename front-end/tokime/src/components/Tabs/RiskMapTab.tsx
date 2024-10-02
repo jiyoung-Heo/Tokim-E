@@ -15,8 +15,8 @@ const RiskMap: React.FC<RiskMapProps> = ({ district, address }) => {
   const [isPanoramaVisible, setIsPanoramaVisible] = useState<boolean>(false);
   const [currentLatLng, setCurrentLatLng] = useState<any | null>(null);
 
-  // handleSearch 함수는 useEffect 위로 이동합니다
-  const handleSearch = (searchTerm: string) => {
+  // 주소 검색 및 마커 표시
+  const handleSearch = async (searchTerm: string) => {
     if (!map || !searchTerm) return;
 
     if (isPanoramaVisible) {
@@ -74,6 +74,7 @@ const RiskMap: React.FC<RiskMapProps> = ({ district, address }) => {
     );
   };
 
+  // 맵 초기화
   useEffect(() => {
     const initializeMap = () => {
       const center = new window.naver.maps.LatLng(37.3595704, 127.105399);
@@ -93,23 +94,25 @@ const RiskMap: React.FC<RiskMapProps> = ({ district, address }) => {
       setMap(newMap);
     };
 
-    if (window.naver) {
-      initializeMap();
-    } else {
+    if (!window.naver) {
       const naverMapScript = document.createElement('script');
       naverMapScript.src =
         'https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=%REACT_APP_NAVERMAP_API_KEY%&submodules=geocoder,panorama';
       naverMapScript.onload = initializeMap;
       document.head.appendChild(naverMapScript);
+    } else {
+      initializeMap();
     }
   }, []);
 
+  // 주소가 변경될 때마다 검색 실행
   useEffect(() => {
     if (map && (district || address)) {
       handleSearch(`${district} ${address}`);
     }
-  }, [district, address]);
+  }, [district, address, map]);
 
+  // 지적도 토글
   const toggleCadastralLayer = () => {
     if (cadastralLayer) {
       if (isCadastralVisible) {
@@ -122,6 +125,7 @@ const RiskMap: React.FC<RiskMapProps> = ({ district, address }) => {
     }
   };
 
+  // 파노라마 토글
   const togglePanorama = () => {
     if (isPanoramaVisible) {
       if (panorama) {
