@@ -15,6 +15,7 @@
     "apexcharts": "^3.53.0",
     "axios": "^1.7.7",
     "chart.js": "^4.4.4",
+    "openai": "^4.67.0",
     "react": "^18.3.1",
     "react-apexcharts": "^1.4.1",
     "react-chartjs-2": "^5.2.0",
