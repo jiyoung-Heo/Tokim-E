@@ -25,16 +25,21 @@ public class DangerController {
     // 줌인 해서 특정 토지의 신고글 목록 조회 - 제목과 신고글 id만 제공
     @GetMapping("")
     public ResponseEntity<?> getDanger(@RequestParam(name="lat") Double lat, @RequestParam(name="lng") Double lng) {
-        List<Danger> dangers = dangerService.dangerList(lat, lng);
-        logger.info("가져온 값들은? "+dangers.size());
-        List<DangerListDTO> list = new ArrayList<>();
-        for (Danger danger : dangers) {
-            list.add(new DangerListDTO(danger));
-        }
-        if (list.size() > 0) { // 신고글이 한 개 이상 있음
-            return ResponseEntity.ok().body(list);
-        } else { // 신고글이 하나도 없음
-            return ResponseEntity.ok().body("신고 정보가 없습니다.");
+        try {
+            List<Danger> dangers = dangerService.dangerList(lat, lng);
+            logger.info("가져온 값들은? " + dangers.size());
+            List<DangerListDTO> list = new ArrayList<>();
+            for (Danger danger : dangers) {
+                list.add(new DangerListDTO(danger));
+            }
+            if (list.size() > 0) { // 신고글이 한 개 이상 있음
+                return ResponseEntity.ok().body(list);
+            } else { // 신고글이 하나도 없음
+                return ResponseEntity.ok().body("신고 정보가 없습니다.");
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return ResponseEntity.ok().body(e.getMessage());
         }
 
     }
@@ -52,8 +57,13 @@ public class DangerController {
     // 신고글 작성
     @PostMapping("")
     public ResponseEntity<?> addDanger(@RequestBody Danger danger) {
-        dangerService.addDanger(danger);
-        return ResponseEntity.ok().build();
+        try {
+            dangerService.addDanger(danger);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return ResponseEntity.ok().body(e.getMessage());
+        }
     }
 
     // 신고글 수정

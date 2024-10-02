@@ -23,7 +23,7 @@ import java.util.*;
 @RestController
 @RequestMapping("/quiz")
 public class QuizController {
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final Logger logger = LoggerFactory.getLogger(QuizController.class);
 
     @Autowired
     private QuizService quizService;
@@ -78,53 +78,59 @@ public class QuizController {
 
     @GetMapping("/average")
     public ResponseEntity<?> getQuizAverage() {
-        getUserInfo();
-        QuizAverageDTO quiz = new QuizAverageDTO();
+        try {
+            getUserInfo();
+            QuizAverageDTO quiz = new QuizAverageDTO();
 
-        // 1. 사용자 점수
-        quiz.setQuizScore(user.getQuizScore());
-
-
-        // 2. 또래 평균
-        List<Long> scoreList = new ArrayList<>();
-        if (user.getBirth() != null) {
-            int birth = user.getBirth().getYear()+1900;
-            scoreList = userService.getQuizScores(birth, birth+1);
-            quiz.setAgeAverage(getAverage(scoreList));
-        } else { //
-            quiz.setAgeAverage(0L);
-        }
+            // 1. 사용자 점수
+            quiz.setQuizScore(user.getQuizScore());
 
 
-        // 사용자 전부의 점수를 가져옴
-        scoreList = userService.getAllQuizScores();
-        // 4. 토키미 전체 평균
-        quiz.setTotalAverage(getAverage(scoreList));
-
-        if (quiz.getQuizScore() == -1) { // 상식퀴즈를 한번도 진행하지 않았다면 디폴트값으로 -1을 가짐
-            // 퀴즈 푼 내역이 없으면 제공받을 수 있는 부분은 또래평균만 알 수 있음
-            // 나머지 값은 디폴트값으로
-            quiz.setTop(0L);
-            quiz.setAgeGap(0L);
-
-        } else {
-            // 3. 사용자의 점수와 또래 평균 차이
+            // 2. 또래 평균
+            List<Long> scoreList = new ArrayList<>();
             if (user.getBirth() != null) {
-                quiz.setAgeGap(quiz.getQuizScore()-quiz.getAgeAverage());
-            } else {
-                quiz.setAgeGap(0L);
+                int birth = user.getBirth().getYear() + 1900;
+                scoreList = userService.getQuizScores(birth, birth + 1);
+                quiz.setAgeAverage(getAverage(scoreList));
+            } else { //
+                quiz.setAgeAverage(0L);
             }
 
 
-            // 5. 상위 n%
-            // 상위 n%는 중복값을 제거
-            Set<Long> set = new HashSet<>(scoreList);
-            scoreList = new ArrayList<>(set);
-            Collections.sort(scoreList, Collections.reverseOrder());
-            System.out.println(scoreList);
-            quiz.setTop(getPercent(scoreList,quiz.getQuizScore()));
+            // 사용자 전부의 점수를 가져옴
+            scoreList = userService.getAllQuizScores();
+            // 4. 토키미 전체 평균
+            quiz.setTotalAverage(getAverage(scoreList));
+
+            if (quiz.getQuizScore() == -1) { // 상식퀴즈를 한번도 진행하지 않았다면 디폴트값으로 -1을 가짐
+                // 퀴즈 푼 내역이 없으면 제공받을 수 있는 부분은 또래평균만 알 수 있음
+                // 나머지 값은 디폴트값으로
+                quiz.setTop(0L);
+                quiz.setAgeGap(0L);
+
+            } else {
+                // 3. 사용자의 점수와 또래 평균 차이
+                if (user.getBirth() != null) {
+                    quiz.setAgeGap(quiz.getQuizScore() - quiz.getAgeAverage());
+                } else {
+                    quiz.setAgeGap(0L);
+                }
+
+
+                // 5. 상위 n%
+                // 상위 n%는 중복값을 제거
+                Set<Long> set = new HashSet<>(scoreList);
+                scoreList = new ArrayList<>(set);
+                Collections.sort(scoreList, Collections.reverseOrder());
+                System.out.println(scoreList);
+                quiz.setTop(getPercent(scoreList, quiz.getQuizScore()));
+            }
+            return ResponseEntity.ok().body(quiz);
         }
-        return ResponseEntity.ok().body(quiz);
+        catch (Exception e) {
+            logger.error("Error while quiz average", e);
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     // 10.01 시점 기준 id기준 2~80개의 퀴즈가 있으니 79개를 선별하겠다고 가정 -> 1~86으로 정정
