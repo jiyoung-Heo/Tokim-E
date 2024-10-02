@@ -9,98 +9,122 @@ import KnowledgeIcon from '../assets/images/icon/commonsenseicon.png';
 import InvestmentIcon from '../assets/images/icon/investicon.png';
 import CarouselImage1 from '../assets/images/icon/scoreicon.png'; // 캐러셀 이미지 (추후 경로 수정)
 
+// 컨테이너 스타일 정의 (스크롤 방지 및 높이 조정)
 const Container = styled.div`
-  width: 100%;
-  height: 100vh;
+  width: 100vw;
+  min-height: 100vh; // 최소 높이를 100vh로 설정하여 스크롤 방지
   background: #f3f7fb;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 5vh;
+  overflow-y: hidden; // 세로 스크롤 방지
 `;
 
-// 로고 스타일
+// 로고 스타일 (vw, vh 사용)
 const Logo = styled.img`
-  width: 118px;
-  height: 43px;
-  margin-top: 47px;
-  position: absolute;
-  left: 25px;
+  width: 33vw;
+  height: auto;
+  margin-top: 3vh;
+  margin-left: 6.94vw;
+  align-self: flex-start;
 `;
 
-// 지번 검색 & 위험지도 아이콘 스타일
-const IconBox = styled(Link)`
-  width: 140px;
-  height: 120px;
+// 큰 박스들을 감싸는 박스 (가로로 배치)
+const LargeIconGrid = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 90vw;
+  margin-top: 5vh;
+`;
+
+// 작은 박스들을 감싸는 박스 (가로로 배치)
+const SmallIconGrid = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 90vw;
+  margin-top: 5vh;
+`;
+
+// 큰 아이콘 박스 스타일
+const LargeIconBox = styled(Link)`
+  width: 38.8vw;
+  height: 18.75vh;
   background: #ffffff;
-  border-radius: 10px;
+  border-radius: 2.78vw;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   text-align: left;
   text-decoration: none;
   color: #333333;
+  padding: 2.78vw;
+  position: relative;
+`;
+
+// 작은 아이콘 박스 스타일
+const SmallIconBox = styled(Link)`
+  width: 27.77vw;
+  height: 16.66vh;
+  background: #ffffff;
+  border-radius: 2.78vw;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  text-decoration: none;
+  color: #333333;
+  padding: 2vw;
+  position: relative;
+`;
+
+// 큰 박스 안의 아이콘 이미지 스타일
+const LargeIcon = styled.img`
+  width: 16.66vw;
+  height: 9vh;
   position: absolute;
-  padding: 10px;
+  bottom: 5px;
+  right: 5px;
 `;
 
-const Icon = styled.img`
-  width: 40px;
-  height: 40px;
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-`;
-
-const IconTitle = styled.span`
-  font-size: 15px;
-  font-weight: 700;
-  position: absolute;
-  top: 10px;
-  left: 10px;
-`;
-
-const IconSubtitle = styled.span`
-  font-size: 10px;
-  font-weight: 400;
-  position: absolute;
-  top: 35px;
-  left: 10px;
-`;
-
-// 하단 3개 아이콘 스타일
-const SmallIconBox = styled(IconBox)`
-  width: 100px;
-  height: 100px;
-`;
-
+// 작은 박스 안의 아이콘 이미지 스타일
 const SmallIcon = styled.img`
-  width: 40px;
-  height: 40px;
+  width: 11.1vw;
+  height: 6.25vh;
   position: absolute;
   bottom: 8px;
   right: 8px;
 `;
 
-const SmallIconTitle = styled.span`
-  font-size: 12px;
+// 큰 아이콘 박스 제목 및 부제목 스타일
+const LargeIconTitle = styled.span`
+  font-size: 4.16vw;
   font-weight: 700;
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  line-height: 1.5;
+  margin-bottom: 5px;
+`;
+
+const LargeIconSubtitle = styled.span`
+  font-size: 2.77vw;
+  font-weight: 400;
+  margin-bottom: 15px;
+`;
+
+// 작은 아이콘 박스 제목 및 부제목 스타일
+const SmallIconTitle = styled.span`
+  font-size: 3.33vw;
+  font-weight: 700;
 `;
 
 const SmallIconSubtitle = styled.span`
-  font-size: 10px;
+  font-size: 2.77vw;
   font-weight: 400;
-  position: absolute;
-  top: 40px;
-  left: 8px;
-  line-height: 1.5;
+  margin-top: 1.5vh;
 `;
 
-// 캐러셀 섹션
+// 캐러셀 섹션 스타일 (text-decoration: none 추가)
 const CarouselContainer = styled(Link)`
-  width: 328px;
-  height: 138px;
+  width: 91.1vw;
+  height: 21.56vh;
   background: linear-gradient(
     180deg,
     #00c99c 0%,
@@ -112,87 +136,71 @@ const CarouselContainer = styled(Link)`
     #00634d 100%
   );
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 15px;
-  margin: 24px auto;
+  border-radius: 4.17vw;
   display: flex;
   align-items: center;
-  text-decoration: none;
-  position: absolute;
-  left: 16px;
-  top: 384px;
+  justify-content: space-between;
+  padding: 2vw;
+  margin-top: 5vh;
+  text-decoration: none; // 밑줄 제거
 `;
 
+// 캐러셀 내용 및 이미지 스타일
 const CarouselContent = styled.div`
   color: white;
-  font-size: 15px;
+  font-size: 4.16vw;
   font-weight: 700;
-  margin-left: 20px;
+  margin-left: 5.55vw;
 `;
 
 const CarouselImage = styled.img`
-  width: 76px;
-  height: 76px;
-  right: 40px;
-  position: absolute;
+  width: 21.11vw;
+  height: 21.11vw;
+  margin-right: 5vw;
 `;
 
 function MainPage() {
   return (
     <Container>
-      {/* 로고 */}
       <Logo src={TokimLogo} alt="Tokim Logo" />
-
-      {/* 지번 검색 */}
-      <IconBox to="/address-search" style={{ left: '25px', top: '107px' }}>
-        <Icon src={SearchIcon} alt="지번 검색" />
-        <IconTitle>지번 검색</IconTitle>
-        <IconSubtitle>원하는 지역 검색</IconSubtitle>
-      </IconBox>
-
-      {/* 위험지도 */}
-      <IconBox to="/risk-map" style={{ left: '195px', top: '107px' }}>
-        <Icon src={RiskIcon} alt="위험지도" />
-        <IconTitle>위험지도</IconTitle>
-        <IconSubtitle>개발 위험 구역 확인</IconSubtitle>
-      </IconBox>
-
-      {/* 토지 용어 사전 */}
-      <SmallIconBox to="/land-terms" style={{ left: '16px', top: '260px' }}>
-        <SmallIcon src={DictionaryIcon} alt="토지 용어 사전" />
-        <SmallIconTitle>토지 용어 사전</SmallIconTitle>
-        <SmallIconSubtitle>
-          어려운 용어
-          <br />
-          쉽게!
-        </SmallIconSubtitle>
-      </SmallIconBox>
-
-      {/* 토지 구매 상식 */}
-      <SmallIconBox
-        to="/land-purchase-knowledge"
-        style={{ left: '130px', top: '260px' }}
-      >
-        <SmallIcon src={KnowledgeIcon} alt="토지 구매 상식" />
-        <SmallIconTitle>토지 구매 상식</SmallIconTitle>
-        <SmallIconSubtitle>
-          알아야 할
-          <br />
-          상식
-        </SmallIconSubtitle>
-      </SmallIconBox>
-
-      {/* 투자 예정지 */}
-      <SmallIconBox to="/investment" style={{ left: '244px', top: '260px' }}>
-        <SmallIcon src={InvestmentIcon} alt="투자 예정지" />
-        <SmallIconTitle>투자 예정지</SmallIconTitle>
-        <SmallIconSubtitle>
-          나의 투자
-          <br />
-          지역 체크
-        </SmallIconSubtitle>
-      </SmallIconBox>
-
-      {/* 캐러셀 섹션 */}
+      <LargeIconGrid>
+        <LargeIconBox to="/address-search">
+          <LargeIconTitle>지번 검색</LargeIconTitle>
+          <LargeIconSubtitle>원하는 지역 검색</LargeIconSubtitle>
+          <LargeIcon src={SearchIcon} alt="지번 검색" />
+        </LargeIconBox>
+        <LargeIconBox to="/risk-map">
+          <LargeIconTitle>위험지도</LargeIconTitle>
+          <LargeIconSubtitle>개발 위험 구역 확인</LargeIconSubtitle>
+          <LargeIcon src={RiskIcon} alt="위험지도" />
+        </LargeIconBox>
+      </LargeIconGrid>
+      <SmallIconGrid>
+        <SmallIconBox to="/land-terms">
+          <SmallIconTitle>토지 용어 사전</SmallIconTitle>
+          <SmallIconSubtitle>
+            어려운 용어 <br />
+            쉽게!
+          </SmallIconSubtitle>
+          <SmallIcon src={DictionaryIcon} alt="토지 용어 사전" />
+        </SmallIconBox>
+        <SmallIconBox to="/land-purchase-knowledge">
+          <SmallIconTitle>토지 구매 상식</SmallIconTitle>
+          <SmallIconSubtitle>
+            알아야 할 <br />
+            상식
+          </SmallIconSubtitle>
+          <SmallIcon src={KnowledgeIcon} alt="토지 구매 상식" />
+        </SmallIconBox>
+        <SmallIconBox to="/investment">
+          <SmallIconTitle>투자 예정지</SmallIconTitle>
+          <SmallIconSubtitle>
+            나의 투자 <br />
+            지역 체크
+          </SmallIconSubtitle>
+          <SmallIcon src={InvestmentIcon} alt="투자 예정지" />
+        </SmallIconBox>
+      </SmallIconGrid>
       <CarouselContainer to="/land-purchase-knowledge">
         <CarouselContent>
           토지 상식 퀴즈 통해
