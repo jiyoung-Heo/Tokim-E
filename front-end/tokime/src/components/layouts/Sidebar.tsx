@@ -204,7 +204,7 @@ function Sidebar() {
         ) : (
           <>
             <GaugeWrapper>
-              <Graph score={score} />
+              <Graph score={userInfo.quizScore} />
               <Icon
                 src={sidebarUser}
                 alt="유저 아이콘"
