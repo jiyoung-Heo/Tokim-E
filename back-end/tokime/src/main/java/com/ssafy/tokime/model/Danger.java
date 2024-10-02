@@ -1,6 +1,5 @@
 package com.ssafy.tokime.model;
 
-import com.ssafy.tokime.dto.DangerDetailDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,11 +16,13 @@ public class Danger {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long dangerId;
 
-//    @Column(name = "user_id", nullable = false)
-//    private Long userId;
+    // 위도
+    @Column(name = "lat", nullable = false)
+    private double lat;
 
-    @Column(name = "land_id", nullable = false)
-    private String landId;
+    // 경도
+    @Column(name="lng", nullable = false)
+    private double lng;
 
     @Column(name = "danger_title", nullable = false)
     private String dangerTitle;
@@ -29,7 +30,4 @@ public class Danger {
     @Column(name = "danger_content", nullable = false, length = 1500)
     private String dangerContent;
 
-    public Danger(DangerDetailDTO detail) {
-
-    }
 }
