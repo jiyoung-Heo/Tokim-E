@@ -20,4 +20,14 @@ public class LandService {
         return landRepository.findTop5ByDistrictAndAddress(district, address);
     }
 
+    // district만 입력된 경우
+    public List<Land> searchByDistrict(String district) {
+        return landRepository.findTop5ByDistrict(district);
+    }
+
+    // address만 입력된 경우
+    public List<Land> searchByAddress(String address) {
+        return landRepository.findTop5ByAddress(address);
+    }
+
 }

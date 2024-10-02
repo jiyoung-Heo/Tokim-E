@@ -26,11 +26,11 @@ public class InvestmentPlannedLandController {
     @PostMapping
     public ResponseEntity<?> registerInvestmentPlannedLand(@RequestBody InvestmentPlannedLandDTO dto) {
         String email = getAuth();
-        int result = investmentPlannedLandService.registInvestmentPlannedLand(dto, email);
-        if (result==0) {
+        try {
+           investmentPlannedLandService.registInvestmentPlannedLand(dto, email);
             return new ResponseEntity<>("성공적으로 등록 되었습니다.", HttpStatus.CREATED);
-        }else{
-            return new ResponseEntity<>("실패하였습니다", HttpStatus.BAD_REQUEST);
+        }   catch (Exception e) {
+            return new ResponseEntity<>("서버 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -44,7 +44,6 @@ public class InvestmentPlannedLandController {
     // 체크리스트 처음 불러오기
     @GetMapping("/checklist")
     public List<ChecklistDTO> getchecklist(){
-            String email = getAuth();
             return investmentPlannedLandService.getallchecklist();
     }
 
@@ -60,8 +59,6 @@ public class InvestmentPlannedLandController {
             return ResponseEntity.badRequest().body(null); // 오류 발생 시 null 반환
         }
     }
-
-
 
     // 수정
     @PutMapping("/{investmentPlannedLandId}")

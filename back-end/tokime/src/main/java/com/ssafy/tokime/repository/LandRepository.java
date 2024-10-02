@@ -9,10 +9,14 @@ import java.util.List;
 
 public interface LandRepository extends JpaRepository<Land, Long> {
 
-    @Query("SELECT l " +
-            "FROM Land l " +
-            "WHERE l.landDistrict LIKE %:district% AND l.landAddress = :address")
+    @Query("SELECT l FROM Land l WHERE l.landDistrict LIKE %:district% AND l.landAddress = :address")
     List<Land> findByDistrictAndAddress(@Param("district") String district, @Param("address") String address);
+
+    @Query("SELECT l FROM Land l WHERE l.landDistrict LIKE %:district%")
+    List<Land> findTop5ByDistrict(@Param("district") String district);
+
+    @Query("SELECT l FROM Land l WHERE l.landAddress LIKE %:address%")
+    List<Land> findTop5ByAddress(@Param("address") String address);
 
     // 최대 5개 결과 반환
     default List<Land> findTop5ByDistrictAndAddress(String district, String address) {
