@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.util.Date;
 import java.util.List;
@@ -44,9 +46,11 @@ public class InvestmentPlannedLand {
     @Column(length = 50)
     private String landUseStatus;
 
-    @Column(nullable = false)
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
     private Date landCreatedAt;
 
+    @LastModifiedDate
     @Column(nullable = false)
     private Date landUpdatedAt;
 
@@ -84,4 +88,5 @@ public class InvestmentPlannedLand {
                 .checkedCount(this.checkedCount)
                 .build();
     }
+
 }

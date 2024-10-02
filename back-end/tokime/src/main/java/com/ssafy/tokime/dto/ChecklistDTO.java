@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class ChecklistDTO {
+    private Integer checklistId;
     private String content; // 체크리스트 내용
 }

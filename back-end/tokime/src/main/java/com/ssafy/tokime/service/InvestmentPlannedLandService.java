@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -85,6 +86,13 @@ public class InvestmentPlannedLandService {
             statusRepository.save(status);
         }
     }
+    public List<ChecklistDTO> getallchecklist(){
+        List<Checklist> checklist =checklistRepository.findAll();
+
+        return checklist.stream()
+                .map(Checklist::toDto)
+                .collect(Collectors.toList());
+    }
 
     // 전체 조회
     public List<InvestmentPlannedLandDTO> getInvestmentPlannedLandsByUserEmail(String email){
@@ -114,6 +122,14 @@ public class InvestmentPlannedLandService {
         return investmentPlannedLand.toDTO(); //dto변환
 
     }
+    // 수정
+//    @Transactional
+//    public InvestmentPlannedLandDTO updateinvestmentPlannedLand(Long id, InvestmentPlannedLandDTO dto){
+//        // id로 수정하려는거 찾고
+//        // 작성자 맞나 확인
+//        // 받아온 dto로 set 수정
+//
+//    }
 
     // 삭제
     @Transactional
@@ -124,14 +140,10 @@ public class InvestmentPlannedLandService {
         if(user.getUserId()!=investmentPlannedLand.getUser().getUserId()){
             throw new RuntimeException("삭제할 권한이 없습니다.");
         }
-        System.out.println("111111111111111111111111");
         // 체크리스트 삭제
         statusRepository.deleteByInvestmentPlannedLand(investmentPlannedLand);
-        System.out.println("222222222222222222222222");
         // 투자예정지 삭제
         investmentPlannedLandRepository.delete(investmentPlannedLand);
 
     }
-
-
 }

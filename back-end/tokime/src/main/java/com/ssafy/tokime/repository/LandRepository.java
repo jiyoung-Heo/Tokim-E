@@ -13,6 +13,7 @@ public interface LandRepository extends JpaRepository<Land, Long> {
             "FROM Land l " +
             "WHERE l.landDistrict LIKE %:district% AND l.landAddress = :address")
     List<Land> findByDistrictAndAddress(@Param("district") String district, @Param("address") String address);
+
     // 최대 5개 결과 반환
     default List<Land> findTop5ByDistrictAndAddress(String district, String address) {
         List<Land> lands = findByDistrictAndAddress(district, address);
