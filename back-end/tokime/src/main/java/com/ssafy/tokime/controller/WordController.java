@@ -124,6 +124,7 @@ public class WordController {
         long userId = getUserId(); // 여기를 JWT에서 가져옴, 추후 static 으로 뺄 예정
 
         List<Likeword> words = wordService.getLikeWordList(userId);
+        logger.info("찾은 단어의 갯수 : "+words.size());
         if (words.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
