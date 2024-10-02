@@ -1,8 +1,8 @@
 import API from '../utils/API';
 
-export default async function logoutAxios() {
-  return API.get('/logout')
-    .then(() => {
+export default async function withdrawAxios() {
+  return API.delete('/user')
+    .then((res) => {
       return 'success';
     })
     .catch((e) => {

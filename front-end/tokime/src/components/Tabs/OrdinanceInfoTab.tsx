@@ -40,7 +40,7 @@ function OrdinanceInfoTab({ district, address }: OrdinanceInfoTabProps) {
             setErrorMessage('해당 지역의 법령 정보가 없습니다.'); // 에러 메시지 상태 업데이트
           }
         } else {
-          setErrorMessage('토지 정보를 가져오는 중 오류 발생');
+          setErrorMessage('주소를 먼저 입력해주세요.');
         }
       } catch (error) {
         console.error('데이터를 가져오는 중 오류 발생:', error);
