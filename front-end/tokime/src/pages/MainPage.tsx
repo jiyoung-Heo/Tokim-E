@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import TokimLogo from '../assets/images/TokimEnglogo.png'; // 로고 이미지
 import SearchIcon from '../assets/images/icon/searchmapicon.png'; // 각 아이콘 이미지
 import RiskIcon from '../assets/images/icon/dangermapicon.png';
@@ -8,6 +9,8 @@ import DictionaryIcon from '../assets/images/icon/dictionary.png';
 import KnowledgeIcon from '../assets/images/icon/commonsenseicon.png';
 import InvestmentIcon from '../assets/images/icon/investicon.png';
 import CarouselImage1 from '../assets/images/icon/scoreicon.png'; // 캐러셀 이미지 (추후 경로 수정)
+import { changeUser } from '../redux/slices/userSlice';
+import userInfoAxios from '../api/userInfoAxios';
 
 // 컨테이너 스타일 정의 (스크롤 방지 및 높이 조정)
 const Container = styled.div`
@@ -156,6 +159,18 @@ const CarouselImage = styled.img`
 `;
 
 function MainPage() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchParentInfo = async () => {
+      const data = await userInfoAxios();
+      if (data) {
+        dispatch(changeUser(data));
+      }
+    };
+    fetchParentInfo();
+  }, []);
+
   return (
     <Container>
       <Logo src={TokimLogo} alt="Tokim Logo" />

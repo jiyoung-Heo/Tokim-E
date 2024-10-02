@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import sidebarIcon from '../../assets/images/icon/sidebar-icon.svg';
 import TokimLogo from '../../assets/images/TokimEnglogo.png';
 import sidebarUser from '../../assets/images/icon/sidebaruser.png';
@@ -9,6 +10,7 @@ import sidebarPhone from '../../assets/images/icon/sidebarphone.png';
 import KakaoIcon from '../../assets/images/icon/kakao.svg'; // 카카오 아이콘 이미지
 import GoogleIcon from '../../assets/images/icon/Google.png'; // 구글 아이콘 이미지
 import Graph from '../charts/GaugeGraph'; // 이전에 만든 Graph 컴포넌트 가져오기
+import { RootState } from '../../redux/store';
 
 // 사이드바 전체 스타일 정의
 const SidebarContainer = styled.div<{ $isOpen: boolean }>`
@@ -116,10 +118,10 @@ const ButtonText = styled.span`
 `;
 
 function Sidebar() {
+  const userInfo = useSelector((state: RootState) => state.user);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const score = isLoggedIn ? 50 : 0; // 로그인 여부에 따라 점수 설정
   const navigate = useNavigate();
 
   const kakaoLoginUrl = `${process.env.REACT_APP_CUSTOM_KEY}/oauth2/authorization/kakao`;
@@ -175,20 +177,20 @@ function Sidebar() {
         {isLoggedIn ? (
           <>
             <GaugeWrapper>
-              <Graph score={score} />
-              <Score>{score}점</Score>
+              <Graph score={userInfo.quizScore} />
+              <Score>{userInfo.quizScore}점</Score>
               <Percentile>상위 XX%</Percentile>
             </GaugeWrapper>
 
             <UserInfo>
               <Icon src={sidebarUser} alt="유저 아이콘" />
-              <UserName>홍길동</UserName>
+              <UserName>{userInfo.name}</UserName>
               <Divider />
               <Icon src={sidebarEmail} alt="이메일 아이콘" />
-              <p>abcd@kakao.com</p>
+              <p>{userInfo.email}</p>
               <Divider />
               <Icon src={sidebarPhone} alt="전화번호 아이콘" />
-              <p>010-1234-1234</p>
+              <p>{userInfo.phone}</p>
               <Divider />
             </UserInfo>
 
