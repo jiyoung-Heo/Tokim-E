@@ -49,7 +49,7 @@ function LandDetailTab({ district, address }: LandDetailTabProps) {
   }, [district, address]);
 
   if (loading) {
-    return <div>로딩 중...</div>;
+    return <div>주소를 먼저 입력해주세요.</div>;
   }
 
   if (error) {
@@ -65,13 +65,13 @@ function LandDetailTab({ district, address }: LandDetailTabProps) {
             <h3>
               주소: {detail.landDistrict} {detail.landAddress}
             </h3>
-            <p>면적: {detail.landScale} 평</p>
+            <p>면적: {detail.landScale} ㎡</p>
             <p>용도: {detail.landUse}</p>
             <p>용도 상태: {detail.landUseStatus}</p>
             <p>지형: {detail.landGradient}</p>
             <p>도로: {detail.landRoad}</p>
-            <p>가격: {detail.landPrice.toLocaleString()} 원</p>
-            <p>위험도: {detail.landDanger}</p>
+            <p>가격: ㎡당 {detail.landPrice.toLocaleString()} 원</p>
+            <p>개발가능성: {detail.landDanger}</p>
           </div>
         ))
       ) : (
