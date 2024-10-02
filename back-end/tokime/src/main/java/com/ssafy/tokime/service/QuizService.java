@@ -39,7 +39,6 @@ public class QuizService {
 
     // 특정 오답 가져오기
     public Optional<QuizIncorrect> getQuizIncorrect(long quizInCorrectId) {
-        System.out.println("가져오니 ? "+quizInCorrectId);
         return quizInCorrectRepository.findById(quizInCorrectId);
     }
 }

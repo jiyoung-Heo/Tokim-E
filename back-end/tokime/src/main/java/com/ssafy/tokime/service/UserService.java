@@ -51,4 +51,14 @@ public class UserService {
     public User selectUserInfoByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
     }
+
+    // 특정 출생년도 기준의 사용자의 퀴즈 점수 모두 가져오기
+    public List<Long> getQuizScores(int startYear, int endYear) {
+        return userRepository.findQuizScoreByBirthYearBetween(startYear, endYear);
+    }
+
+    // 토키미 전체 사용자의 퀴즈 점수 모두 가져오기
+    public List<Long> getAllQuizScores() {
+        return userRepository.findAllByQuizScore();
+    }
 }
