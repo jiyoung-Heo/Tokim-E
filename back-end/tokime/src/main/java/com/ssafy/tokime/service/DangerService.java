@@ -15,8 +15,8 @@ public class DangerService {
     private DangerRepository dangerRepository;
 
     // 특정 토지의 신고글 모두 조회
-    public List<Danger> dangerList(String landId) {
-        return dangerRepository.findAllByLandId(landId);
+    public List<Danger> dangerList(Double lat, Double lng) {
+        return dangerRepository.findAllByLatAndLng(lat, lng);
     }
 
     // 특정 토지의 신고글 상세 조회
