@@ -14,21 +14,24 @@ import Graph from '../charts/GaugeGraph'; // 이전에 만든 Graph 컴포넌트
 const SidebarContainer = styled.div<{ $isOpen: boolean }>`
   position: fixed;
   top: 0;
-  right: ${(props) => (props.$isOpen ? '0' : '-300px')};
-  width: 180px;
-  height: calc(100% - 75px);
+  right: ${(props) =>
+    props.$isOpen ? '0' : '-50vw'}; /* 너비를 기준으로 열리고 닫히도록 설정 */
+  width: 50vw;
+  height: 90vh; /* 전체 화면 높이에 맞추기 */
   background-color: white;
   transition: right 0.3s ease-in-out;
   z-index: 1000;
+  padding: 2.5vh 2vw; /* 사이드바 안쪽 패딩 조정 */
+  box-sizing: border-box; /* 패딩을 포함한 크기 계산 */
 `;
 
 // 사이드바 아이콘 정의
 const SidebarIcon = styled.img<{ $isOpen: boolean }>`
   position: fixed;
-  top: 47px;
-  right: 20px;
-  width: 40px;
-  height: 40px;
+  top: 7.34vh;
+  right: 5.56vw;
+  width: 8vw;
+  height: auto;
   cursor: pointer;
   z-index: 2000;
   display: ${(props) => (props.$isOpen ? 'none' : 'block')};
@@ -37,9 +40,8 @@ const SidebarIcon = styled.img<{ $isOpen: boolean }>`
 // 로고 스타일 정의
 const Logo = styled.img`
   display: block;
-  margin: 20px auto;
-  width: 120px;
-  top: 10px;
+  margin: 0 auto 3vh auto;
+  width: 30vw;
 `;
 
 // 점수와 백분위
@@ -47,24 +49,19 @@ const GaugeWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 10px;
-  position: relative;
+  margin-bottom: 2vh;
 `;
 
 // 점수 텍스트 스타일
 const Score = styled.p`
-  font-size: 20px;
+  font-size: 5vw;
   font-weight: bold;
-  position: relative;
-  top: -20px;
 `;
 
 // 백분위 텍스트 스타일
 const Percentile = styled.p`
-  font-size: 10px;
+  font-size: 2.5vw;
   color: #333333;
-  position: relative;
-  top: -20px;
 `;
 
 // 사용자 정보 섹션
@@ -72,40 +69,39 @@ const UserInfo = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
-  top: -20px;
+  margin-top: 3vh;
 `;
 
 const UserName = styled.p`
-  font-size: 14px;
-  margin-bottom: 10px; /* 추가: 로그인 해주세요 텍스트 밑에 10px 마진 */
+  font-size: 3.5vw;
+  margin-bottom: 1.5vh;
 `;
 
 const Icon = styled.img`
-  width: 24px;
-  height: 24px;
-  margin-right: 5px;
+  width: 7vw;
+  height: auto;
+  margin-right: 1vw;
   cursor: pointer;
 `;
 
 const Divider = styled.hr`
-  width: calc(100% - 10px);
+  width: 90%;
   border: none;
-  border-top: 2px solid #000000;
-  margin: 5px 0;
+  border-top: 1px solid #000000;
+  margin: 1.5vh 0;
 `;
 
 // 버튼 스타일 정의
 const Button = styled.button<{ $bgColor: string; $boxShadow?: string }>`
-  width: 90%;
-  margin: 10px auto;
+  width: 80%;
+  margin: 2vh auto;
   background-color: ${(props) => props.$bgColor};
   color: white;
-  font-size: 15px;
+  font-size: 4vw;
   font-weight: bold;
-  padding: 10px;
+  padding: 2vh 0;
   border: none;
-  border-radius: 10px;
+  border-radius: 2vw;
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -114,7 +110,7 @@ const Button = styled.button<{ $bgColor: string; $boxShadow?: string }>`
 `;
 
 const ButtonText = styled.span`
-  margin-left: 10px;
+  margin-left: 2vw;
   color: #000000;
 `;
 
@@ -178,10 +174,9 @@ function Sidebar() {
         {isLoggedIn ? (
           <>
             <GaugeWrapper>
-              {/* Graph 컴포넌트를 사용하여 게이지 표시 */}
               <Graph score={score} />
               <Score>{score}점</Score>
-              <Percentile>상위 XX%</Percentile> {/* score 대신 백분위로 변경 */}
+              <Percentile>상위 XX%</Percentile>
             </GaugeWrapper>
 
             <UserInfo>
@@ -207,7 +202,6 @@ function Sidebar() {
           <>
             <GaugeWrapper>
               <Graph score={score} />
-              {/* 로그인 해주세요 텍스트와 아이콘에 클릭 이벤트 추가 */}
               <Icon
                 src={sidebarUser}
                 alt="유저 아이콘"
@@ -220,7 +214,6 @@ function Sidebar() {
 
             <UserInfo>
               <Divider />
-
               <Icon src={sidebarEmail} alt="이메일 아이콘" />
               <p>e-mail</p>
               <Divider />
@@ -229,13 +222,11 @@ function Sidebar() {
               <Divider />
             </UserInfo>
 
-            {/* 카카오 로그인 버튼 */}
             <Button $bgColor="#FEE500" onClick={handleKakaoLogin}>
               <Icon src={KakaoIcon} alt="카카오 아이콘" />
               <ButtonText>카카오로 로그인</ButtonText>
             </Button>
 
-            {/* 구글 로그인 버튼 */}
             <Button
               $bgColor="#FFFFFF"
               $boxShadow="0px 4px 4px 0px rgba(0, 0, 0, 0.25)"
