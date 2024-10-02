@@ -3,11 +3,15 @@ package com.ssafy.tokime.controller;
 import com.ssafy.tokime.dto.LandtermDTO;
 import com.ssafy.tokime.model.Landterm;
 import com.ssafy.tokime.model.Likeword;
+import com.ssafy.tokime.model.User;
+import com.ssafy.tokime.service.UserService;
 import com.ssafy.tokime.service.WordService;
+import com.ssafy.tokime.service.facade.UserFacadeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -22,6 +26,11 @@ public class WordController {
     private WordService wordService;
     private long userId;
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
+    //사용자의 정보 가져오기
+    @Autowired
+    private UserFacadeService userService;
+    private static User user;
 
 
     // 모든 단어를 가져오는 메서드
@@ -104,7 +113,7 @@ public class WordController {
     public ResponseEntity<?> getWordLike() {
 
         // 추후 JWT을 디코딩해서 유저 id를 가져올 예정
-        long userId = 1; // 여기를 JWT에서 가져옴, 추후 static 으로 뺄 예정
+        long userId = getUserId(); // 여기를 JWT에서 가져옴, 추후 static 으로 뺄 예정
 
         List<Likeword> words = wordService.getLikeWordList(userId);
         if (words.isEmpty()) {
@@ -129,7 +138,7 @@ public class WordController {
     @PostMapping("/like/{wordId}")
     public ResponseEntity<?> likeWord(@PathVariable long wordId) {
         // 추후 JWT을 디코딩해서 유저 id를 가져올 예정
-        long userId = 1; // 여기를 JWT에서 가져옴, 추후 static 으로 뺄 예정
+        long userId = getUserId(); // 여기를 JWT에서 가져옴, 추후 static 으로 뺄 예정
 
         // 즐겨찾기의 PK는 유저의 ID
         Likeword word = new Likeword();
@@ -145,7 +154,7 @@ public class WordController {
     @DeleteMapping("/like/{termId}")
     public ResponseEntity<?> deleteWord(@PathVariable long termId) {
         // 추후 JWT을 디코딩해서 유저 id를 가져올 예정
-        long userId = 1; // 여기를 JWT에서 가져옴, 추후 static 으로 뺄 예정
+        long userId = getUserId(); // 여기를 JWT에서 가져옴, 추후 static 으로 뺄 예정
         System.out.println("삭제하고자 하는 용어 : "+termId+" 맞나? :"+likeCheck(termId));
         wordService.deleteLikeWord(userId, termId);
         return ResponseEntity.ok().build();
@@ -160,5 +169,12 @@ public class WordController {
             }
         }
         return false;
+    }
+
+    // 유저 정보 가져오기
+    public Long getUserId() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        user = userService.getUserInfo(email);
+        return user.getUserId();
     }
 }
