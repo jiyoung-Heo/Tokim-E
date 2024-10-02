@@ -3,16 +3,17 @@ import styled from 'styled-components';
 import fetchKnowledgeByCategory from '../../api/LandPurchaseKnowledge'; // default import로 변경
 import landImage from '../../assets/images/land1.png'; // 이미지 임포트
 
+// 반응형 스타일 정의
 const TabContent = styled.div`
-  width: 300px;
-  height: 350px;
+  width: 83.33vw; // 360px 기준 300px
+  height: 54.69vh; // 360px 기준 350px
   background-color: #ffffff;
-  border-radius: 20px;
-  border: 1px solid #ddd;
+  border-radius: 5.56vw; // 360px 기준 20px
+  border: 0.28vw solid #ddd; // 360px 기준 1px
   box-shadow:
-    0px 4px 4px rgba(0, 0, 0, 0.25),
-    inset 0px 4px 4px rgba(0, 0, 0, 0.25);
-  margin-top: 180px;
+    0px 1.11vw 1.11vw rgba(0, 0, 0, 0.25),
+    inset 0px 1.11vw 1.11vw rgba(0, 0, 0, 0.25);
+  margin-top: 25vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -20,14 +21,14 @@ const TabContent = styled.div`
 `;
 
 const Image = styled.img`
-  width: 150px;
-  height: 150px;
-  margin-top: 30px;
+  width: 41.67vw; // 360px 기준 150px
+  height: 20.83vh; // 360px 기준 150px
+  margin-top: 8.33vh; // 360px 기준 30px
 `;
 
 const Text = styled.p`
-  margin-top: 25px;
-  font-size: 14px;
+  margin-top: 6.94vh; // 360px 기준 25px
+  font-size: 3.89vw; // 360px 기준 14px
   font-family: 'KoddiUD OnGothic';
   font-weight: 700;
   text-align: center;
@@ -59,9 +60,8 @@ function LandPurchaseProcedureTab() {
 
   return (
     <TabContent>
-      <Image src={landImage} alt="Land" /> {/* 이미지 출력 */}
-      <Text>{knowledge || '구매 절차에 대한 정보가 없습니다.'}</Text>{' '}
-      {/* 받아온 데이터를 출력 */}
+      <Image src={landImage} alt="Land" />
+      <Text>{knowledge || '구매 절차에 대한 정보가 없습니다.'}</Text>
     </TabContent>
   );
 }

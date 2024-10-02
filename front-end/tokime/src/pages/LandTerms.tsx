@@ -14,8 +14,8 @@ const Container = styled.div`
 // 제목 스타일 정의
 const Title = styled.h2`
   position: absolute;
-  left: 40px;
-  top: 40px;
+  left: 11.11vw;
+  top: 6.25vh;
   font-size: 20px;
   font-weight: 700;
   font-family: 'KoddiUD OnGothic';
@@ -25,8 +25,8 @@ const Title = styled.h2`
 // 부제 스타일 정의
 const SubTitle = styled.div`
   position: absolute;
-  left: 13px;
-  top: 85px;
+  left: 4.17vw;
+  top: 13.28vh;
   font-size: 20px;
   font-weight: 700;
   color: #333333;
@@ -36,10 +36,10 @@ const SubTitle = styled.div`
 // 검색 박스 스타일 정의
 const SearchBox = styled.div`
   position: absolute;
-  width: 340px;
+  width: 94.44vw;
   height: 40px;
-  left: 10px;
-  top: 131px;
+  left: 1.56vw;
+  top: 20.31vh;
   background: #ffffff;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 10px;
@@ -64,6 +64,9 @@ const SearchInput = styled.input`
   background: none;
   font-family: 'KoddiUD OnGothic';
 
+  &::placeholder {
+    color: rgba(39, 195, 132, 0.5); // placeholder 텍스트 색상 설정 (50% 투명도)
+  }
   &:focus {
     outline: none;
     color: #27c384;
@@ -73,16 +76,16 @@ const SearchInput = styled.input`
 // 용어 목록 스타일 정의
 const TermContainer = styled.div`
   position: absolute;
-  width: 340px;
-  height: 385px;
-  left: 10px;
-  top: 178px;
+  width: 94.44vw;
+  height: 60.16vh;
+  left: 2.78vw;
+  top: 28.13vh;
   background: #ffffff;
   box-shadow:
     inset 0px 4px 4px rgba(0, 0, 0, 0.25),
     0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 10px;
-  padding: 20px;
+  padding: 3.13vh;
   overflow-y: scroll;
 `;
 
@@ -91,7 +94,7 @@ const Term = styled(Link)`
   font-size: 18px;
   font-weight: 700;
   color: #333333;
-  margin-bottom: 33px;
+  margin-bottom: 5.16vh;
   font-family: 'KoddiUD OnGothic';
   text-decoration: none;
 
@@ -104,11 +107,11 @@ const Term = styled(Link)`
 const AlphabetNavContainer = styled.div`
   display: flex;
   overflow-x: auto;
-  padding-bottom: 10px;
+  padding-bottom: 1.56vh;
   position: fixed;
-  bottom: 80px;
-  width: 340px;
-  left: 10px;
+  bottom: 12.5vh;
+  width: 94.44vw;
+  left: 2.78vw;
   z-index: 999;
   border-top: 3px solid rgba(120, 120, 130, 0.1);
 
