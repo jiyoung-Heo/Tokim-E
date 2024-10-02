@@ -1,10 +1,16 @@
 // src/pages/RiskMapReportPage.tsx
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { registDanger } from '../api/dangerAxios';
 
 function RiskMapReportPage() {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const map = useRef<any>(null);
   const marker = useRef<any>(null); // 마커를 저장할 ref
+
+  const [lat, setLat] = useState<number | null>(null); // 위도 상태
+  const [lng, setLng] = useState<number | null>(null); // 경도 상태
+  const [dangerTitle, setDangerTitle] = useState(''); // 제목 상태
+  const [dangerContent, setDangerContent] = useState(''); // 내용 상태
 
   useEffect(() => {
     if (mapContainer.current) {
@@ -17,10 +23,13 @@ function RiskMapReportPage() {
 
       // 지도 클릭 이벤트 핸들러
       window.naver.maps.Event.addListener(map.current, 'click', (e: any) => {
-        const lat = e.latlng.lat(); // 클릭한 위치의 위도
-        const lng = e.latlng.lng(); // 클릭한 위치의 경도
+        const latMap = e.latlng.lat(); // 클릭한 위치의 위도
+        const lngMap = e.latlng.lng(); // 클릭한 위치의 경도
 
-        console.log(`위도: ${lat}, 경도: ${lng}`); // 위경도 정보를 콘솔에 출력
+        console.log(`위도: ${latMap}, 경도: ${lngMap}`); // 위경도 정보를 콘솔에 출력
+
+        setLat(latMap); // 클릭한 위도 저장
+        setLng(lngMap); // 클릭한 경도 저장
 
         // 기존 마커가 있으면 제거
         if (marker.current) {
@@ -36,6 +45,29 @@ function RiskMapReportPage() {
     }
   }, []);
 
+  // 신고글 등록 함수
+  const handleSubmit = async () => {
+    if (lat && lng && dangerTitle && dangerContent) {
+      const dangerData = {
+        lat,
+        lng,
+        dangerTitle,
+        dangerContent,
+      };
+
+      try {
+        const res = await registDanger(dangerData); // axios로 데이터 전송
+        if (res) {
+          alert('신고글이 성공적으로 등록되었습니다.');
+        }
+      } catch (e) {
+        alert('신고글 등록에 실패했습니다.');
+      }
+    } else {
+      alert('모든 필드를 입력하고 지도를 클릭하여 위치를 선택하세요.');
+    }
+  };
+
   return (
     <>
       <div>
@@ -43,6 +75,8 @@ function RiskMapReportPage() {
         <input
           type="text"
           placeholder="텍스트를 입력하세요"
+          value={dangerTitle}
+          onChange={(e) => setDangerTitle(e.target.value)} // 제목 상태 업데이트
           style={{
             width: '300px',
             height: '30px',
@@ -71,6 +105,8 @@ function RiskMapReportPage() {
         <input
           type="text"
           placeholder="텍스트를 입력하세요"
+          value={dangerContent}
+          onChange={(e) => setDangerContent(e.target.value)} // 내용 상태 업데이트
           style={{
             width: '300px',
             height: '150px',
@@ -80,6 +116,24 @@ function RiskMapReportPage() {
             borderRadius: '4px',
           }}
         />
+      </div>
+      <div>
+        <button
+          type="button"
+          onClick={handleSubmit} // 등록 버튼 클릭 시 handleSubmit 함수 호출
+          style={{
+            marginTop: '20px',
+            padding: '10px 20px',
+            fontSize: '16px',
+            backgroundColor: '#4CAF50',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+          }}
+        >
+          등록
+        </button>
       </div>
     </>
   );
