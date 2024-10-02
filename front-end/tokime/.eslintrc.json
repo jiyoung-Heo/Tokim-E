@@ -24,6 +24,14 @@
     "no-console": "off",
     "import/extensions": "off", // 파일 확장자 관련 경고 비활성화
     "import/no-unresolved": "off", // 경로 관련 경고 비활성화
-    "react/no-array-index-key": "off"
+    "react/no-array-index-key": "off",
+    "no-param-reassign": [
+      "error",
+      {
+        "props": true,
+        "ignorePropertyModificationsFor": ["state"] // 'state'는 무시하도록 설정
+        //redux update 할 때 state 들어오는데 안써서 에러가나서 이거 추가합니다 -지영
+      }
+    ]
   }
 }
