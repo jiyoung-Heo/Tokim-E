@@ -4,7 +4,6 @@ import com.ssafy.tokime.dto.LandtermDTO;
 import com.ssafy.tokime.model.Landterm;
 import com.ssafy.tokime.model.Likeword;
 import com.ssafy.tokime.model.User;
-import com.ssafy.tokime.service.UserService;
 import com.ssafy.tokime.service.WordService;
 import com.ssafy.tokime.service.facade.UserFacadeService;
 import org.slf4j.Logger;
@@ -24,7 +23,6 @@ import java.util.Optional;
 public class WordController {
     @Autowired
     private WordService wordService;
-    private long userId;
     private static final Logger logger = LoggerFactory.getLogger(WordController.class);
 
     //사용자의 정보 가져오기
@@ -67,14 +65,11 @@ public class WordController {
             words.add(new LandtermDTO(word));
         }
         try {
-            List<Likeword> asdf = wordService.getLikeWordList(getUserId());
+            getUser();
+            List<Likeword> asdf = wordService.getLikeWordList(user.getUserId());
 //                List<Likeword> asdf = wordService.getLikeWordList(1L);
             logger.info("가져온 즐찾 단어의 수  :"+asdf.size());
-            logger.info("현재 유저의 아이디 넘버 : "+getUserId());
-
-//            for (int i = 0; i < asdf.size(); i++) {
-//                logger.info(asdf.get(i).getTermId()+" "+asdf.get(i).getUserId());
-//            }
+            logger.info("현재 유저의 아이디 : "+user.getEmail());
             // 가져온 것들이 즐겨찾기에 등록된 것들인지 표시정돈 해주기
             if (keyword.length() == 0) { // 전체 조회일시 바로 index값으로 접근하면됨
                 for (int i = 0; i < asdf.size(); i++) {
@@ -82,6 +77,7 @@ public class WordController {
                     words.get((int) index).setLikeCheck(true);
                     logger.info("즐겨찾기 한 단어 : "+asdf.get(i).getTermId());
                     logger.info("조회때 갱신할 단어"+words.get((int) index).getTermId());
+                    logger.info("잘 됐을까?"+words.get((int) index).isLikeCheck());
                 }
             } else { // 특정 키워드로 검색해서 가져온 것들
                 // 키워드 목록과 즐찾목록 비교해서 일치하면 likecheck = ture로 바꿔주기
@@ -123,7 +119,8 @@ public class WordController {
     @GetMapping("/like")
     public ResponseEntity<?> getWordLike() {
         try {
-            long userId = getUserId();
+            getUser();
+            long userId = user.getUserId();
 
             List<Likeword> words = wordService.getLikeWordList(userId);
             logger.info("찾은 단어의 갯수 : "+words.size());
@@ -152,7 +149,8 @@ public class WordController {
     public ResponseEntity<?> likeWord(@PathVariable long wordId) {
         // 추후 JWT을 디코딩해서 유저 id를 가져올 예정
         try {
-            long userId = getUserId(); // 여기를 JWT에서 가져옴, 추후 static 으로 뺄 예정
+            getUser();
+            long userId = user.getUserId(); // 여기를 JWT에서 가져옴, 추후 static 으로 뺄 예정
             // 즐겨찾기의 PK는 유저의 ID
             Likeword word = new Likeword();
             word.setTermId(wordId);
@@ -172,7 +170,8 @@ public class WordController {
     @DeleteMapping("/like/{termId}")
     public ResponseEntity<?> deleteWord(@PathVariable long termId) {
         try {
-            long userId = getUserId();
+            getUser();
+            long userId = user.getUserId();
             System.out.println("삭제하고자 하는 용어 : "+termId+" 맞나? :"+likeCheck(termId));
             wordService.deleteLikeWord(userId, termId);
             return ResponseEntity.ok().build();
@@ -202,9 +201,8 @@ public class WordController {
     }
 
     // 유저 정보 가져오기
-    public Long getUserId() {
+    public void getUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         user = userService.getUserInfo(email);
-        return user.getUserId();
     }
 }
