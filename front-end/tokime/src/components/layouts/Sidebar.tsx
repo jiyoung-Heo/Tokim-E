@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import sidebarIcon from '../../assets/images/icon/sidebar-icon.svg';
 import TokimLogo from '../../assets/images/TokimEnglogo.png';
 import sidebarUser from '../../assets/images/icon/sidebaruser.png';
@@ -11,6 +11,8 @@ import GoogleIcon from '../../assets/images/icon/Google.png'; // 구글 아이�
 import Graph from '../charts/GaugeGraph'; // 이전에 만든 Graph 컴포넌트 가져오기
 import { RootState } from '../../redux/store';
 import userQuizPercentAxios from '../../api/userQuizPercentAxios';
+import logoutAxios from '../../api/logoutAxios';
+import { persistor } from '../../redux/reduxStore';
 
 // 사이드바 전체 스타일 정의
 const SidebarContainer = styled.div<{ $isOpen: boolean }>`
@@ -67,6 +69,7 @@ const Score = styled.p`
 // 백분위 텍스트 스타일
 const Percentile = styled.p`
   font-size: 2.5vw;
+  font-weight: bold;
   color: #333333;
 `;
 
@@ -126,15 +129,15 @@ const ButtonContainer = styled.div`
 `;
 
 function Sidebar() {
+  const dispatch = useDispatch();
   const userInfo = useSelector((state: RootState) => state.user);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [percent, setPercent] = useState(0);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  const kakaoLoginUrl = `${process.env.REACT_APP_CUSTOM_KEY}/oauth2/authorization/kakao`;
-  const googleLoginUrl = `${process.env.REACT_APP_CUSTOM_KEY}/oauth2/authorization/google`;
+  const kakaoLoginUrl = `${process.env.REACT_APP_API_URL}/oauth2/authorization/kakao`;
+  const googleLoginUrl = `${process.env.REACT_APP_API_URL}/oauth2/authorization/google`;
 
   const handleKakaoLogin = () => {
     window.location.href = kakaoLoginUrl;
@@ -159,6 +162,14 @@ function Sidebar() {
   };
 
   useEffect(() => {
+    const fetchPercent = async () => {
+      const data = await userQuizPercentAxios();
+      if (data) {
+        setPercent(data);
+      }
+    };
+    fetchPercent();
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -176,7 +187,14 @@ function Sidebar() {
   }, [isSidebarOpen]);
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
+    const fetchLogout = async () => {
+      const data = await logoutAxios();
+      if (data) {
+        persistor.purge();
+        dispatch({ type: 'RESET_ALL' });
+      }
+    };
+    fetchLogout();
   };
 
   const handleNavigateToLogin = () => {
@@ -192,7 +210,7 @@ function Sidebar() {
         $isOpen={isSidebarOpen}
       />
 
-      {isLoggedIn ? (
+      {userInfo.name !== '' ? (
         <SidebarContainer ref={sidebarRef} $isOpen={isSidebarOpen}>
           <Logo src={TokimLogo} alt="Tokim Logo" />
           <GaugeWrapper>
@@ -204,7 +222,7 @@ function Sidebar() {
             </Score>
             <Percentile>
               상위
-              {userInfo.quizScore === -1 ? '?? ' : `${percent}`}%
+              {userInfo.quizScore === -1 ? ' ?? ' : ` ${percent} `}%
             </Percentile>
           </GaugeWrapper>
 
