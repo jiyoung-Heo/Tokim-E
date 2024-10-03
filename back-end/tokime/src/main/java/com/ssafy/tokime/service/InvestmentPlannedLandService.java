@@ -1,6 +1,7 @@
 package com.ssafy.tokime.service;
 
 import com.ssafy.tokime.dto.ChecklistDTO;
+import com.ssafy.tokime.dto.ChecklistStatusDTO;
 import com.ssafy.tokime.dto.InvestmentPlannedLandDTO;
 import com.ssafy.tokime.model.Checklist;
 import com.ssafy.tokime.model.ChecklistStatus;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,12 +30,11 @@ public class InvestmentPlannedLandService {
     private final ChecklistStatusRepository statusRepository;
 
     // 투자 예정지 등록
-    public int registInvestmentPlannedLand(InvestmentPlannedLandDTO dto, String email) {
+    public void registInvestmentPlannedLand(InvestmentPlannedLandDTO dto, String email) {
         // 로그인 유저
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("email로 조회 했으나 존재 하지 않는 유저"));
 
-        try {
             // 투자예정지 등록정보 entity로 변환
             InvestmentPlannedLand investmentPlannedLand = InvestmentPlannedLand.builder()
                     .user(user)
@@ -57,34 +58,90 @@ public class InvestmentPlannedLandService {
             // 체크리스트 상태 저장
             saveChecklists(dto.getChecklistIds(), investmentPlannedLand); // 체크리스트 ID로 수정
 
-            return 0; // 성공
-        } catch (Exception e) {
-            return 1; // 실패
-        }
     }
-    // 체크리스트 체크한거 리스트 불러오는거
-    public List<ChecklistStatus> getChecklistStatuses(Long investmentPlannedLandId) {
-        InvestmentPlannedLand investmentPlannedLand = investmentPlannedLandRepository.findById(investmentPlannedLandId)
-                .orElseThrow(() -> new RuntimeException("투자 예정지를 찾을 수 없습니다."));
-        return statusRepository.findByInvestmentPlannedLand(investmentPlannedLand);
+
+    // 첫 체크리스트 실행 시 가져오기
+    public List<ChecklistDTO> getallchecklist(){
+        List<Checklist> checklist =checklistRepository.findAll();
+        return checklist.stream()
+                .map(Checklist::toDto)
+                .collect(Collectors.toList());
     }
 
     // checklist 저장하는것
-    private void saveChecklists(List<Integer> checklistIds , InvestmentPlannedLand investmentPlannedLand) {
+    public void saveChecklists(List<Integer> checklistIds , InvestmentPlannedLand investmentPlannedLand) {
         for (Integer checklistId : checklistIds) {
 
             Checklist checklist = checklistRepository.findById(checklistId)
                     .orElseThrow(() -> new RuntimeException("체크리스트 항목을 찾을 수 없습니다."));
 
-
             ChecklistStatus status = ChecklistStatus.builder()
                     .investmentPlannedLand(investmentPlannedLand)
                     .checklist(checklist)
                     .build();
-
             statusRepository.save(status);
         }
     }
+
+    public List<ChecklistDTO> getChecklistWithStatus(Long investmentPlannedLandId) {
+        // 투자 예정지 찾기
+        InvestmentPlannedLand investmentPlannedLand = investmentPlannedLandRepository.findById(investmentPlannedLandId)
+                .orElseThrow(() -> new RuntimeException("투자 예정지를 찾을 수 없습니다."));
+
+        // 해당 투자 예정지에 대한 체크리스트 상태를 가져옴
+        List<ChecklistStatus> checklistStatuses = statusRepository.findByInvestmentPlannedLand(investmentPlannedLand);
+
+        // 체크리스트 상태에서 체크리스트 ID를 기반으로 체크리스트 DTO 리스트 생성
+        return checklistStatuses.stream()
+                .map(status -> {
+                    Checklist checklist = status.getChecklist(); // 체크리스트 상태에서 체크리스트 가져오기
+                    return ChecklistDTO.builder()
+                            .checklistId(checklist.getChecklistId()) // 체크리스트 ID
+                            .content(checklist.getContent()) // 체크리스트 내용
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
+
+
+
+    // 투자 예정지 수정
+    @Transactional
+    public InvestmentPlannedLandDTO updateInvestmentPlannedLand(Long id, InvestmentPlannedLandDTO dto, String email) {
+        if (dto == null) {
+            throw new IllegalArgumentException("수정할 데이터가 필요합니다.");
+        }
+
+        InvestmentPlannedLand investmentPlannedLand = investmentPlannedLandRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("투자 예정지를 찾을 수 없습니다."));
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 유저입니다."));
+
+        if (!investmentPlannedLand.getUser().getUserId().equals(user.getUserId())) {
+            throw new RuntimeException("수정할 권한이 없습니다.");
+        }
+
+        // DTO의 내용을 엔티티에 업데이트
+        investmentPlannedLand.setLandAddress(dto.getLandAddress());
+        investmentPlannedLand.setLandGradient(dto.getLandGradient());
+        investmentPlannedLand.setLandPrice(dto.getLandPrice());
+        investmentPlannedLand.setLandRoad(dto.getLandRoad());
+        investmentPlannedLand.setLandOwner(dto.getLandOwner());
+        investmentPlannedLand.setLandUseStatus(dto.getLandUseStatus());
+        investmentPlannedLand.setLandStory(dto.getLandStory());
+        investmentPlannedLand.setPlannedLandPyeong(dto.getPlannedLandPyeong());
+        investmentPlannedLand.setPlannedLandPrice(dto.getPlannedLandPrice());
+        investmentPlannedLand.setCheckedCount(dto.getCheckedCount());
+
+        // 수정된 투자 예정지 저장
+        investmentPlannedLandRepository.save(investmentPlannedLand);
+
+        return investmentPlannedLand.toDTO();
+    }
+
+
+
 
     // 전체 조회
     public List<InvestmentPlannedLandDTO> getInvestmentPlannedLandsByUserEmail(String email){
@@ -115,6 +172,7 @@ public class InvestmentPlannedLandService {
 
     }
 
+
     // 삭제
     @Transactional
     public void deleteinvestmentPlannedLand(Long id,String email){
@@ -124,14 +182,10 @@ public class InvestmentPlannedLandService {
         if(user.getUserId()!=investmentPlannedLand.getUser().getUserId()){
             throw new RuntimeException("삭제할 권한이 없습니다.");
         }
-        System.out.println("111111111111111111111111");
         // 체크리스트 삭제
         statusRepository.deleteByInvestmentPlannedLand(investmentPlannedLand);
-        System.out.println("222222222222222222222222");
         // 투자예정지 삭제
         investmentPlannedLandRepository.delete(investmentPlannedLand);
 
     }
-
-
 }

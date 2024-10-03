@@ -17,6 +17,6 @@ public class QuizDTO {
     // 문항 - quiz
     private String question;
     // 사지선다 - inco + co
-    private List<String> selectList;
+    private String[] selectList;
 
 }

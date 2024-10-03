@@ -14,10 +14,12 @@ import java.util.List;
 public interface LikeWordRepository extends JpaRepository<Likeword, Long> {
 
     //해당 사용자의 모든 즐겨찾기 단어 가져오기
-    List<Likeword> findAllByUserIdOrderByTermId(Long userId);
+    @Query("SELECT l FROM Likeword l WHERE l.userId = :userId")
+    List<Likeword> findAllByUserIdOrderByTermId(@Param("userId") Long userId);
 
     //해당 사용자의 특정 즐겨찾기 단어 삭제
     @Transactional
     @Modifying
-    void deleteByUserIdAndTermId(Long userId, Long termId);
+    @Query(value="DELETE FROM Likeword l where l.userId = :userId AND l.termId = :termId")
+    void deleteByUserIdAndTermId(@Param("userId") Long userId, @Param("termId") Long termId);
 }

@@ -23,4 +23,6 @@ public class ChecklistStatus {
     @ManyToOne
     @JoinColumn(name = "checklist_id", nullable = false)
     private Checklist checklist;
+
+
 }
