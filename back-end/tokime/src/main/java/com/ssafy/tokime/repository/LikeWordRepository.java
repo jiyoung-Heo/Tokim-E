@@ -14,8 +14,8 @@ import java.util.List;
 public interface LikeWordRepository extends JpaRepository<Likeword, Long> {
 
     //해당 사용자의 모든 즐겨찾기 단어 가져오기
-    @Query("SELECT l FROM Likeword l WHERE l.userId = :userId AND l.termId = :termId")
-    List<Likeword> findAllByUserIdOrderByTermId(@Param("userId") Long userId, @Param("termId") Long termId);
+    @Query("SELECT l FROM Likeword l WHERE l.userId = :userId")
+    List<Likeword> findAllByUserIdOrderByTermId(@Param("userId") Long udserId);
 
     //해당 사용자의 특정 즐겨찾기 단어 삭제
     @Transactional
