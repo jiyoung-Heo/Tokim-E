@@ -3,8 +3,10 @@ package com.ssafy.tokime.service;
 
 import com.ssafy.tokime.model.Land;
 import com.ssafy.tokime.repository.LandRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -20,17 +22,18 @@ public class LandService {
     }
 
     public List<Land> searchLands(String district, String address) {
-        return landRepository.findTop5ByDistrictAndAddress(district, address);
+        Pageable top5 = PageRequest.of(0, 5);  // 첫 페이지에서 5개의 항목만 가져오기
+        return landRepository.findTop5ByDistrictAndAddress(district, address, top5);
     }
 
-    // district만 입력된 경우
     public List<Land> searchByDistrict(String district) {
-        return landRepository.findTop5ByDistrict(district);
+        Pageable top5 = PageRequest.of(0, 5);  // 첫 페이지에서 5개의 항목만 가져오기
+        return landRepository.findTop5ByDistrict(district, top5);
     }
 
-    // address만 입력된 경우
     public List<Land> searchByAddress(String address) {
-        return landRepository.findTop5ByAddress(address);
+        Pageable top5 = PageRequest.of(0, 5);  // 첫 페이지에서 5개의 항목만 가져오기
+        return landRepository.findTop5ByAddress(address, top5);
     }
 
 }
