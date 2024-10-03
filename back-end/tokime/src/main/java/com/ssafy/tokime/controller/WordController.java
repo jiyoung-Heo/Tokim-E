@@ -72,7 +72,7 @@ public class WordController {
             try {
                 getUserId();
                 logger.info("로그인 한 상태임!"+user.getEmail());
-                List<LandtermDTO> asdf = (List<LandtermDTO>) getWordLike().getBody();
+                List<Likeword> asdf = wordService.getLikeWordList(userId);
                 // 가져온 것들이 즐겨찾기에 등록된 것들인지 표시정돈 해주기
                 if (keyword.length() == 0) { // 전체 조회일시 바로 index값으로 접근하면됨
                     for (int i = 0; i < asdf.size(); i++) {
