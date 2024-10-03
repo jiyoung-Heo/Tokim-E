@@ -225,6 +225,14 @@ const LandTerms = () => {
     try {
       const data = await getAllTerms('');
       setAllTerms(data);
+
+      // likeCheck가 true인 항목을 찾아 likedTerms에 저장
+      const likedTermIds = data
+        .filter((term: any) => term.likeCheck === true) // term에 타입 명시
+        .map((term: any) => term.termId); // term에 타입 명시
+
+      setLikedTerms(likedTermIds);
+
       setFilteredTerms(data);
     } catch (error) {
       console.error('용어를 불러오는데 실패했습니다:', error);

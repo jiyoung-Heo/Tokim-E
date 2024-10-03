@@ -41,8 +41,8 @@ const TermDetailContainer = styled.div`
 
 const FavoriteIcon = styled.img<{ isLiked: boolean }>`
   position: absolute;
-  top: 7.19vh; // 상단에서 2vh 위치
-  right: 5.83vw; // 오른쪽에서 5vw 위치
+  top: 7.19vh;
+  right: 5.83vw;
   width: 6vw;
   height: 6vw;
   max-width: 40px;
@@ -69,7 +69,6 @@ const TermDescription = styled.div`
   color: #000000;
 `;
 
-// 관련 법률 및 규제 정보 컨테이너
 const RelatedLawsContainer = styled.div`
   width: 90vw;
   max-width: 340px;
@@ -92,7 +91,6 @@ const RelatedLawsTitle = styled.div`
   margin-bottom: 10px;
 `;
 
-// 관련 뉴스 타이틀
 const RelatedNewsTitle = styled.div`
   width: 90vw;
   max-width: 340px;
@@ -103,7 +101,6 @@ const RelatedNewsTitle = styled.div`
   margin-top: 4.38vh;
 `;
 
-// 관련 뉴스 컨테이너
 const NewsContainer = styled.div`
   width: 90vw;
   max-width: 340px;
@@ -137,7 +134,9 @@ function LandTermDetail() {
       try {
         const data = await getSelectedTerm(Number(term)); // API로 용어 상세 정보 가져오기
         setTermData(data);
-        setIsLiked(data.isLiked); // 서버에서 받아온 즐겨찾기 상태를 반영
+
+        // likeCheck 값에 따라 즐겨찾기 상태를 설정
+        setIsLiked(data.likeCheck === true); // likeCheck 값이 true이면 즐겨찾기 상태로 설정
       } catch (error) {
         console.error('용어 데이터를 불러오는데 실패했습니다.', error);
       } finally {
