@@ -17,7 +17,6 @@ public class UserDTO {
     private String name;
     private String email;
     private String birth;
-    private int phone;
     private Long quizScore;
 
     public UserDTO(final User entity) {
@@ -26,7 +25,6 @@ public class UserDTO {
         if(entity.getBirth() != null){
             this.birth = format.format(entity.getBirth());
         }
-        this.phone = entity.getPhone();
         this.quizScore = entity.getQuizScore();
     }
 
@@ -35,7 +33,6 @@ public class UserDTO {
                 .name(dto.getName())
                 .email(dto.getEmail())
                 .birth(format.parse(dto.getBirth()))
-                .phone(dto.getPhone())
                 .quizScore(dto.getQuizScore())
                 .build();
     }
