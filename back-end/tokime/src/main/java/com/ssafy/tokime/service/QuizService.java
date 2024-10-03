@@ -3,6 +3,7 @@ package com.ssafy.tokime.service;
 import com.ssafy.tokime.model.Quiz;
 import com.ssafy.tokime.model.QuizCorrect;
 import com.ssafy.tokime.model.QuizIncorrect;
+import com.ssafy.tokime.model.QuizTotal;
 import com.ssafy.tokime.repository.QuizCorrectRepository;
 import com.ssafy.tokime.repository.QuizInCorrectRepository;
 import com.ssafy.tokime.repository.QuizRepository;
@@ -40,5 +41,10 @@ public class QuizService {
     // 특정 오답 가져오기
     public Optional<QuizIncorrect> getQuizIncorrect(long quizInCorrectId) {
         return quizInCorrectRepository.findById(quizInCorrectId);
+    }
+
+    //퀴즈 무작위 5개 가져오기
+    public List<Object[]> getQuizList() {
+        return quizRepository.findRandomQuizzes();
     }
 }
