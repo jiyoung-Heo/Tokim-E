@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import { getSelectedTerm } from '../api/termAxios'; // API 호출
+import OpenAiUtil from '../utils/OpenAiUtill';
 
 // 스타일 정의
 const Container = styled.div`
@@ -116,6 +117,7 @@ const NewsItem = styled.div`
 function LandTermDetail() {
   const { term } = useParams<{ term: string }>(); // useParams로 termId 가져오기
   const [termData, setTermData] = useState<any>(null);
+  const [openAiResponse, setOpenAiResponse] = useState<string | null>(null); // OpenAI 응답 저장
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -131,7 +133,25 @@ function LandTermDetail() {
     };
 
     fetchTermData();
-  }, [term]);
+  }, [term]); // term이 변경될 때마다 fetchTermData를 호출
+
+  useEffect(() => {
+    const fetchOpenAiResponse = async () => {
+      if (termData && termData.termLaw) {
+        // termData가 존재하고 termLaw가 있을 때만 호출
+        try {
+          const msg = `${termData.termLaw}에 대해 알려줘.`;
+          const result = await OpenAiUtil.prompt(msg); // OpenAI API 호출
+          setOpenAiResponse(result.message.content); // 응답 내용 저장
+        } catch (error) {
+          console.error('OpenAI API 실행 중 오류 발생:', error);
+          setOpenAiResponse('OpenAI 응답을 가져오는데 실패했습니다.');
+        }
+      }
+    };
+
+    fetchOpenAiResponse(); // termData가 변경될 때마다 OpenAI 응답을 가져옴
+  }, [termData]); // termData가 변경될 때마다 fetchOpenAiResponse를 호출
 
   if (loading) {
     return <div>용어 정보를 불러오는 중입니다...</div>;
@@ -155,6 +175,7 @@ function LandTermDetail() {
       <RelatedLawsContainer>
         <RelatedLawsTitle>관련 법률 및 규제 정보</RelatedLawsTitle>
         <div>{termData.termLaw}</div>
+        <div>{openAiResponse || '응답을 불러오는 중입니다...'}</div>
       </RelatedLawsContainer>
 
       {/* 관련 뉴스 */}
