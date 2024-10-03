@@ -66,40 +66,40 @@ public class WordController {
         for (Landterm word : result) {
             words.add(new LandtermDTO(word));
         }
-        if (SecurityContextHolder.getContext().getAuthentication().getName().equals("anonymousUser")) {
-            return ResponseEntity.ok().body(words);
-        } else {
-            try {
-                
-                List<Likeword> asdf = wordService.getLikeWordList(getUserId());
-                logger.info("가져온 즐찾 단어의 수  :"+asdf.size());
+        try {
+            List<Likeword> asdf = wordService.getLikeWordList(getUserId());
+//                List<Likeword> asdf = wordService.getLikeWordList(1L);
+            logger.info("가져온 즐찾 단어의 수  :"+asdf.size());
+            logger.info("현재 유저의 아이디 넘버 : "+getUserId());
+
+//            for (int i = 0; i < asdf.size(); i++) {
+//                logger.info(asdf.get(i).getTermId()+" "+asdf.get(i).getUserId());
+//            }
+            // 가져온 것들이 즐겨찾기에 등록된 것들인지 표시정돈 해주기
+            if (keyword.length() == 0) { // 전체 조회일시 바로 index값으로 접근하면됨
                 for (int i = 0; i < asdf.size(); i++) {
-                    logger.info(asdf.get(i).getTermId()+" "+asdf.get(i).getUserId());
+                    long index = asdf.get(i).getTermId()-1;
+                    words.get((int) index).setLikeCheck(true);
+                    logger.info("즐겨찾기 한 단어 : "+asdf.get(i).getTermId());
+                    logger.info("조회때 갱신할 단어"+words.get((int) index).getTermId());
                 }
-                // 가져온 것들이 즐겨찾기에 등록된 것들인지 표시정돈 해주기
-                if (keyword.length() == 0) { // 전체 조회일시 바로 index값으로 접근하면됨
-                    for (int i = 0; i < asdf.size(); i++) {
-                        long index = asdf.get(i).getTermId()-1;
-                        words.get((int) index).setLikeCheck(true);
-                    }
-                } else { // 특정 키워드로 검색해서 가져온 것들
-                    // 키워드 목록과 즐찾목록 비교해서 일치하면 likecheck = ture로 바꿔주기
-                    for (int x = 0; x < asdf.size(); x++) {
-                        long number = asdf.get(x).getTermId();
-                        for (int y = 0; y < words.size(); y++) {
-                            if (number == words.get(y).getTermId()) {
-                                // 즐찾 termId와 검색결과들의 termId 비교
-                                words.get(y).setLikeCheck(true);
-                                break;
-                            }
+            } else { // 특정 키워드로 검색해서 가져온 것들
+                // 키워드 목록과 즐찾목록 비교해서 일치하면 likecheck = ture로 바꿔주기
+                for (int x = 0; x < asdf.size(); x++) {
+                    long number = asdf.get(x).getTermId();
+                    for (int y = 0; y < words.size(); y++) {
+                        if (number == words.get(y).getTermId()) {
+                            // 즐찾 termId와 검색결과들의 termId 비교
+                            words.get(y).setLikeCheck(true);
+                            break;
                         }
                     }
                 }
-                return ResponseEntity.ok().body(words);
-            }catch (Exception e) {
-                e.printStackTrace();
-                return ResponseEntity.status(500).build();
             }
+            return ResponseEntity.ok().body(words);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(words);
         }
     }
 
