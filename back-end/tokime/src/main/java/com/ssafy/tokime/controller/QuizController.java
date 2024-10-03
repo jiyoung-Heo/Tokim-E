@@ -2,10 +2,7 @@ package com.ssafy.tokime.controller;
 
 import com.ssafy.tokime.dto.QuizAverageDTO;
 import com.ssafy.tokime.dto.QuizDTO;
-import com.ssafy.tokime.model.Quiz;
-import com.ssafy.tokime.model.QuizCorrect;
-import com.ssafy.tokime.model.QuizIncorrect;
-import com.ssafy.tokime.model.User;
+import com.ssafy.tokime.model.*;
 import com.ssafy.tokime.service.QuizService;
 import com.ssafy.tokime.service.UserService;
 import com.ssafy.tokime.service.facade.UserFacadeService;
@@ -33,47 +30,46 @@ public class QuizController {
     private UserService userService;
     private static User user;
 
-    //문제의 수, 우선 1개로하고 완성되면 20개로!
-    static int num = 20;
-
     // 특정 퀴즈 조회
     @GetMapping("")
     public ResponseEntity<?> getQuiz() {
-        // 20개의 문제를 선별
-        long[] quizNumber = getQuizNumber();
-        // 해당 id값으로 퀴즈들 가져옴
-        long quizId; // 문제 id
-        int location; // 정답 삽입 위치
-        List<QuizDTO> quizList = new ArrayList<>();
-        for (int i = 0; i < num; i ++) {
-            quizId = quizNumber[i];
-            location = (int) quizId%4;
-            // 퀴즈 문항, 정답, 오답 불러오기
-
-            // 문항
-            Optional<Quiz> quiz = quizService.getQuiz(quizId);
-            // 정답
-            Optional<QuizCorrect> quizCorrect = quizService.getQuizCorrect(quizId);
-            // 오답들
-            List<QuizIncorrect> quizIncorrects = quizService.getQuizIncorrects(quizId);
-
-            // DTO수준에서 정답의 위치를 임의로 지정, List의 어느 위치에 정답이 있는지 알려줌
+        try {
+            List<Object[]> quizList = quizService.getQuizList();
+            List<QuizDTO> quizDTOList = new ArrayList<>();
+            int cnt = 0;
             QuizDTO quizDTO = new QuizDTO();
-            quizDTO.setQuizId(quizId);
-            quizDTO.setQuestion(quiz.get().getQuizQuestion()); // 퀴즈 문항
-            // 정답의 위치는 quizId기준 4의 나머지값으로 임의로 설정
-            quizDTO.setAnswerNumber(quizId%4+1); // List상에 퀴즈 정답이 어디에 위치해있는가의 위치 0~3의 값
-            List<String> strList = new ArrayList<>();
-            for (int index = 0; index < 3; index ++) {
-                strList.add(quizIncorrects.get(index).getIncorrectAnswer());
-                logger.info(quizIncorrects.get(index).getIncorrectAnswer());
+            for (int repeat = 0; repeat < 20; repeat++) {
+                int start = repeat * 3;
+                int location = 0;
+                int ind = 0;
+                if (quizDTO.getSelectList() == null) {
+                    quizDTO.setSelectList(new String[4]);
+                    quizDTO.setQuizId((Long) quizList.get(start)[0]);
+                    quizDTO.setQuestion((String) quizList.get(start)[1]);
+                    quizDTO.setAnswerNumber((quizDTO.getQuizId() % 4) + 1);
+                    location = (int) (quizDTO.getQuizId() % 4);
+                }
+                for (int i = 0; i < 3; i++) {
+                    int index = start + i;
+                    String select = (String) quizList.get(index)[3];
+                    if (ind == location) {
+                        quizDTO.getSelectList()[ind] = (String) quizList.get(index)[2];
+                        ind++;
+                    }
+                    quizDTO.getSelectList()[ind] = select;
+                    ind++;
+                }
+                if (location == 3) {
+                    quizDTO.getSelectList()[ind] = (String) quizList.get(start)[2];
+                }
+                quizDTOList.add(quizDTO);
+                quizDTO = new QuizDTO();
             }
-
-            strList.add(location, quizCorrect.get().getCorrectAnswer());
-            quizDTO.setSelectList(strList);
-            quizList.add(quizDTO);
+            return ResponseEntity.ok().body(quizDTOList);
+        }catch (Exception e) {
+            logger.error(e.getMessage());
+            return ResponseEntity.status(500).body(e.getMessage());
         }
-        return ResponseEntity.ok().body(quizList);
     }
 
     @GetMapping("/average")
@@ -131,22 +127,6 @@ public class QuizController {
             logger.error("Error while quiz average", e);
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-    }
-
-    // 10.01 시점 기준 id기준 2~80개의 퀴즈가 있으니 79개를 선별하겠다고 가정 -> 1~86으로 정정
-    // 퀴즈 번호 랜덤 뽑기
-    public long[] getQuizNumber() {
-        List<Long> temp = new ArrayList<>();
-        for (long i = 1; i<= 86; i ++) {
-            temp.add(i);
-        }
-        // 2~80를 섞음
-        Collections.shuffle(temp);
-        long[] quizNumber = new long[num];
-        for (int i = 0; i < num; i++) {
-            quizNumber[i] = temp.get(i);
-        }
-        return quizNumber;
     }
 
     // 상위 n프로인지 반환해주는 메서드
