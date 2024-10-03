@@ -27,10 +27,12 @@ List<Land> findTop5ByDistrictAndAddress(@Param("district") String district, @Par
     @Query("SELECT l FROM Land l WHERE l.landDistrict LIKE %:district%")
     List<Land> findTop5ByDistrict(@Param("district") String district, Pageable pageable);
 
-    @Query(value = "SELECT * FROM land WHERE MATCH(land_district) AGAINST (:district IN NATURAL LANGUAGE MODE)", nativeQuery = true)
+//    @Query(value = "SELECT * FROM land WHERE MATCH(land_district) AGAINST (:district IN NATURAL LANGUAGE MODE)", nativeQuery = true)
+//    List<Land> findTop5ByDistrictFullText(@Param("district") String district, Pageable pageable);
+
+
+    @Query(value = "SELECT * FROM land WHERE MATCH(land_district) AGAINST (CONCAT(:district, '*') IN BOOLEAN MODE)", nativeQuery = true)
     List<Land> findTop5ByDistrictFullText(@Param("district") String district, Pageable pageable);
-
-
 
     @Query("SELECT l FROM Land l WHERE l.landAddress LIKE %:address%")
     List<Land> findTop5ByAddress(@Param("address") String address, Pageable pageable);
