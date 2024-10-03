@@ -1,57 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { getLandLawInfo, getSearchLandInfo } from '../../api/landAxios';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store'; // RootState 경로에 맞게 수정 필요
 
-interface Ordinance {
-  lawId: number;
-  lawName: string;
-  lawContent: string;
-  lawItemNumber: string;
-  lawLandUse: string;
-  lawDistrict: number;
-  lawImplementAt: string; // ISO 형식의 날짜 문자열
-}
-
-interface OrdinanceInfoTabProps {
-  district: string;
-  address: string;
-}
-
-function OrdinanceInfoTab({ district, address }: OrdinanceInfoTabProps) {
-  const [ordinances, setOrdinances] = useState<Ordinance[]>([]);
+function OrdinanceInfoTab() {
+  const ordinances = useSelector((state: RootState) => state.lawInfo.lawInfos); // 법령 정보 가져오기
   const [currentIndex, setCurrentIndex] = useState(0);
-
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // error 상태 변수 이름 변경
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // 1. 토지 정보를 가져옵니다.
-        const landInfo = await getSearchLandInfo(district, address);
-
-        if (landInfo) {
-          // 2. 가져온 데이터 중 landDistrictCode를 사용하여 조례 정보를 가져옵니다.
-          const landDistrictCode = landInfo[0]?.landDistrictCode; // 첫 번째 요소의 landDistrictCode를 사용
-
-          if (landDistrictCode) {
-            const lawData = await getLandLawInfo(landDistrictCode.toString());
-            setOrdinances(lawData); // 조례 정보 저장
-          } else {
-            setErrorMessage('해당 지역의 법령 정보가 없습니다.'); // 에러 메시지 상태 업데이트
-          }
-        } else {
-          setErrorMessage('주소를 먼저 입력해주세요.');
-        }
-      } catch (error) {
-        console.error('데이터를 가져오는 중 오류 발생:', error);
-        setErrorMessage('데이터를 가져오는 중 오류 발생'); // 에러 메시지 상태 업데이트
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [district, address]);
+    if (ordinances.length === 0) {
+      setErrorMessage('법령 정보가 없습니다.'); // 에러 메시지 상태 업데이트
+      setLoading(false);
+    } else {
+      setLoading(false);
+    }
+  }, [ordinances]);
 
   const handleNext = () => {
     if (currentIndex < ordinances.length - 1) {
