@@ -70,7 +70,7 @@ public class WordController {
             return ResponseEntity.ok().body(words);
         } else {
             try {
-                
+
                 logger.info("로그인 한 상태임!"+user.getEmail());
                 List<Likeword> asdf = wordService.getLikeWordList(getUserId());
                 logger.info("가져온 즐찾 단어의 수  :"+asdf.size());
