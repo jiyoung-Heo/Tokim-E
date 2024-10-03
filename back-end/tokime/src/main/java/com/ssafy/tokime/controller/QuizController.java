@@ -135,8 +135,9 @@ public class QuizController {
     @GetMapping("/percent")
     public ResponseEntity<?> getQuizAverageN() {
         try {
-            getUserInfo();
+//            getUserInfo();
             List<Long> scoreList = userService.getAllQuizScoreDistinct();
+            logger.info("가져온 점수들 : "+scoreList.toString());
             return ResponseEntity.ok().body(getPercent(scoreList, user.getQuizScore()));
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -178,6 +179,7 @@ public class QuizController {
     // 유저 정보 가져오기
     public void getUserInfo() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        logger.info("가져오려는 유저의 정보 : "+email);
         user = userFacadeService.getUserInfo(email);
     }
 }
