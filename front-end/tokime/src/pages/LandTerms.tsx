@@ -152,7 +152,10 @@ const AlphabetNavContainer = styled.div`
   }
 `;
 
-const AlphabetButton = styled.div<{ isSelected: boolean }>`
+const AlphabetButton = styled.div<{
+  isSelected: boolean;
+  showFavorites: boolean;
+}>`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -164,8 +167,21 @@ const AlphabetButton = styled.div<{ isSelected: boolean }>`
   font-family: 'KoddiUD OnGothic';
   font-weight: 700;
   text-align: center;
-  color: ${(props) => (props.isSelected ? '#27c384' : '#333333')};
-  cursor: pointer;
+
+  color: ${(props) => {
+    if (props.showFavorites) {
+      return '#CCCCCC'; // 즐겨찾기 모드일 때 알파벳 색상을 회색으로
+    }
+    if (props.isSelected) {
+      return '#27c384'; // 선택된 알파벳 색상
+    }
+    return '#333333'; // 기본 알파벳 색상
+  }};
+
+  cursor: ${(props) =>
+    props.showFavorites
+      ? 'not-allowed'
+      : 'pointer'}; // 즐겨찾기 모드일 때 클릭 비활성화
 `;
 
 const FavoriteButton = styled(StarIcon)`
@@ -233,6 +249,7 @@ const LandTerms = () => {
 
   const handleFavoriteClick = () => {
     setShowFavorites(!showFavorites);
+    setSelectedAlphabet(''); // 즐겨찾기 모드에서는 알파벳 선택 초기화
     if (!showFavorites) {
       setFilteredTerms(
         allTerms.filter((term) => likedTerms.includes(term.termId)),
@@ -269,6 +286,7 @@ const LandTerms = () => {
       setSelectedAlphabet('');
     } else {
       setSelectedAlphabet(alphabet);
+      setShowFavorites(false); // 알파벳을 클릭하면 즐겨찾기 모드를 해제
     }
   };
 
@@ -282,9 +300,13 @@ const LandTerms = () => {
       <SubTitle>어떤 용어를 검색할까요?</SubTitle>
 
       <AlphabetNavContainer>
-        <AlphabetButton isSelected={false} onClick={handleFavoriteClick}>
+        <AlphabetButton
+          isSelected={false}
+          onClick={handleFavoriteClick}
+          showFavorites={showFavorites}
+        >
           <FavoriteButton
-            src={showFavorites ? starFilled : starIcon} // showFavorites에 따라 이미지 변경
+            src={showFavorites ? starFilled : starIcon} // 즐겨찾기 모드에 따라 아이콘 변경
             alt="즐겨찾기 전용 보기"
             isLiked={showFavorites}
           />
@@ -293,6 +315,7 @@ const LandTerms = () => {
           <AlphabetButton
             key={alphabet}
             isSelected={selectedAlphabet === alphabet}
+            showFavorites={showFavorites} // 즐겨찾기 모드에 따라 알파벳 색상 변경
             onClick={() => handleAlphabetClick(alphabet)}
           >
             {alphabet}
