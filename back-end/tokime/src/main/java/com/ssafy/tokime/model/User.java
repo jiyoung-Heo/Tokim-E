@@ -29,9 +29,6 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
-    private int phone;
-
 //    @Column(nullable = false)
     private Date birth;
 
