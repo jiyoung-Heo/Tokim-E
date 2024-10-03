@@ -72,11 +72,19 @@ public class QuizController {
         }
     }
 
+    @GetMapping("/temp")
+    public ResponseEntity<?> getTempQuiz() {
+        return ResponseEntity.ok().body(userService.getQuizList());
+    }
+
     @GetMapping("/average")
     public ResponseEntity<?> getQuizAverage() {
         try {
             getUserInfo();
+//            user = new User();
+//            user.setQuizScore(50L);
             QuizAverageDTO quiz = new QuizAverageDTO();
+            quiz.setScoreList(new ArrayList<>());
 
             // 1. 사용자 점수
             quiz.setQuizScore(user.getQuizScore());
@@ -100,12 +108,20 @@ public class QuizController {
             // 4. 토키미 전체 평균
             quiz.setTotalAverage(getAverage(scoreList));
 
+            // 6. 토키미 전체 사용자 점수 분포
+            List<Object[]> list = userService.getQuizList();
+            for (int i = 0; i < list.size(); i++) {
+                Object[] temp = list.get(i);
+                long score = (long) temp[0];
+                long person = (long) temp[1];
+                quiz.getScoreList().add(new long[] {score, person});
+            }
+
             if (quiz.getQuizScore() == -1) { // 상식퀴즈를 한번도 진행하지 않았다면 디폴트값으로 -1을 가짐
                 // 퀴즈 푼 내역이 없으면 제공받을 수 있는 부분은 또래평균만 알 수 있음
                 // 나머지 값은 디폴트값으로
                 quiz.setTop(0L);
                 quiz.setAgeGap(0L);
-
             } else {
                 // 3. 사용자의 점수와 또래 평균 차이
                 if (user.getBirth() != null) {
@@ -122,6 +138,7 @@ public class QuizController {
                 Collections.sort(scoreList, Collections.reverseOrder());
                 System.out.println(scoreList);
                 quiz.setTop(getPercent(scoreList, quiz.getQuizScore()));
+
             }
             return ResponseEntity.ok().body(quiz);
         }
