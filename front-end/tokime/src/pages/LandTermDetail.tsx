@@ -1,42 +1,55 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
-import { getSelectedTerm } from '../api/termAxios'; // API 호출
+import {
+  getSelectedTerm,
+  registTermLike,
+  deleteTermLike,
+} from '../api/termAxios'; // API 호출
 import OpenAiUtil from '../utils/OpenAiUtill';
+import starIcon from '../assets/images/icon/star.svg';
+import starFilled from '../assets/images/icon/star_filled.svg';
 
 // 스타일 정의
 const Container = styled.div`
   width: 100%;
-  height: 100vh;
   background: #f3f7fb;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 5vh 2vw;
-  box-sizing: border-box;
 `;
 
 const Title = styled.h2`
-  font-size: 5vw;
+  position: absolute;
+  left: 11.11vw;
+  top: 6.25vh;
+  font-size: 20px;
   font-weight: 700;
   font-family: 'KoddiUD OnGothic';
   color: #333333;
-  margin-bottom: 20px;
-  text-align: center;
 `;
 
-// 용어 정보 컨테이너
 const TermDetailContainer = styled.div`
-  width: 90vw; // 반응형을 위해 90vw로 설정
+  width: 90vw;
   max-width: 340px;
   height: 180px;
   background: #ffffff;
   border: 1px solid #000000;
   border-radius: 10px;
-  padding: 15px;
+  padding: 2.34vh;
   box-sizing: border-box;
-  overflow-y: auto; // 스크롤 추가
-  margin-bottom: 20px;
+  overflow-y: auto;
+  margin-top: 7vh;
+`;
+
+const FavoriteIcon = styled.img<{ isLiked: boolean }>`
+  position: absolute;
+  top: 7.19vh; // 상단에서 2vh 위치
+  right: 5.83vw; // 오른쪽에서 5vw 위치
+  width: 6vw;
+  height: 6vw;
+  max-width: 40px;
+  max-height: 40px;
+  cursor: pointer;
+  transition: opacity 0.3s ease-in-out;
+  opacity: ${(props) => (props.isLiked ? 1 : 0.5)};
 `;
 
 const TermTitle = styled.div`
@@ -66,8 +79,8 @@ const RelatedLawsContainer = styled.div`
   border-radius: 10px;
   padding: 15px;
   box-sizing: border-box;
-  overflow-y: auto; // 스크롤 추가
-  margin-bottom: 20px;
+  overflow-y: auto;
+  margin-top: 2.03vh;
 `;
 
 const RelatedLawsTitle = styled.div`
@@ -87,7 +100,7 @@ const RelatedNewsTitle = styled.div`
   font-weight: 700;
   font-size: 4vw;
   color: #333333;
-  margin-bottom: 10px;
+  margin-top: 4.38vh;
 `;
 
 // 관련 뉴스 컨테이너
@@ -95,12 +108,9 @@ const NewsContainer = styled.div`
   width: 90vw;
   max-width: 340px;
   height: 110px;
-  background: #ffffff;
   border-radius: 10px;
-  padding: 10px;
   box-sizing: border-box;
-  overflow-y: auto; // 스크롤 추가
-  margin-bottom: 20px;
+  overflow-y: auto;
 `;
 
 const NewsItem = styled.div`
@@ -119,12 +129,15 @@ function LandTermDetail() {
   const [termData, setTermData] = useState<any>(null);
   const [openAiResponse, setOpenAiResponse] = useState<string | null>(null); // OpenAI 응답 저장
   const [loading, setLoading] = useState(true);
+  const [isLiked, setIsLiked] = useState(false); // 즐겨찾기 상태
 
+  // 용어 데이터를 가져오는 useEffect
   useEffect(() => {
     const fetchTermData = async () => {
       try {
         const data = await getSelectedTerm(Number(term)); // API로 용어 상세 정보 가져오기
-        setTermData(data); // API로 받은 데이터 저장
+        setTermData(data);
+        setIsLiked(data.isLiked); // 서버에서 받아온 즐겨찾기 상태를 반영
       } catch (error) {
         console.error('용어 데이터를 불러오는데 실패했습니다.', error);
       } finally {
@@ -133,12 +146,12 @@ function LandTermDetail() {
     };
 
     fetchTermData();
-  }, [term]); // term이 변경될 때마다 fetchTermData를 호출
+  }, [term]);
 
+  // OpenAI 응답을 가져오는 useEffect
   useEffect(() => {
     const fetchOpenAiResponse = async () => {
       if (termData && termData.termLaw) {
-        // termData가 존재하고 termLaw가 있을 때만 호출
         try {
           const msg = `${termData.termLaw}에 대해 알려줘.`;
           const result = await OpenAiUtil.prompt(msg); // OpenAI API 호출
@@ -150,8 +163,22 @@ function LandTermDetail() {
       }
     };
 
-    fetchOpenAiResponse(); // termData가 변경될 때마다 OpenAI 응답을 가져옴
-  }, [termData]); // termData가 변경될 때마다 fetchOpenAiResponse를 호출
+    fetchOpenAiResponse();
+  }, [termData]);
+
+  // 즐겨찾기 토글 함수
+  const toggleLike = async () => {
+    try {
+      if (isLiked) {
+        await deleteTermLike(Number(term)); // 즐겨찾기 해제
+      } else {
+        await registTermLike(Number(term)); // 즐겨찾기 등록
+      }
+      setIsLiked(!isLiked); // 상태 업데이트
+    } catch (error) {
+      console.error('즐겨찾기 처리 중 오류 발생:', error);
+    }
+  };
 
   if (loading) {
     return <div>용어 정보를 불러오는 중입니다...</div>;
@@ -170,6 +197,14 @@ function LandTermDetail() {
         <TermTitle>{termData.termName}</TermTitle>
         <TermDescription>{termData.termDescribe}</TermDescription>
       </TermDetailContainer>
+
+      {/* 즐겨찾기 아이콘 */}
+      <FavoriteIcon
+        src={isLiked ? starFilled : starIcon}
+        alt="즐겨찾기"
+        isLiked={isLiked}
+        onClick={toggleLike}
+      />
 
       {/* 관련 법률 및 규제 정보 */}
       <RelatedLawsContainer>
