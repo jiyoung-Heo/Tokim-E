@@ -6,7 +6,6 @@ import sidebarIcon from '../../assets/images/icon/sidebar-icon.svg';
 import TokimLogo from '../../assets/images/TokimEnglogo.png';
 import sidebarUser from '../../assets/images/icon/sidebaruser.png';
 import sidebarEmail from '../../assets/images/icon/sidebaremail.png';
-import sidebarPhone from '../../assets/images/icon/sidebarphone.png';
 import KakaoIcon from '../../assets/images/icon/kakao.svg'; // 카카오 아이콘 이미지
 import GoogleIcon from '../../assets/images/icon/Google.png'; // 구글 아이콘 이미지
 import Graph from '../charts/GaugeGraph'; // 이전에 만든 Graph 컴포넌트 가져오기
@@ -25,6 +24,9 @@ const SidebarContainer = styled.div<{ $isOpen: boolean }>`
   z-index: 1000;
   padding: 2.5vh 2vw; /* 사이드바 안쪽 패딩 조정 */
   box-sizing: border-box; /* 패딩을 포함한 크기 계산 */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;
 
 // 사이드바 아이콘 정의
@@ -72,12 +74,14 @@ const UserInfo = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 3vh;
+  height: 35vh;
+  // margin-top: 3vh;
 `;
 
 const UserName = styled.p`
   font-size: 3.5vw;
   margin-bottom: 1.5vh;
+  font-weight: bold;
 `;
 
 const Icon = styled.img`
@@ -97,7 +101,7 @@ const Divider = styled.hr`
 // 버튼 스타일 정의
 const Button = styled.button<{ $bgColor: string; $boxShadow?: string }>`
   width: 80%;
-  margin: 2vh auto;
+  margin: 1vh auto;
   background-color: ${(props) => props.$bgColor};
   color: white;
   font-size: 4vw;
@@ -115,6 +119,13 @@ const Button = styled.button<{ $bgColor: string; $boxShadow?: string }>`
 const ButtonText = styled.span`
   margin-left: 2vw;
   color: #000000;
+`;
+
+// 버튼을 감싸는 컨테이너 스타일 정의
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1vh; /* 버튼과 사이드바 아래쪽 여백 */
 `;
 
 function Sidebar() {
@@ -172,64 +183,54 @@ function Sidebar() {
         onClick={toggleSidebar}
         $isOpen={isSidebarOpen}
       />
-      <SidebarContainer ref={sidebarRef} $isOpen={isSidebarOpen}>
-        <Logo src={TokimLogo} alt="Tokim Logo" />
-        {isLoggedIn ? (
-          <>
-            <GaugeWrapper>
-              <Graph score={userInfo.quizScore} />
-              <Score>{userInfo.quizScore}점</Score>
-              <Percentile>상위 XX%</Percentile>
-            </GaugeWrapper>
 
-            <UserInfo>
-              <Icon src={sidebarUser} alt="유저 아이콘" />
-              <UserName>{userInfo.name}</UserName>
-              <Divider />
-              <Icon src={sidebarEmail} alt="이메일 아이콘" />
-              <p>{userInfo.email}</p>
-              <Divider />
-              <Icon src={sidebarPhone} alt="전화번호 아이콘" />
-              <p>{userInfo.phone}</p>
-              <Divider />
-            </UserInfo>
+      {isLoggedIn ? (
+        <SidebarContainer ref={sidebarRef} $isOpen={isSidebarOpen}>
+          <Logo src={TokimLogo} alt="Tokim Logo" />
+          <GaugeWrapper>
+            <Graph score={userInfo.quizScore} />
+            <Score>
+              {userInfo.quizScore === -1
+                ? `${userInfo.quizScore}점`
+                : '점수 측정하기'}
+            </Score>
+            <Percentile>상위 XX%</Percentile>
+          </GaugeWrapper>
 
+          <UserInfo>
+            <Icon src={sidebarUser} alt="유저 아이콘" />
+            <UserName>{userInfo.name}</UserName>
+            <Divider />
+            <Icon src={sidebarEmail} alt="이메일 아이콘" />
+            <UserName>{userInfo.email.split('@')[0]}</UserName>
+            <Divider />
+          </UserInfo>
+          <ButtonContainer>
             <Button $bgColor="#00C99C" onClick={() => navigate('/my-page')}>
               마이페이지
             </Button>
             <Button $bgColor="#00C99C" onClick={handleLogout}>
               로그아웃
             </Button>
-          </>
-        ) : (
-          <>
-            <GaugeWrapper>
-              <Graph score={userInfo.quizScore} />
-              <Icon
-                src={sidebarUser}
-                alt="유저 아이콘"
-                onClick={handleNavigateToLogin}
-              />
-              <UserName onClick={handleNavigateToLogin}>
-                로그인 해주세요
-              </UserName>
-            </GaugeWrapper>
-
-            <UserInfo>
-              <Divider />
-              <Icon src={sidebarEmail} alt="이메일 아이콘" />
-              <p>e-mail</p>
-              <Divider />
-              <Icon src={sidebarPhone} alt="전화번호 아이콘" />
-              <p>010-xxxx-xxxx</p>
-              <Divider />
-            </UserInfo>
-
+          </ButtonContainer>
+        </SidebarContainer>
+      ) : (
+        <SidebarContainer ref={sidebarRef} $isOpen={isSidebarOpen}>
+          <Logo src={TokimLogo} alt="Tokim Logo" />
+          <GaugeWrapper>
+            <Graph score={userInfo.quizScore} />
+            <Icon
+              src={sidebarUser}
+              alt="유저 아이콘"
+              onClick={handleNavigateToLogin}
+            />
+            <UserName onClick={handleNavigateToLogin}>로그인</UserName>
+          </GaugeWrapper>
+          <ButtonContainer>
             <Button $bgColor="#FEE500" onClick={handleKakaoLogin}>
               <Icon src={KakaoIcon} alt="카카오 아이콘" />
               <ButtonText>카카오로 로그인</ButtonText>
             </Button>
-
             <Button
               $bgColor="#FFFFFF"
               $boxShadow="0px 4px 4px 0px rgba(0, 0, 0, 0.25)"
@@ -238,9 +239,9 @@ function Sidebar() {
               <Icon src={GoogleIcon} alt="구글 아이콘" />
               <ButtonText>구글로 로그인</ButtonText>
             </Button>
-          </>
-        )}
-      </SidebarContainer>
+          </ButtonContainer>
+        </SidebarContainer>
+      )}
     </>
   );
 }
