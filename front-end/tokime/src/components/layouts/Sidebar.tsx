@@ -35,12 +35,9 @@ const SidebarContainer = styled.div<{ $isOpen: boolean }>`
 // 사이드바 아이콘 정의
 const SidebarIcon = styled.img<{ $isOpen: boolean }>`
   position: relative;
-  top: 5vh;
-  left: 90vw;
-  width: 8vw;
-  height: auto;
   cursor: pointer;
-  z-index: 2000;
+  margin-right: 1vw;
+  width: 8vw;
   visibility: ${(props) =>
     props.$isOpen ? 'hidden' : 'visible'}; /* visibility로 가리기 */
 `;
