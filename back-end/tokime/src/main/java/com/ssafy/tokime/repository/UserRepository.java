@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
     // 특정 연령대의 퀴즈점수 모두 가져오기 - 중복 허용 X 내림차순으로
-    @Query("SELECT u.quizScore DISTINCT FROM User u WHERE YEAR(u.birth) BETWEEN :startYear AND :endYear order by u.quizScore desc")
+    @Query("SELECT DISTINCT u.quizScore FROM User u WHERE YEAR(u.birth) BETWEEN :startYear AND :endYear order by u.quizScore desc")
     List<Long> findQuizScoreByBirthYearBetween(@Param("startYear") int startYear, @Param("endYear") int endYear);
 
     // 모든 연령대 퀴즈점수 모두 가져오기 - 중복 허용
@@ -23,6 +23,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<Long> findAllByQuizScore();
 
     // 모든 연령대 쥐크점수 모두 가져오기 - 중복 허용 X
-    @Query("SELECT u.quizScore DISTINCT FROM User u order by u.quizScore desc")
+    @Query("SELECT DISTINCT u.quizScore FROM User u order by u.quizScore desc")
     List<Long> findAllByQuizScoreDistinct();
 }
