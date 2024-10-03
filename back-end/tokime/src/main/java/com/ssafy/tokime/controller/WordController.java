@@ -73,6 +73,10 @@ public class WordController {
                 getUserId();
                 logger.info("로그인 한 상태임!"+user.getEmail());
                 List<Likeword> asdf = wordService.getLikeWordList(userId);
+                logger.info("가져온 즐찾 단어의 수  :"+asdf.size());
+                for (int i = 0; i < asdf.size(); i++) {
+                    logger.info(asdf.get(i).getTermId()+" "+asdf.get(i).getUserId());
+                }
                 // 가져온 것들이 즐겨찾기에 등록된 것들인지 표시정돈 해주기
                 if (keyword.length() == 0) { // 전체 조회일시 바로 index값으로 접근하면됨
                     for (int i = 0; i < asdf.size(); i++) {
