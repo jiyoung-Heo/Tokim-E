@@ -165,7 +165,7 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
             <p>
               면적: {detail.landScale}㎡
               <button
-                type="button" // type 속성 추가
+                type="button"
                 style={{
                   background: 'none',
                   border: 'none',
@@ -179,7 +179,7 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
                 aria-label="토지 면적 정보"
               >
                 <img
-                  src="../../assets/images/icon/information.png"
+                  src="/icons/information.png"
                   alt="info"
                   style={{ width: '16px', height: '16px' }}
                 />
@@ -219,7 +219,7 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
             <p>
               용도: {detail.landUse}
               <button
-                type="button" // type 속성 추가
+                type="button"
                 style={{
                   background: 'none',
                   border: 'none',
@@ -233,7 +233,7 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
                 aria-label="토지 용도 정보"
               >
                 <img
-                  src="../../assets/images/icon/information.png"
+                  src="/icons/information.png"
                   alt="info"
                   style={{ width: '16px', height: '16px' }}
                 />
@@ -272,7 +272,7 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
             <p>
               용도 상태: {detail.landUseStatus}
               <button
-                type="button" // type 속성 추가
+                type="button"
                 style={{
                   background: 'none',
                   border: 'none',
@@ -286,7 +286,7 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
                 aria-label="토지 용도 상태 정보"
               >
                 <img
-                  src="../../assets/images/icon/information.png"
+                  src="/icons/information.png"
                   alt="info"
                   style={{ width: '16px', height: '16px' }}
                 />
@@ -325,7 +325,7 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
             <p>
               지형: {detail.landGradient}
               <button
-                type="button" // type 속성 추가
+                type="button"
                 style={{
                   background: 'none',
                   border: 'none',
@@ -339,7 +339,7 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
                 aria-label="토지 지형 정보"
               >
                 <img
-                  src="../../assets/images/icon/information.png"
+                  src="/icons/information.png"
                   alt="info"
                   style={{ width: '16px', height: '16px' }}
                 />
@@ -378,7 +378,7 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
             <p>
               도로: {detail.landRoad}
               <button
-                type="button" // type 속성 추가
+                type="button"
                 style={{
                   background: 'none',
                   border: 'none',
@@ -392,7 +392,7 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
                 aria-label="토지 도로 정보"
               >
                 <img
-                  src="../../assets/images/icon/information.png"
+                  src="/icons/information.png"
                   alt="info"
                   style={{ width: '16px', height: '16px' }}
                 />
@@ -411,7 +411,7 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
                     zIndex: 100,
                   }}
                 >
-                  도로 정보는 해당 토지와 인접한 도로의 상태를 나타냅니다.
+                  도로는 토지에 접근 가능한 경로를 나타냅니다.
                   <span
                     style={{
                       content: '""',
@@ -429,9 +429,9 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
 
             {/* 가격 */}
             <p>
-              가격: {detail.landPrice.toLocaleString()} 원
+              가격: {detail.landPrice} 원
               <button
-                type="button" // type 속성 추가
+                type="button"
                 style={{
                   background: 'none',
                   border: 'none',
@@ -445,7 +445,7 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
                 aria-label="토지 가격 정보"
               >
                 <img
-                  src="../../assets/images/icon/information.png"
+                  src="/icons/information.png"
                   alt="info"
                   style={{ width: '16px', height: '16px' }}
                 />
@@ -464,7 +464,7 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
                     zIndex: 100,
                   }}
                 >
-                  가격 정보는 해당 토지의 현재 시장 가격을 나타냅니다.
+                  가격은 현재 토지의 시장 가치를 나타냅니다.
                   <span
                     style={{
                       content: '""',
@@ -480,11 +480,11 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
               )}
             </p>
 
-            {/* 개발 가능성 */}
+            {/* 위험 */}
             <p>
-              개발 가능성: {detail.landDanger}%
+              위험: {detail.landDanger}
               <button
-                type="button" // type 속성 추가
+                type="button"
                 style={{
                   background: 'none',
                   border: 'none',
@@ -495,10 +495,10 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
                   height: '16px',
                 }}
                 onClick={() => toggleInfo(`landDanger-${detail.landId}`)}
-                aria-label="토지 개발 가능성 정보"
+                aria-label="토지 위험 정보"
               >
                 <img
-                  src="../../assets/images/icon/information.png"
+                  src="/icons/information.png"
                   alt="info"
                   style={{ width: '16px', height: '16px' }}
                 />
@@ -517,7 +517,7 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
                     zIndex: 100,
                   }}
                 >
-                  개발 가능성은 해당 토지가 개발될 가능성을 퍼센트로 나타냅니다.
+                  위험은 해당 지역의 자연재해 위험을 나타냅니다.
                   <span
                     style={{
                       content: '""',
@@ -535,7 +535,7 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
           </div>
         ))
       ) : (
-        <div>상세 정보가 없습니다.</div>
+        <p>해당 주소에 대한 토지 정보가 없습니다.</p>
       )}
     </div>
   );
