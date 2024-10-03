@@ -487,12 +487,24 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
   const [error, setError] = useState<string | null>(null);
   const [showInfo, setShowInfo] = useState<{ [key: string]: boolean }>({});
 
-  // 인포메이션 토글 핸들러
   const toggleInfo = (key: string) => {
     setShowInfo((prev) => ({
       ...prev,
       [key]: !prev[key],
     }));
+  };
+
+  const closeInfo = (key: string) => {
+    setShowInfo((prev) => ({
+      ...prev,
+      [key]: false,
+    }));
+  };
+
+  const handleKeyDown = (key: string, event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      toggleInfo(key);
+    }
   };
 
   useEffect(() => {
@@ -537,381 +549,119 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
               주소: {detail.landDistrict} {detail.landAddress}
             </p>
 
-            {/* 면적 */}
-            <p>
-              면적: {detail.landScale}㎡
-              <button
-                type="button"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: 0,
-                  marginLeft: '8px',
-                  width: '16px',
-                  height: '16px',
-                }}
-                onClick={() => toggleInfo(`landScale-${detail.landId}`)} // 면적 툴팁 토글
-                aria-label="토지 면적 정보"
-              >
-                <img
-                  src="/icons/information.png"
-                  alt="info"
-                  style={{ width: '16px', height: '16px' }}
-                />
-              </button>
-              {showInfo[`landScale-${detail.landId}`] && (
-                <span
-                  style={{
-                    position: 'absolute',
-                    backgroundColor: '#333',
-                    color: '#fff',
-                    padding: '4px 8px',
-                    borderRadius: '4px',
-                    top: '20px',
-                    left: '25px', // 버튼 오른쪽으로 툴팁 위치
-                    whiteSpace: 'nowrap',
-                    zIndex: 100,
-                  }}
-                >
-                  토지의 평수는 {(detail.landScale * 0.3025).toFixed(2)}평
-                  입니다.
-                  <span
+            {/* 공통 정보 항목을 위한 컴포넌트 생성 */}
+            {[
+              {
+                label: '면적',
+                value: `${detail.landScale}㎡`,
+                tooltip: `토지의 평수는 ${(detail.landScale * 0.3025).toFixed(2)}평 입니다.`,
+                key: `landScale-${detail.landId}`,
+              },
+              {
+                label: '용도',
+                value: detail.landUse,
+                tooltip: '토지의 용도는 해당 법적 용도에 따라 다릅니다.',
+                key: `landUse-${detail.landId}`,
+              },
+              {
+                label: '용도 상태',
+                value: detail.landUseStatus,
+                tooltip: `이 토지는 현재 용도 상태가 ${detail.landUseStatus}입니다.`,
+                key: `landUseStatus-${detail.landId}`,
+              },
+              {
+                label: '지형',
+                value: detail.landGradient,
+                tooltip: '지형에 대한 정보입니다.',
+                key: `landGradient-${detail.landId}`,
+              },
+              {
+                label: '도로',
+                value: detail.landRoad,
+                tooltip: '도로에 대한 정보입니다.',
+                key: `landRoad-${detail.landId}`,
+              },
+              {
+                label: '가격',
+                value: `${detail.landPrice} 원`,
+                tooltip: '이 가격은 현재 시장 가격을 반영합니다.',
+                key: `landPrice-${detail.landId}`,
+              },
+              {
+                label: '위험도',
+                value: detail.landDanger.toString(),
+                tooltip: '위험도에 대한 정보입니다.',
+                key: `landDanger-${detail.landId}`,
+              },
+            ].map((item) => (
+              <div key={item.key}>
+                <p>
+                  {item.label}: {item.value}
+                  <button
+                    type="button"
                     style={{
-                      content: '""',
-                      position: 'absolute',
-                      top: '-5px',
-                      left: '10px',
-                      borderWidth: '5px',
-                      borderStyle: 'solid',
-                      borderColor: 'transparent transparent #333 transparent',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: 0,
+                      marginLeft: '8px',
+                      width: '16px',
+                      height: '16px',
                     }}
-                  />
-                </span>
-              )}
-            </p>
-
-            {/* 용도 */}
-            <p>
-              용도: {detail.landUse}
-              <button
-                type="button"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: 0,
-                  marginLeft: '8px',
-                  width: '16px',
-                  height: '16px',
-                }}
-                onClick={() => toggleInfo(`landUse-${detail.landId}`)} // 용도 툴팁 토글
-                aria-label="토지 용도 정보"
-              >
-                <img
-                  src="/icons/information.png"
-                  alt="info"
-                  style={{ width: '16px', height: '16px' }}
-                />
-              </button>
-              {showInfo[`landUse-${detail.landId}`] && (
-                <span
-                  style={{
-                    position: 'absolute',
-                    backgroundColor: '#333',
-                    color: '#fff',
-                    padding: '4px 8px',
-                    borderRadius: '4px',
-                    top: '20px',
-                    left: '25px', // 버튼 오른쪽으로 툴팁 위치
-                    whiteSpace: 'nowrap',
-                    zIndex: 100,
-                  }}
-                >
-                  토지의 용도는 해당 법적 용도에 따라 다릅니다.
-                  <span
-                    style={{
-                      content: '""',
-                      position: 'absolute',
-                      top: '-5px',
-                      left: '10px',
-                      borderWidth: '5px',
-                      borderStyle: 'solid',
-                      borderColor: 'transparent transparent #333 transparent',
-                    }}
-                  />
-                </span>
-              )}
-            </p>
-
-            {/* 용도 상태 */}
-            <p>
-              용도 상태: {detail.landUseStatus}
-              <button
-                type="button"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: 0,
-                  marginLeft: '8px',
-                  width: '16px',
-                  height: '16px',
-                }}
-                onClick={() => toggleInfo(`landUseStatus-${detail.landId}`)} // 용도 상태 툴팁 토글
-                aria-label="토지 용도 상태 정보"
-              >
-                <img
-                  src="/icons/information.png"
-                  alt="info"
-                  style={{ width: '16px', height: '16px' }}
-                />
-              </button>
-              {showInfo[`landUseStatus-${detail.landId}`] && (
-                <span
-                  style={{
-                    position: 'absolute',
-                    backgroundColor: '#333',
-                    color: '#fff',
-                    padding: '4px 8px',
-                    borderRadius: '4px',
-                    top: '20px',
-                    left: '25px', // 버튼 오른쪽으로 툴팁 위치
-                    whiteSpace: 'nowrap',
-                    zIndex: 100,
-                  }}
-                >
-                  용도 상태는 현재 토지의 이용 가능 상태를 나타냅니다.
-                  <span
-                    style={{
-                      content: '""',
-                      position: 'absolute',
-                      top: '-5px',
-                      left: '10px',
-                      borderWidth: '5px',
-                      borderStyle: 'solid',
-                      borderColor: 'transparent transparent #333 transparent',
-                    }}
-                  />
-                </span>
-              )}
-            </p>
-
-            {/* 지형 */}
-            <p>
-              지형: {detail.landGradient}
-              <button
-                type="button"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: 0,
-                  marginLeft: '8px',
-                  width: '16px',
-                  height: '16px',
-                }}
-                onClick={() => toggleInfo(`landGradient-${detail.landId}`)} // 지형 툴팁 토글
-                aria-label="토지 지형 정보"
-              >
-                <img
-                  src="/icons/information.png"
-                  alt="info"
-                  style={{ width: '16px', height: '16px' }}
-                />
-              </button>
-              {showInfo[`landGradient-${detail.landId}`] && (
-                <span
-                  style={{
-                    position: 'absolute',
-                    backgroundColor: '#333',
-                    color: '#fff',
-                    padding: '4px 8px',
-                    borderRadius: '4px',
-                    top: '20px',
-                    left: '25px', // 버튼 오른쪽으로 툴팁 위치
-                    whiteSpace: 'nowrap',
-                    zIndex: 100,
-                  }}
-                >
-                  지형은 토지의 경사를 나타냅니다.
-                  <span
-                    style={{
-                      content: '""',
-                      position: 'absolute',
-                      top: '-5px',
-                      left: '10px',
-                      borderWidth: '5px',
-                      borderStyle: 'solid',
-                      borderColor: 'transparent transparent #333 transparent',
-                    }}
-                  />
-                </span>
-              )}
-            </p>
-
-            {/* 도로 */}
-            <p>
-              도로: {detail.landRoad}
-              <button
-                type="button"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: 0,
-                  marginLeft: '8px',
-                  width: '16px',
-                  height: '16px',
-                }}
-                onClick={() => toggleInfo(`landRoad-${detail.landId}`)} // 도로 툴팁 토글
-                aria-label="토지 도로 정보"
-              >
-                <img
-                  src="/icons/information.png"
-                  alt="info"
-                  style={{ width: '16px', height: '16px' }}
-                />
-              </button>
-              {showInfo[`landRoad-${detail.landId}`] && (
-                <span
-                  style={{
-                    position: 'absolute',
-                    backgroundColor: '#333',
-                    color: '#fff',
-                    padding: '4px 8px',
-                    borderRadius: '4px',
-                    top: '20px',
-                    left: '25px', // 버튼 오른쪽으로 툴팁 위치
-                    whiteSpace: 'nowrap',
-                    zIndex: 100,
-                  }}
-                >
-                  도로 정보는 접근성을 나타냅니다.
-                  <span
-                    style={{
-                      content: '""',
-                      position: 'absolute',
-                      top: '-5px',
-                      left: '10px',
-                      borderWidth: '5px',
-                      borderStyle: 'solid',
-                      borderColor: 'transparent transparent #333 transparent',
-                    }}
-                  />
-                </span>
-              )}
-            </p>
-
-            {/* 가격 */}
-            <p>
-              가격: {detail.landPrice}원
-              <button
-                type="button"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: 0,
-                  marginLeft: '8px',
-                  width: '16px',
-                  height: '16px',
-                }}
-                onClick={() => toggleInfo(`landPrice-${detail.landId}`)} // 가격 툴팁 토글
-                aria-label="토지 가격 정보"
-              >
-                <img
-                  src="/icons/information.png"
-                  alt="info"
-                  style={{ width: '16px', height: '16px' }}
-                />
-              </button>
-              {showInfo[`landPrice-${detail.landId}`] && (
-                <span
-                  style={{
-                    position: 'absolute',
-                    backgroundColor: '#333',
-                    color: '#fff',
-                    padding: '4px 8px',
-                    borderRadius: '4px',
-                    top: '20px',
-                    left: '25px', // 버튼 오른쪽으로 툴팁 위치
-                    whiteSpace: 'nowrap',
-                    zIndex: 100,
-                  }}
-                >
-                  가격은 현재 토지의 시세를 나타냅니다.
-                  <span
-                    style={{
-                      content: '""',
-                      position: 'absolute',
-                      top: '-5px',
-                      left: '10px',
-                      borderWidth: '5px',
-                      borderStyle: 'solid',
-                      borderColor: 'transparent transparent #333 transparent',
-                    }}
-                  />
-                </span>
-              )}
-            </p>
-
-            {/* 위험도 */}
-            <p>
-              위험도: {detail.landDanger}
-              <button
-                type="button"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: 0,
-                  marginLeft: '8px',
-                  width: '16px',
-                  height: '16px',
-                }}
-                onClick={() => toggleInfo(`landDanger-${detail.landId}`)} // 위험도 툴팁 토글
-                aria-label="토지 위험도 정보"
-              >
-                <img
-                  src="/icons/information.png"
-                  alt="info"
-                  style={{ width: '16px', height: '16px' }}
-                />
-              </button>
-              {showInfo[`landDanger-${detail.landId}`] && (
-                <span
-                  style={{
-                    position: 'absolute',
-                    backgroundColor: '#333',
-                    color: '#fff',
-                    padding: '4px 8px',
-                    borderRadius: '4px',
-                    top: '20px',
-                    left: '25px', // 버튼 오른쪽으로 툴팁 위치
-                    whiteSpace: 'nowrap',
-                    zIndex: 100,
-                  }}
-                >
-                  위험도는 해당 지역의 위험 요소를 나타냅니다.
-                  <span
-                    style={{
-                      content: '""',
-                      position: 'absolute',
-                      top: '-5px',
-                      left: '10px',
-                      borderWidth: '5px',
-                      borderStyle: 'solid',
-                      borderColor: 'transparent transparent #333 transparent',
-                    }}
-                  />
-                </span>
-              )}
-            </p>
+                    onClick={() => toggleInfo(item.key)}
+                    onKeyDown={(e) => handleKeyDown(item.key, e)}
+                    aria-label={`${item.label} 정보`}
+                  >
+                    <img
+                      src="/icons/information.png"
+                      alt="info"
+                      style={{ width: '16px', height: '16px' }}
+                    />
+                  </button>
+                  {showInfo[item.key] && (
+                    <button
+                      type="button"
+                      style={{
+                        position: 'absolute',
+                        backgroundColor: '#333',
+                        color: '#fff',
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                        top: '-40px',
+                        left: '25px',
+                        whiteSpace: 'nowrap',
+                        zIndex: 100,
+                      }}
+                      onClick={() => closeInfo(item.key)}
+                      aria-label="정보 닫기"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          closeInfo(item.key);
+                        }
+                      }}
+                    >
+                      {item.tooltip}
+                      <span
+                        style={{
+                          content: '""',
+                          position: 'absolute',
+                          top: '-5px',
+                          left: '10px',
+                          borderWidth: '5px',
+                          borderStyle: 'solid',
+                          borderColor:
+                            'transparent transparent #333 transparent',
+                        }}
+                      />
+                    </button>
+                  )}
+                </p>
+              </div>
+            ))}
           </div>
         ))
       ) : (
-        <p>토지 정보를 찾을 수 없습니다.</p>
+        <div>토지 정보가 없습니다.</div>
       )}
     </div>
   );
