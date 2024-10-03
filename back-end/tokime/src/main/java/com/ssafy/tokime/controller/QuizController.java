@@ -86,7 +86,9 @@ public class QuizController {
             List<Long> scoreList = new ArrayList<>();
             if (user.getBirth() != null) {
                 int birth = user.getBirth().getYear() + 1900;
-                scoreList = userService.getQuizScores(birth, birth + 1);
+                int start = birth-(birth%10);
+                int end = start+9;
+                scoreList = userService.getQuizScores(start, end);
                 quiz.setAgeAverage(getAverage(scoreList));
             } else { //
                 quiz.setAgeAverage(0L);
@@ -125,6 +127,19 @@ public class QuizController {
         }
         catch (Exception e) {
             logger.error("Error while quiz average", e);
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // 상위 n%만 반환해주는 메서드
+    @GetMapping("/percent")
+    public ResponseEntity<?> getQuizAverageN() {
+        try {
+            getUserInfo();
+            List<Long> scoreList = userService.getAllQuizScoreDistinct();
+            return ResponseEntity.ok().body(getPercent(scoreList, user.getQuizScore()));
+        } catch (Exception e) {
+            logger.error(e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

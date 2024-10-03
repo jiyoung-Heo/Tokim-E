@@ -21,4 +21,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // 모든 연령대 퀴즈점수 모두 가져오기 - 중복 허용
     @Query("SELECT u.quizScore FROM User u order by u.quizScore desc")
     List<Long> findAllByQuizScore();
+
+    // 모든 연령대 쥐크점수 모두 가져오기 - 중복 허용 X
+    @Query("SELECT u.quizScore DISTINCT FROM User u order by u.quizScore desc")
+    List<Long> findAllByQuizScoreDistinct();
 }
