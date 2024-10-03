@@ -21,19 +21,16 @@ public class LandService {
         return landRepository.findAll(pageable);
     }
 
-    public List<Land> searchLands(String district, String address) {
-        Pageable top5 = PageRequest.of(0, 5);  // 첫 페이지에서 5개의 항목만 가져오기
-        return landRepository.findTop5ByDistrictAndAddress(district, address, top5);
+    public List<Land> searchLands(String district, String address,Pageable pageable) {
+        return landRepository.findTop5ByDistrictAndAddress(district, address, pageable);
     }
 
-    public List<Land> searchByDistrict(String district) {
-        Pageable top5 = PageRequest.of(0, 5);  // 첫 페이지에서 5개의 항목만 가져오기
-        return landRepository.findTop5ByDistrict(district, top5);
+    public List<Land> searchByDistrict(String district,Pageable pageable) {
+        return landRepository.findTop5ByDistrict(district, pageable);
     }
 
-    public List<Land> searchByAddress(String address) {
-        Pageable top5 = PageRequest.of(0, 5);  // 첫 페이지에서 5개의 항목만 가져오기
-        return landRepository.findTop5ByAddress(address, top5);
+    public List<Land> searchByAddress(String address, Pageable pageable) {
+        return landRepository.findTop5ByAddress(address, pageable);
     }
 
 }
