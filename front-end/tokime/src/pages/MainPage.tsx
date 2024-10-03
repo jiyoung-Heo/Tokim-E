@@ -10,6 +10,7 @@ import InvestmentIcon from '../assets/images/icon/investicon.png';
 import CarouselImage1 from '../assets/images/icon/scoreicon.png'; // 캐러셀 이미지 (추후 경로 수정)
 import { changeUser } from '../redux/slices/userSlice';
 import userInfoAxios from '../api/userInfoAxios';
+import TokimLogo from '../assets/images/TokimEnglogo.png'; // 로고 이미지
 
 // 컨테이너 스타일 정의 (스크롤 방지 및 높이 조정)
 const Container = styled.div`
@@ -19,6 +20,13 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   overflow-y: hidden; // 세로 스크롤 방지
+`;
+
+// 로고 스타일 (vw, vh 사용)
+const Logo = styled.img`
+  align-self: flex-start;
+  width: 33vw;
+  margin-top: 3vh;
 `;
 
 // 큰 박스들을 감싸는 박스 (가로로 배치)
@@ -165,6 +173,8 @@ function MainPage() {
 
   return (
     <Container>
+      <Logo src={TokimLogo} alt="Tokim Logo" />
+
       <LargeIconGrid>
         <LargeIconBox to="/address-search">
           <LargeIconTitle>지번 검색</LargeIconTitle>
