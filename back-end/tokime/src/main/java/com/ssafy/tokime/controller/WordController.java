@@ -94,8 +94,9 @@ public class WordController {
             }
             return ResponseEntity.ok().body(words);
         }catch (Exception e) {
+            // 비회원일 수 있으니까 조회는 가능하게!
             e.printStackTrace();
-            return ResponseEntity.status(500).body(words);
+            return ResponseEntity.ok().body(words);
         }
     }
 
