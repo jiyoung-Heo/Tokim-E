@@ -135,7 +135,7 @@
 //               },
 //             ].map((item) => (
 //               <div key={item.key}>
-//                 <p>
+//                 <p style={{ position: 'relative' }}>
 //                   {item.label}: {item.value}
 //                   <button
 //                     type="button"
@@ -167,8 +167,8 @@
 //                         color: '#fff',
 //                         padding: '4px 8px',
 //                         borderRadius: '4px',
-//                         top: '-40px',
-//                         left: '25px',
+//                         top: '20px', // Adjust this value to control the tooltip's vertical position
+//                         left: '0px', // Align with the button
 //                         whiteSpace: 'nowrap',
 //                         zIndex: 100,
 //                       }}
@@ -185,7 +185,7 @@
 //                         style={{
 //                           content: '""',
 //                           position: 'absolute',
-//                           top: '-5px',
+//                           top: '100%',
 //                           left: '10px',
 //                           borderWidth: '5px',
 //                           borderStyle: 'solid',
@@ -287,6 +287,17 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
     return <div>{error}</div>;
   }
 
+  // 용도에 따른 설명 객체
+  const landUseDescriptions: { [key: string]: string } = {
+    저지: '간선도로 또는 주위의 지형지세보다 현저히 낮은 지대의 토지를 말합니다.',
+    평지: '간선도로 또는 주위의 지형지세의 높이와 비슷하거나 경사도가 미미한 지대의 토지를 말합니다.',
+    완경사지:
+      '간선도로 또는 주위의 지형지세보다는 높으면서 경사도가 15도 이하인 지대의 토지를 말합니다.',
+    급경사지:
+      '간선도로 또는 주위의 지형지세보다 높으면서 경사도가 15도를 초과하는 지대의 토지를 말합니다.',
+    고지: '간선도로 또는 주위의 지형지세보다 현저하게 높은 지대의 토지를 말합니다.',
+  };
+
   return (
     <div>
       <h2>토지 상세 정보</h2>
@@ -311,7 +322,7 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
               {
                 label: '용도',
                 value: detail.landUse,
-                tooltip: '토지의 용도는 해당 법적 용도에 따라 다릅니다.',
+                tooltip: `${detail.landUse}는 ${landUseDescriptions[detail.landUse] || '정보가 없습니다.'}`,
                 key: `landUse-${detail.landId}`,
               },
               {
