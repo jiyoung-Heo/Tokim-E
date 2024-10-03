@@ -66,4 +66,9 @@ public class UserService {
     public List<Long> getAllQuizScoreDistinct() {
         return userRepository.findAllByQuizScoreDistinct();
     }
+
+    // 토키미 전체 사용자 퀴즈 점수 분포도
+    public List<Object[]> getQuizList() {
+        return userRepository.findAllByScoreList();
+    }
 }

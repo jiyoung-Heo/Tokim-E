@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,4 +20,6 @@ public class QuizAverageDTO {
     private Long top;
     // 토키미 전체 평균
     private Long totalAverage;
+    // 토키미 점수 분포
+    private List<long[]> scoreList;
 }
