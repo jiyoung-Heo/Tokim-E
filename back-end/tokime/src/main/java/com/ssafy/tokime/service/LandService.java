@@ -33,4 +33,11 @@ public class LandService {
         return landRepository.findTop5ByAddress(address, pageable);
     }
 
+    public List<Land> searchByDistrictFullText(String district, Pageable pageable) {
+        return landRepository.findTop5ByDistrictFullText(district, pageable);
+    }
+
 }
+
+// 동만 -> 그동으로 검색해서 리스트를 10개띄워저
+// 그중에 고르면 거기로 가는거야 ㅇㅋ?

@@ -60,7 +60,7 @@ public class LandController {
                 return ResponseEntity.badRequest().body("검색 조건을 입력해주세요.");
             } else if (district != null && !district.trim().isEmpty() && (address == null || address.trim().isEmpty())) {
                 // district만 입력했을 때
-                lands = landService.searchByDistrict(district.trim(),pageable);
+                lands = landService.searchByDistrictFullText(district.trim(),pageable);
             } else if (address != null && !address.trim().isEmpty() && (district == null || district.trim().isEmpty())) {
                 // address만 입력했을 때
                 lands = landService.searchByAddress(address.trim(),pageable);
