@@ -106,10 +106,6 @@ function AddressSearch() {
         {activeTab === 'riskMap' && (
           <RiskMapTab district={district} address={address} />
         )}
-
-        {/* {activeTab === 'riskMap' && (
-          <RiskMapTab district={district} address={address} />
-        )} */}
         {activeTab === 'regionalInfo' && (
           <OrdinanceInfoTab district={district} address={address} />
         )}
