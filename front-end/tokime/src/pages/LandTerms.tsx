@@ -2,7 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import searchIcon from '../assets/images/icon/search.svg';
-import { getAllTerms } from '../api/termAxios'; // API 서비스 호출
+import starIcon from '../assets/images/icon/star.svg'; // 기본 별 아이콘
+import starFilled from '../assets/images/icon/star_filled.svg'; // 즐겨찾기 시 사용될 채워진 별 아이콘
+
+import { getAllTerms, registTermLike, deleteTermLike } from '../api/termAxios'; // API 서비스 호출
 
 const Container = styled.div`
   width: 100%;
@@ -91,14 +94,20 @@ const TermList = styled.div`
   align-items: flex-start;
   padding: 0;
   gap: 33px;
-
   position: absolute;
   top: 4.69vh;
   left: 8.33vw;
   width: 75vw;
-  height: 46.88vh;
+  height: 43vh;
   overflow-y: auto;
   box-sizing: border-box;
+`;
+
+const TermWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 `;
 
 const Term = styled(Link)`
@@ -112,6 +121,14 @@ const Term = styled(Link)`
   &:hover {
     color: #27c384;
   }
+`;
+
+const StarIcon = styled.img<{ isLiked: boolean }>`
+  width: 4.17vw;
+  height: 2.34vh;
+  cursor: pointer;
+  transition: opacity 0.3s ease-in-out;
+  opacity: ${(props) => (props.isLiked ? 1 : 0.5)};
 `;
 
 const AlphabetNavContainer = styled.div`
@@ -136,17 +153,28 @@ const AlphabetNavContainer = styled.div`
 `;
 
 const AlphabetButton = styled.div<{ isSelected: boolean }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   flex: 0 0 auto;
-  padding: 8px;
-  margin-left: 17px;
+  padding: 2vh;
+  margin-left: 3vw;
   border-radius: 4px;
-  font-size: 16px;
+  font-size: 4vw;
   font-family: 'KoddiUD OnGothic';
   font-weight: 700;
   text-align: center;
-  line-height: 24px;
   color: ${(props) => (props.isSelected ? '#27c384' : '#333333')};
   cursor: pointer;
+`;
+
+const FavoriteButton = styled(StarIcon)`
+  width: 4.17vw;
+  height: 2.34vh;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const alphabets = [
@@ -172,6 +200,8 @@ const LandTerms = () => {
   const [filteredTerms, setFilteredTerms] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedAlphabet, setSelectedAlphabet] = useState('');
+  const [likedTerms, setLikedTerms] = useState<number[]>([]); // 즐겨찾기된 용어 ID 목록
+  const [showFavorites, setShowFavorites] = useState(false); // 즐겨찾기 모드 여부
 
   const termContainerRef = useRef<HTMLDivElement>(null);
 
@@ -184,6 +214,31 @@ const LandTerms = () => {
       console.error('용어를 불러오는데 실패했습니다:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const toggleLike = async (termId: number, isLiked: boolean) => {
+    try {
+      if (isLiked) {
+        await deleteTermLike(termId);
+        setLikedTerms((prev) => prev.filter((id) => id !== termId));
+      } else {
+        await registTermLike(termId);
+        setLikedTerms((prev) => [...prev, termId]);
+      }
+    } catch (error) {
+      console.error('좋아요 처리 중 오류 발생:', error);
+    }
+  };
+
+  const handleFavoriteClick = () => {
+    setShowFavorites(!showFavorites);
+    if (!showFavorites) {
+      setFilteredTerms(
+        allTerms.filter((term) => likedTerms.includes(term.termId)),
+      );
+    } else {
+      setFilteredTerms(allTerms);
     }
   };
 
@@ -202,6 +257,13 @@ const LandTerms = () => {
     }
   }, [selectedAlphabet, allTerms]);
 
+  useEffect(() => {
+    const filtered = allTerms.filter((term) =>
+      term.termName.includes(searchTerm),
+    );
+    setFilteredTerms(filtered);
+  }, [searchTerm, allTerms]);
+
   const handleAlphabetClick = (alphabet: string) => {
     if (selectedAlphabet === alphabet) {
       setSelectedAlphabet('');
@@ -209,13 +271,6 @@ const LandTerms = () => {
       setSelectedAlphabet(alphabet);
     }
   };
-
-  useEffect(() => {
-    const filtered = allTerms.filter((term) =>
-      term.termName.includes(searchTerm),
-    );
-    setFilteredTerms(filtered);
-  }, [searchTerm, allTerms]);
 
   if (loading) {
     return <div>로딩 중...</div>;
@@ -227,6 +282,13 @@ const LandTerms = () => {
       <SubTitle>어떤 용어를 검색할까요?</SubTitle>
 
       <AlphabetNavContainer>
+        <AlphabetButton isSelected={false} onClick={handleFavoriteClick}>
+          <FavoriteButton
+            src={showFavorites ? starFilled : starIcon} // showFavorites에 따라 이미지 변경
+            alt="즐겨찾기 전용 보기"
+            isLiked={showFavorites}
+          />
+        </AlphabetButton>
         {alphabets.map((alphabet) => (
           <AlphabetButton
             key={alphabet}
@@ -252,9 +314,17 @@ const LandTerms = () => {
         <TermList>
           {filteredTerms.length > 0 ? (
             filteredTerms.map((term) => (
-              <Term to={`/land-terms/${term.termId}`} key={term.termId}>
-                {term.termName}
-              </Term>
+              <TermWrapper key={term.termId}>
+                <Term to={`/land-terms/${term.termId}`}>{term.termName}</Term>
+                <StarIcon
+                  src={likedTerms.includes(term.termId) ? starFilled : starIcon} // isLiked에 따라 이미지 변경
+                  alt="즐겨찾기"
+                  isLiked={likedTerms.includes(term.termId)}
+                  onClick={() =>
+                    toggleLike(term.termId, likedTerms.includes(term.termId))
+                  }
+                />
+              </TermWrapper>
             ))
           ) : (
             <div>검색 결과가 없습니다.</div>
