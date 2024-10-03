@@ -213,6 +213,49 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
     return descriptions[gradient] || '해당 경사도에 대한 설명이 없습니다.';
   };
 
+  const getRoadAccessDescription = (roadAccess: string) => {
+    const descriptions: { [key: string]: string } = {
+      광대한면:
+        "'광대한면'은 폭 25m 이상의 도로에 한 면이 접하고 있는 토지입니다.",
+      광대소각:
+        "'광대소각'은 광대로에 한 면이 접하고 소로(폭 8m 이상 12m 미만)의 도로에 한 면 이상 접하고 있는 토지입니다.",
+      광대세각:
+        "'광대세각'은 광대로에 한 면이 접하면서 자동차 통행이 가능한 세로(가)에 한 면 이상 접하고 있는 토지입니다.",
+      중로한면:
+        "'중로한면'은 폭 12m 이상 25m 미만 도로에 한 면이 접하고 있는 토지입니다.",
+      중로각지:
+        "'중로각지'는 중로에 한 면이 접하면서 중로, 소로, 자동차 통행이 가능한 세로(가)에 한 면 이상 접하고 있는 토지입니다.",
+      소로한면:
+        "'소로한면'은 폭 8m 이상 12m 미만인 도로에 한 면이 접하고 있는 토지입니다.",
+      소로각지:
+        "'소로각지'는 소로에 한 면이 접하면서 소로, 자동차 통행이 가능한 세로(가)에 한 면 이상 접하고 있는 토지입니다.",
+      세로가:
+        "'세로 (가)'는 자동차 통행이 가능한 폭 8m 미만의 도로에 한 면이 접하고 있는 토지입니다.",
+      세각가:
+        "'세각 (가)'는 자동차 통행이 가능한 세로에 두 면 이상이 접하고 있는 토지입니다.",
+      세로불:
+        "'세로 (불)'은 자동차 통행이 불가능하나 이륜자동차의 통행이 가능한 세로에 한 면이 접하고 있는 토지입니다.",
+      세각불:
+        "'세각 (불)'은 자동차 통행이 불가능하나 이륜자동차의 통행이 가능한 세로에 두 면 이상 접하고 있는 토지입니다.",
+      맹지: "'맹지'는 이륜자동차의 통행이 불가능한 도로에 접한 토지와 도로에 접하지 않는 토지입니다.",
+    };
+
+    return descriptions[roadAccess] || "'도로접면'에 대한 정보가 없습니다.";
+  };
+
+  const getDevelopmentPotentialDescription = (developmentPotential: number) => {
+    const descriptions: { [key: number]: string } = {
+      0: "개발 가능성은 토키미에서 여러 정보들을 종합해 알려드리는 추천 지수입니다. 해당 토지는 '주의'입니다. 가장 낮은 지표입니다.",
+      1: "개발 가능성은 토키미에서 여러 정보들을 종합해 알려드리는 추천 지수입니다. 해당 토지는 '양호'입니다. 중간 지표입니다.",
+      2: "개발 가능성은 토키미에서 여러 정보들을 종합해 알려드리는 추천 지수입니다. 해당 토지는 '안전'입니다. 가장 높은 지표입니다.",
+    };
+
+    return (
+      descriptions[developmentPotential] ||
+      '개발 가능성에 대한 정보가 없습니다.'
+    );
+  };
+
   if (loading) {
     return <div>주소를 먼저 입력해주세요.</div>;
   }
@@ -261,21 +304,21 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
                 key: `landGradient-${detail.landId}`,
               },
               {
-                label: '도로',
+                label: '도로접면',
                 value: detail.landRoad,
-                tooltip: '도로에 대한 정보입니다.',
+                tooltip: getRoadAccessDescription(detail.landRoad),
                 key: `landRoad-${detail.landId}`,
               },
               {
-                label: '가격',
+                label: '공시지가',
                 value: `${detail.landPrice} 원`,
                 tooltip: '이 가격은 현재 시장 가격을 반영합니다.',
                 key: `landPrice-${detail.landId}`,
               },
               {
-                label: '위험도',
+                label: '개발 가능성',
                 value: detail.landDanger.toString(),
-                tooltip: '위험도에 대한 정보입니다.',
+                tooltip: getDevelopmentPotentialDescription(detail.landDanger),
                 key: `landDanger-${detail.landId}`,
               },
             ].map((item) => (
