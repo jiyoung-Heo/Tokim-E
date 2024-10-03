@@ -61,4 +61,9 @@ public class UserService {
     public List<Long> getAllQuizScores() {
         return userRepository.findAllByQuizScore();
     }
+
+    // 토키미 전체 사용자의 퀴즈 점수 중복제거 후 가져오기
+    public List<Long> getAllQuizScoreDistinct() {
+        return userRepository.findAllByQuizScoreDistinct();
+    }
 }
