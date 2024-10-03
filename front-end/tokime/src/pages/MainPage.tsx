@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import TokimLogo from '../assets/images/TokimEnglogo.png'; // 로고 이미지
 import SearchIcon from '../assets/images/icon/searchmapicon.png'; // 각 아이콘 이미지
 import RiskIcon from '../assets/images/icon/dangermapicon.png';
 import DictionaryIcon from '../assets/images/icon/dictionary.png';
@@ -14,7 +13,7 @@ import userInfoAxios from '../api/userInfoAxios';
 
 // 컨테이너 스타일 정의 (스크롤 방지 및 높이 조정)
 const Container = styled.div`
-  width: 100vw;
+  width: 100%;
   background: #f3f7fb;
   display: flex;
   flex-direction: column;
@@ -22,19 +21,12 @@ const Container = styled.div`
   overflow-y: hidden; // 세로 스크롤 방지
 `;
 
-// 로고 스타일 (vw, vh 사용)
-const Logo = styled.img`
-  width: 33vw;
-  margin-left: 6.94vw;
-  align-self: flex-start;
-`;
-
 // 큰 박스들을 감싸는 박스 (가로로 배치)
 const LargeIconGrid = styled.div`
   display: flex;
   justify-content: space-between;
   width: 90vw;
-  margin-top: 5vh;
+  margin-top: 2vh;
 `;
 
 // 작은 박스들을 감싸는 박스 (가로로 배치)
@@ -173,7 +165,6 @@ function MainPage() {
 
   return (
     <Container>
-      <Logo src={TokimLogo} alt="Tokim Logo" />
       <LargeIconGrid>
         <LargeIconBox to="/address-search">
           <LargeIconTitle>지번 검색</LargeIconTitle>
