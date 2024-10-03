@@ -135,7 +135,7 @@ public class QuizController {
     @GetMapping("/percent")
     public ResponseEntity<?> getQuizAverageN() {
         try {
-//            getUserInfo();
+            getUserInfo();
             List<Long> scoreList = userService.getAllQuizScoreDistinct();
             logger.info("가져온 점수들 : "+scoreList.toString());
             return ResponseEntity.ok().body(getPercent(scoreList, user.getQuizScore()));
