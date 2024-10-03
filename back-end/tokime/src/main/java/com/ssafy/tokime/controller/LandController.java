@@ -44,34 +44,37 @@ public class LandController {
     }
 
     // 토지 검색 조회 district + address 필요
-
     @GetMapping("/search")
     public ResponseEntity<?> searchLands(
             @RequestParam(required = false) String district,
-            @RequestParam(required = false) String address) {
+            @RequestParam(required = false) String address,
+            @RequestParam(defaultValue = "0") int page,  // 페이지 번호, 기본값 0
+            @RequestParam(defaultValue = "5") int size) {  // 페이지 크기, 기본값 5
         List<Land> lands;
         try {
             // 입력값 검토 및 조건에 따라 검색 수행
+            Pageable pageable = PageRequest.of(page, size);  // 페이지 설정
+
             if (district == null && address == null) {
-                return ResponseEntity.badRequest().body(null); // 아무것도 입력하지 않았을 때
+                return ResponseEntity.badRequest().body("검색 조건을 입력해주세요."); // 입력값 없음
             } else if (district != null && !district.trim().isEmpty() && (address == null || address.trim().isEmpty())) {
-                // 2. district만 입력했을 때
+                // district만 입력했을 때
                 lands = landService.searchByDistrict(district.trim());
             } else if (address != null && !address.trim().isEmpty() && (district == null || district.trim().isEmpty())) {
-                // 3. address만 입력했을 때
+                // address만 입력했을 때
                 lands = landService.searchByAddress(address.trim());
             } else {
-                // 4. 둘 다 입력했을 때
+                // 둘 다 입력했을 때
                 lands = landService.searchLands(district.trim(), address.trim());
             }
-        }catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             return new ResponseEntity<>("유효한 값을 넣어주세요", HttpStatus.BAD_REQUEST);
-        }catch (Exception e ){
+        } catch (Exception e) {
             e.printStackTrace();
-            return  new ResponseEntity<>("서버 에러입니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("서버 에러입니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return new ResponseEntity<>(lands,HttpStatus.OK);
+        return new ResponseEntity<>(lands, HttpStatus.OK);
     }
 
     // 특정지번조례조회
