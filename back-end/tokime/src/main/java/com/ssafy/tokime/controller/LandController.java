@@ -49,23 +49,24 @@ public class LandController {
             @RequestParam(required = false) String district,
             @RequestParam(required = false) String address,
             @RequestParam(defaultValue = "0") int page,  // 페이지 번호, 기본값 0
-            @RequestParam(defaultValue = "5") int size) {  // 페이지 크기, 기본값 5
+            @RequestParam(defaultValue = "10") int size) {  // 페이지 크기, 기본값 5
         List<Land> lands;
         try {
-            // 입력값 검토 및 조건에 따라 검색 수행
-            Pageable pageable = PageRequest.of(page, size);  // 페이지 설정
+            // 페이지
+            Pageable pageable = PageRequest.of(page, size);
 
             if (district == null && address == null) {
-                return ResponseEntity.badRequest().body("검색 조건을 입력해주세요."); // 입력값 없음
+                // 공백 입력
+                return ResponseEntity.badRequest().body("검색 조건을 입력해주세요.");
             } else if (district != null && !district.trim().isEmpty() && (address == null || address.trim().isEmpty())) {
                 // district만 입력했을 때
-                lands = landService.searchByDistrict(district.trim());
+                lands = landService.searchByDistrict(district.trim(),pageable);
             } else if (address != null && !address.trim().isEmpty() && (district == null || district.trim().isEmpty())) {
                 // address만 입력했을 때
-                lands = landService.searchByAddress(address.trim());
+                lands = landService.searchByAddress(address.trim(),pageable);
             } else {
                 // 둘 다 입력했을 때
-                lands = landService.searchLands(district.trim(), address.trim());
+                lands = landService.searchLands(district.trim(), address.trim(),pageable);
             }
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>("유효한 값을 넣어주세요", HttpStatus.BAD_REQUEST);
