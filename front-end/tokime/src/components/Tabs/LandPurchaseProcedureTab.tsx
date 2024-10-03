@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import fetchKnowledgeByCategory from '../../api/LandPurchaseKnowledge'; // default import로 변경
-// import landImage from '../../assets/images/land1.png'; // 이미지 임포트
+import styled, { css } from 'styled-components';
+import { useSwipeable } from 'react-swipeable';
+import fetchKnowledgeByCategory from '../../api/LandPurchaseKnowledge';
 
 interface KnowledgeItem {
   knowledgeCategory: number;
@@ -9,14 +9,13 @@ interface KnowledgeItem {
   knowledgeDescribe: string;
   knowledgeImageUrl: string;
 }
-// 반응형 스타일 정의
 
 const TabContent = styled.div`
-  width: 83.33vw; // 360px 기준 300px
-  height: 54.69vh; // 360px 기준 350px
+  width: 83.33vw;
+  height: 60vh;
   background-color: #ffffff;
-  border-radius: 5.56vw; // 360px 기준 20px
-  border: 0.28vw solid #ddd; // 360px 기준 1px
+  border-radius: 5.56vw;
+  border: 0.28vw solid #ddd;
   box-shadow:
     0px 1.11vw 1.11vw rgba(0, 0, 0, 0.25),
     inset 0px 1.11vw 1.11vw rgba(0, 0, 0, 0.25);
@@ -25,99 +24,149 @@ const TabContent = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  position: relative;
 `;
 
 const ItemContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 2vh; // 각 아이템 사이에 여백 추가
+  margin-bottom: 2vh;
+  width: 75%; /* 텍스트 컨테이너의 너비를 조정 */
 `;
 
 const Image = styled.img`
-  width: 41.67vw; // 360px 기준 150px
-  height: 20.83vh; // 360px 기준 150px
-  margin-top: 8.33vh; // 360px 기준 30px
+  width: 41.67vw;
+  height: 20.83vh;
+  margin-top: 8.33vh;
 `;
 
 const Text = styled.p`
-  margin-top: 6.94vh; // 360px 기준 25px
-  font-size: 3.89vw; // 360px 기준 14px
+  margin-top: 3vh;
+  font-size: 3.89vw;
   font-family: 'KoddiUD OnGothic';
   font-weight: 700;
   text-align: center;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 `;
 
 const Description = styled.p`
-  font-size: 3.33vw; // 360px 기준 12px
+  font-size: 3.33vw;
   text-align: center;
   color: #555;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 `;
 
-// 페이지 버튼 스타일
 const PaginationContainer = styled.div`
+  position: absolute;
+  bottom: 1vh;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   justify-content: center;
-  margin-top: 2vh;
+  align-items: center;
+  gap: 1vw;
 `;
 
-const Button = styled.button<{ disabled: boolean }>`
-  background-color: ${({ disabled }) => (disabled ? '#ddd' : '#007bff')};
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  margin: 0 0.5rem;
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-  font-size: 1rem;
-  border-radius: 0.25rem;
+const Dot = styled.div<{ active: boolean }>`
+  width: 1.5vw;
+  height: 1.5vw;
+  border-radius: 50%;
+  background-color: ${(props) => (props.active ? '#00C99C' : '#ddd')};
+  transition:
+    width 0.3s ease-in-out,
+    height 0.3s ease-in-out;
 
-  &:hover {
-    background-color: ${({ disabled }) => (disabled ? '#ddd' : '#0056b3')};
+  ${(props) =>
+    props.active &&
+    css`
+      width: 2.5vw;
+      height: 2.5vw;
+    `}
+`;
+
+const SlideButton = styled.button`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: transparent;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 10;
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
   }
 `;
 
+const LeftButton = styled(SlideButton)`
+  left: 2vw;
+  color: #00c99c;
+`;
+
+const RightButton = styled(SlideButton)`
+  right: 2vw;
+  color: #00c99c;
+`;
+
 function LandPurchaseProcedureTab() {
-  const [knowledgeList, setKnowledgeList] = useState<KnowledgeItem[]>([]); // 배열 상태로 변경
-  const [loading, setLoading] = useState<boolean>(true); // 로딩 상태
-  const [currentPage, setCurrentPage] = useState<number>(1); // 현재 페이지 상태
+  const [knowledgeList, setKnowledgeList] = useState<KnowledgeItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 1; // 한 페이지에 보여줄 항목 수
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchKnowledgeByCategory(0); // 구매 절차에 해당하는 category 0 데이터 요청
-        console.log('구매 절차 API 응답:', data); // 콘솔에 API 응답 출력
-        setKnowledgeList(data); // 데이터를 배열로 상태에 저장
+        const data = await fetchKnowledgeByCategory(0);
+        setKnowledgeList(data);
       } catch (error) {
         console.error('데이터를 불러오는 중 오류 발생:', error);
       } finally {
-        setLoading(false); // 로딩 상태 업데이트
+        setLoading(false);
       }
     };
 
-    fetchData(); // 데이터 요청 함수 호출
+    fetchData();
   }, []);
 
-  // 페이지에 맞는 데이터 필터링
+  const totalPages = Math.ceil(knowledgeList.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = knowledgeList.slice(indexOfFirstItem, indexOfLastItem);
 
-  // 페이지 변경 핸들러
   const handleNextPage = () => {
-    setCurrentPage((prevPage) => prevPage + 1);
+    if (currentPage < totalPages) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
   };
 
   const handlePreviousPage = () => {
-    setCurrentPage((prevPage) => prevPage - 1);
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
   };
 
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handlers = useSwipeable({
+    onSwipedLeft: handleNextPage,
+    onSwipedRight: handlePreviousPage,
+    trackMouse: true,
+  });
+
   if (loading) {
-    return <TabContent>로딩 중...</TabContent>; // 로딩 중일 때 표시
+    return <TabContent>로딩 중...</TabContent>;
   }
 
   return (
-    <TabContent>
+    <TabContent {...handlers}>
       {currentItems.length > 0 ? (
         currentItems.map((item, index) => (
           <ItemContainer key={index}>
@@ -129,17 +178,27 @@ function LandPurchaseProcedureTab() {
       ) : (
         <Text>구매 절차에 대한 정보가 없습니다.</Text>
       )}
-      {/* 페이지네이션 */}
+
+      <LeftButton onClick={handlePreviousPage} disabled={currentPage === 1}>
+        {'<'}
+      </LeftButton>
+
+      <RightButton
+        onClick={handleNextPage}
+        disabled={currentPage === totalPages}
+      >
+        {'>'}
+      </RightButton>
+
+      {/* 페이지 인디케이터 */}
       <PaginationContainer>
-        <Button onClick={handlePreviousPage} disabled={currentPage === 1}>
-          이전
-        </Button>
-        <Button
-          onClick={handleNextPage}
-          disabled={indexOfLastItem >= knowledgeList.length}
-        >
-          다음
-        </Button>
+        {Array.from({ length: totalPages }, (_, i) => (
+          <Dot
+            key={i}
+            active={i + 1 === currentPage}
+            onClick={() => handlePageChange(i + 1)}
+          />
+        ))}
       </PaginationContainer>
     </TabContent>
   );
