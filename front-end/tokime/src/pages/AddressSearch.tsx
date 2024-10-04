@@ -62,23 +62,48 @@ function AddressSearch() {
   };
 
   const handleSearchSubmit = async () => {
-    const parts = searchValue.split(' ');
-    if (parts.length < 2) {
-      setErrorMessage('주소 형식이 올바르지 않습니다.'); // 잘못된 형식일 때 에러 메시지 설정
+    const parts = searchValue
+      .replace(/(\d+-\d+)/g, ' $1 ') // '95-16'과 같이 번호와 주소를 구분
+      .replace(/(\s+)/g, ' ') // 다중 공백을 하나의 공백으로 변경
+      .trim() // 앞뒤 공백 제거
+      .split(' '); // 공백을 기준으로 분리
+
+    let localDistrict = '';
+    let localAddress = '';
+
+    parts.forEach((part) => {
+      if (part.match(/(도|시|군|구|읍|면|리|통|동)$/)) {
+        localDistrict += `${part} `;
+      } else if (part.match(/\d+/)) {
+        localAddress += `${part} `;
+      } else {
+        localAddress += `${part} `;
+      }
+    });
+
+    localDistrict = localDistrict.trim(); // 불필요한 공백 제거
+    localAddress = localAddress.trim(); // 불필요한 공백 제거
+
+    if (!localDistrict && !localAddress) {
+      setErrorMessage('주소 형식이 올바르지 않습니다.');
       return;
     }
 
-    setDistrict(parts[0]);
-    setAddress(parts[1]);
+    setDistrict(localDistrict);
+    setAddress(localAddress);
 
     // Redux에 district와 address 저장
-    dispatch(setLandAddress({ district: parts[0], address: parts[1] }));
+    dispatch(
+      setLandAddress({ district: localDistrict, address: localAddress }),
+    );
 
     try {
       // 정보를 가져오는 로직
-      const landInfo = await getSearchLandInfo(parts[0], parts[1]);
-      if (landInfo.length > 0) {
-        dispatch(setLandDetails(landInfo[0])); // 필요한 데이터 저장
+      const landInfo = await getSearchLandInfo(localDistrict, localAddress);
+
+      // landInfo가 유효한지 체크
+      if (landInfo && landInfo.length > 0) {
+        dispatch(setLandDetails(landInfo));
 
         const lawData = await getLandLawInfo(landInfo[0].landDistrictCode);
         dispatch(setLawInfo(lawData)); // 법령 정보 저장
@@ -129,9 +154,7 @@ function AddressSearch() {
       </TabsContainer>
 
       <Content>
-        {activeTab === 'landInfo' && (
-          <LandDetailTab district={district} address={address} />
-        )}
+        {activeTab === 'landInfo' && <LandDetailTab />}
         {activeTab === 'riskMap' && (
           <RiskMapTab district={district} address={address} />
         )}

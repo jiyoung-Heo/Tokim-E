@@ -1,30 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { getSearchLandInfo } from '../../api/landAxios';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
-interface LandDetail {
-  landId: string;
-  landDistrictCode: number;
-  landDistrict: string;
-  landAddress: string;
-  landAddressName: string;
-  landScale: number;
-  landUse: string;
-  landUseStatus: string;
-  landGradient: string;
-  landRoad: string;
-  landPrice: number;
-  landDanger: number;
-}
-
-interface LandDetailTabProps {
-  district: string;
-  address: string;
-}
-
-const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
-  const [landDetails, setLandDetails] = useState<LandDetail[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+const LandDetailTab: React.FC = () => {
+  const landDetails = useSelector(
+    (state: RootState) => state.landinfo.landDetails,
+  );
   const [showInfo, setShowInfo] = useState<{ [key: string]: boolean }>({});
 
   const toggleInfo = (key: string) => {
@@ -46,27 +27,6 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
       toggleInfo(key);
     }
   };
-
-  useEffect(() => {
-    const fetchLandDetails = async () => {
-      try {
-        const data = await getSearchLandInfo(district, address);
-        if (data) {
-          setLandDetails(data);
-        } else {
-          setError('데이터를 가져오는 중 오류가 발생했습니다.');
-        }
-      } catch (err) {
-        setError('데이터를 가져오는 중 오류가 발생했습니다.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (district && address) {
-      fetchLandDetails();
-    }
-  }, [district, address]);
 
   const getLandUseDescription = (landUse: string) => {
     const descriptions: { [key: string]: string } = {
@@ -255,14 +215,6 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
       '개발 가능성에 대한 정보가 없습니다.'
     );
   };
-
-  if (loading) {
-    return <div>주소를 먼저 입력해주세요.</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
 
   return (
     <div>
