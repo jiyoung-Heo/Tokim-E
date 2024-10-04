@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { setQuizScore } from '../redux/slices/userSlice'; // 리덕스 액션 가져오기
 import userQuizListAxios from '../api/quizListAxios'; // 퀴즈 API 호출
+import modifyUserQuizAxios from '../api/modifyUserQuizAxios'; // 퀴즈 점수 수정 API 호출
 
 // 이미지 미리 import
 import Option1Icon from '../assets/images/icon/1.png';
@@ -64,10 +65,10 @@ const QuestionText = styled.p`
   color: #27c384;
   text-align: center;
   margin-top: 3vh;
-  max-width: 90%; /* 문제 텍스트의 최대 너비를 제한 */
-  white-space: normal; /* 줄바꿈을 정상적으로 처리 */
-  word-break: keep-all; /* 단어 중간에 줄바꿈 금지 */
-  overflow-wrap: break-word; /* 단어가 길 때 자동으로 줄바꿈 처리 */
+  max-width: 90%;
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 `;
 
 const QuizContent = styled.div`
@@ -86,7 +87,7 @@ const OptionContainer = styled.div`
   margin-left: 2vh;
 `;
 
-const Option = styled.button`
+const Option = styled.button<{ isCorrect: boolean; isWrong: boolean }>`
   display: flex;
   align-items: center;
   padding: 10px;
@@ -95,9 +96,15 @@ const Option = styled.button`
   cursor: pointer;
   font-family: 'Pretendard';
   font-size: 4vw;
-  color: #797982;
   text-align: left;
-  background-color: transparent;
+  background-color: ${({ isCorrect, isWrong }) => {
+    if (isCorrect) return '#27c384'; // 정답일 때 초록색
+    if (isWrong) return '#ff6b6b'; // 오답일 때 빨간색
+    return 'transparent'; // 기본 투명 배경
+  }};
+  color: ${({ isCorrect, isWrong }) =>
+    isCorrect || isWrong ? '#fff' : '#797982'};
+  transition: background-color 0.3s ease;
 `;
 
 const OptionIcon = styled.img`
@@ -115,7 +122,6 @@ const QuizImage = styled.img<{ size: number }>`
   max-height: ${(props) => props.size}px;
 `;
 
-// 아이콘 이미지도 미리 import
 const optionIcons = [Option1Icon, Option2Icon, Option3Icon, Option4Icon];
 
 const tokimImages = [
@@ -147,6 +153,7 @@ function LandPurchaseQuiz() {
   const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
   const [correctAnswersCount, setCorrectAnswersCount] = useState(0); // 맞은 개수
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [showCorrectAnswer, setShowCorrectAnswer] = useState<boolean>(false); // 정답 확인 여부
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -164,22 +171,38 @@ function LandPurchaseQuiz() {
     if (selectedAnswer === null) {
       setSelectedAnswer(id); // 선택된 답변 설정
       const correctAnswer = quizzes[currentQuizIndex].answerNumber;
+      setShowCorrectAnswer(true);
+
       if (id === correctAnswer) {
         setCorrectAnswersCount(correctAnswersCount + 1); // 맞은 개수 증가
       }
 
       // 다음 문제로 넘어가기
       setTimeout(() => {
+        setShowCorrectAnswer(false);
         if (currentQuizIndex < quizzes.length - 1) {
           setCurrentQuizIndex(currentQuizIndex + 1);
         } else {
           // 퀴즈가 종료되었을 때
-          const finalScore = correctAnswersCount * 5; // 점수는 맞은 개수 * 5
-          dispatch(setQuizScore(finalScore)); // 최종 점수 리덕스 상태에 저장
+          const finalScore =
+            (correctAnswersCount + (id === correctAnswer ? 1 : 0)) * 5; // 점수는 맞은 개수 * 5
+
+          // 퀴즈 점수 리덕스 상태에 저장
+          dispatch(setQuizScore(finalScore));
+
+          // 점수 수정 요청 API 호출
+          modifyUserQuizAxios(finalScore)
+            .then((updatedScore) => {
+              console.log(`서버에 점수 업데이트 완료: ${updatedScore}`);
+            })
+            .catch((e) => {
+              console.error('점수 업데이트 실패:', e);
+            });
+
           alert(`퀴즈가 종료되었습니다. 최종 점수: ${finalScore}`);
         }
         setSelectedAnswer(null); // 선택된 답변 초기화
-      }, 100); // 1초 후 다음 문제로
+      }, 1000); // 2초 후 다음 문제로
     }
   };
 
@@ -205,10 +228,14 @@ function LandPurchaseQuiz() {
             <Option
               key={index}
               onClick={() => handleOptionClick(index + 1)}
-              style={{
-                backgroundColor:
-                  selectedAnswer === index + 1 ? '#d1ffd7' : 'transparent',
-              }}
+              isCorrect={
+                showCorrectAnswer && currentQuiz.answerNumber === index + 1
+              }
+              isWrong={
+                showCorrectAnswer &&
+                selectedAnswer === index + 1 &&
+                selectedAnswer !== currentQuiz.answerNumber
+              }
             >
               <OptionIcon
                 src={optionIcons[index]} // 미리 import한 아이콘 배열 사용
