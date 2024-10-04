@@ -3,39 +3,84 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { registDanger } from '../api/dangerAxios';
+import backIcon from '../assets/images/icon/left-actionable.png';
 
+// 필요한 스타일 정의
+const Container = styled.div`
+  width: 100%;
+  height: 100%;
+  background: #f3f7fb;
+`;
+
+const Title = styled.h2`
+  margin: 0 0 3vh 0;
+  font-size: 25px;
+  font-weight: bold;
+  font-family: 'KoddiUD OnGothic';
+  color: #333333;
+  display: flex;
+  justify-content: left;
+`;
+
+// 뒤로가기 아이콘 정의
+const BackIcon = styled.img``;
 const DangerButton = styled.button`
-  margin-top: 10px;
-  width: 23%;
+  width: 30vw;
   background-color: #00c99c;
   color: white;
-  padding: 10px;
+  padding: 2vw;
   font-size: 15px;
   font-weight: bold;
   border-radius: 10px;
   cursor: pointer;
-  justify-content: right;
-  align-items: right;
   border: none;
 `;
 
+const TitleContainer = styled.div`
+  margin-bottom: 2vh;
+`;
+
+const TitleText = styled.input`
+  width: 100%;
+  height: 5vh;
+  padding: 2vw;
+  font-size: 16px;
+  border: 1.4px solid #333;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: bold;
+`;
+const Content = styled.textarea`
+  width: 100%;
+  height: 15vh;
+  padding: 2vw;
+  font-size: 15px;
+  font-weight: bold;
+  border: 1.4px solid #333;
+  border-radius: 10px;
+  // line-height: 1.5; // 필요에 따라 조절
+  margin-bottom: 2vh;
+`;
+
 const DangerP = styled.p`
-  margin-top: 5px;
-  margin-bottom: 5px;
+  margin: 0;
+  margin-bottom: 1vh;
+  font-size: 17px;
   font-weight: bold;
 `;
 
-const MapP = styled.p`
-  margin-top: 15px;
-  margin-bottom: 15px;
+const MapP = styled.div`
+  height: 30vh;
+  border: none;
+  borderradius: 10px;
   font-weight: bold;
 `;
 
 const ButtonDiv = styled.p`
-  margin-top: 0.5px;
+  margin: 0;
   display: flex; // flex container로 설정
-  justify-content: flex-end; // 오른쪽 정렬
-  gap: 20px;
+  justify-content: center;
+  gap: 7vw;
 `;
 
 function RiskMapReportPage() {
@@ -109,61 +154,44 @@ function RiskMapReportPage() {
     }
   };
 
+  const goBack = () => {
+    navigate(-1); // 이전 페이지로 이동
+  };
+
   return (
-    <>
-      <div>
+    <Container>
+      <Title>
+        <BackIcon src={backIcon} alt="back Icon" onClick={goBack} />
+        신고 등록
+      </Title>
+      <TitleContainer>
         <DangerP>제목</DangerP>
-        <input
+        <TitleText
           type="text"
-          placeholder="텍스트를 입력하세요"
+          placeholder="신고 제목을 입력하세요"
           value={dangerTitle}
           onChange={(e) => setDangerTitle(e.target.value)} // 제목 상태 업데이트
-          style={{
-            width: '100%',
-            height: '30px',
-            padding: '5px',
-            fontSize: '16px',
-            border: '1.4px solid #333',
-            borderRadius: '10px',
-          }}
         />
-      </div>
-      <MapP>
-        {/* 네이버 맵을 표시할 div */}
-        <div
-          ref={mapContainer}
-          style={{
-            width: '100%',
-            height: '400px',
-            border: 'none',
-            borderRadius: '10px',
-          }}
-        />
-      </MapP>
+      </TitleContainer>
+
+      <TitleContainer>
+        <DangerP>신고위치</DangerP>
+        <MapP ref={mapContainer} />
+      </TitleContainer>
+
       <div>
         <DangerP>내용</DangerP>
-        <input
-          type="text"
-          placeholder="텍스트를 입력하세요"
+        <Content
+          placeholder="내용을 입력하세요"
           value={dangerContent}
           onChange={(e) => setDangerContent(e.target.value)} // 내용 상태 업데이트
-          style={{
-            width: '100%',
-            height: '150px',
-            padding: '5px',
-            fontSize: '16px',
-            border: '1.4px solid #333',
-            borderRadius: '10px',
-            textAlign: 'center', // 텍스트 가운데 정렬
-            lineHeight: '1.5', // 필요에 따라 조절
-          }}
         />
       </div>
       <ButtonDiv>
         <DangerButton onClick={handleSubmit}>작성</DangerButton>
         <DangerButton onClick={handleBack}>취소</DangerButton>
       </ButtonDiv>
-    </>
+    </Container>
   );
 }
 
