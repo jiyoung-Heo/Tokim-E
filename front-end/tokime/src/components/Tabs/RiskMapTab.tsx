@@ -198,14 +198,10 @@
 // export default RiskMap;
 
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
 import styled from 'styled-components';
-
-// Props 인터페이스 정의
-interface RiskMapTabProps {
-  district: string;
-  address: string;
-}
+import { RootState } from '../../redux/store'; // RootState를 import하세요
 
 // 스타일 정의
 const Container = styled.div`
@@ -219,8 +215,13 @@ const MapContainer = styled.div`
   border: 1px solid #ccc;
 `;
 
-// RiskMapTab 컴포넌트 정의 (예제데이터)
-const RiskMapTab: React.FC<RiskMapTabProps> = ({ district, address }) => {
+// RiskMapTab 컴포넌트 정의
+const RiskMapTab: React.FC = () => {
+  // Redux 스토어에서 district와 address 가져오기
+  const { district, address } = useSelector(
+    (state: RootState) => state.landaddress,
+  );
+
   const [mapData, setMapData] = useState<any>(null);
   const [errorMessage, setErrorMessage] = useState('');
 
