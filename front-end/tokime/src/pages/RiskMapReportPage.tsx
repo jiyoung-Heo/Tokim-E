@@ -1,6 +1,7 @@
 // src/pages/RiskMapReportPage.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import { registDanger } from '../api/dangerAxios';
 
 const DangerButton = styled.button`
@@ -41,6 +42,11 @@ function RiskMapReportPage() {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const map = useRef<any>(null);
   const marker = useRef<any>(null); // 마커를 저장할 ref
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    navigate(-1); // 이전 페이지로 이동
+  };
 
   const [lat, setLat] = useState<number | null>(null); // 위도 상태
   const [lng, setLng] = useState<number | null>(null); // 경도 상태
@@ -155,7 +161,7 @@ function RiskMapReportPage() {
       </div>
       <ButtonDiv>
         <DangerButton onClick={handleSubmit}>작성</DangerButton>
-        <DangerButton>취소</DangerButton>
+        <DangerButton onClick={handleBack}>취소</DangerButton>
       </ButtonDiv>
     </>
   );
