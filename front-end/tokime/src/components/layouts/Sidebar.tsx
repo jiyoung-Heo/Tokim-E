@@ -118,9 +118,53 @@ const ButtonText = styled.span`
   color: #000000;
 `;
 
+// 모달 스타일 정의
+const ModalContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000; /* 사이드바보다 큰 z-index 값 */
+`;
+
+const ModalContent = styled.div`
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 2100; /* 모달 내용도 사이드바보다 위에 있도록 설정 */
+`;
+const ModalButtonList = styled.div`
+  display: flex;
+  justify-content: space-evenly; /* 버튼 사이의 공간을 균등하게 배분 */
+`;
+
+const ModalButton = styled.button`
+  margin-top: 10px;
+  width: 37%;
+  background-color: #00c99c;
+  color: white;
+  padding: 10px;
+  font-size: 15px;
+  font-weight: bold;
+  border-radius: 10px;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  cursor: pointer;
+`;
+
 function Sidebar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  // const modalBackground = useRef();
   const sidebarRef = useRef<HTMLDivElement>(null);
   const score = isLoggedIn ? 50 : 0; // 로그인 여부에 따라 점수 설정
   const navigate = useNavigate();
@@ -144,7 +188,8 @@ function Sidebar() {
   const handleClickOutside = (event: MouseEvent) => {
     if (
       sidebarRef.current &&
-      !sidebarRef.current.contains(event.target as Node)
+      !sidebarRef.current.contains(event.target as Node) &&
+      !modalOpen // 모달이 열려 있을 경우 사이드바 닫기 방지
     ) {
       setIsSidebarOpen(false);
     }
@@ -155,10 +200,12 @@ function Sidebar() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
+  }, [modalOpen]);
 
+  // 로그아웃 핸들러
   const handleLogout = () => {
     setIsLoggedIn(false);
+    setModalOpen(false); // 모달 닫기
   };
 
   const handleNavigateToLogin = () => {
@@ -199,7 +246,7 @@ function Sidebar() {
             <Button $bgColor="#00C99C" onClick={() => navigate('/my-page')}>
               마이페이지
             </Button>
-            <Button $bgColor="#00C99C" onClick={handleLogout}>
+            <Button $bgColor="#00C99C" onClick={() => setModalOpen(true)}>
               로그아웃
             </Button>
           </>
@@ -207,7 +254,6 @@ function Sidebar() {
           <>
             <GaugeWrapper>
               <Graph score={score} />
-              {/* 로그인 해주세요 텍스트와 아이콘에 클릭 이벤트 추가 */}
               <Icon
                 src={sidebarUser}
                 alt="유저 아이콘"
@@ -220,7 +266,6 @@ function Sidebar() {
 
             <UserInfo>
               <Divider />
-
               <Icon src={sidebarEmail} alt="이메일 아이콘" />
               <p>e-mail</p>
               <Divider />
@@ -247,6 +292,21 @@ function Sidebar() {
           </>
         )}
       </SidebarContainer>
+
+      {/* 모달 추가 */}
+      {modalOpen && (
+        <ModalContainer onClick={() => setModalOpen(false)}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <h3>로그아웃하시겠습니까?</h3>
+            <ModalButtonList>
+              <ModalButton onClick={handleLogout}>확인</ModalButton>
+              <ModalButton onClick={() => setModalOpen(false)}>
+                취소
+              </ModalButton>
+            </ModalButtonList>
+          </ModalContent>
+        </ModalContainer>
+      )}
     </>
   );
 }
