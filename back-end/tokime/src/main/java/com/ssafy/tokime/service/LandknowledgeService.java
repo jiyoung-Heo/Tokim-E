@@ -23,10 +23,6 @@ public class LandknowledgeService {
 
     public List<Landknowledge> selectAllKnowledgeByKnowledgeCategory(Long knowledgeCategory){
         List<Landknowledge> knowledges = landknowledgeRepository.findAllByKnowledgeCategory(knowledgeCategory);
-
-        if (knowledges.isEmpty()){
-            throw new NoSuchElementException("해당하는 지식이 없습니다.");
-        }
         return knowledges;
 
     }
