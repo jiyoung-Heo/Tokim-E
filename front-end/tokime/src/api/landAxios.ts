@@ -18,11 +18,7 @@ export const getSearchLandInfo = async (
   district: string | null,
   address: string | null,
 ) => {
-  // district와 address 중 하나라도 없으면 호출하지 않음
-  if (!district || !address) {
-    console.log('District or address is missing. Skipping API call.');
-    return null;
-  }
+  // district나 address가 없어도 API 호출
   return API.get('/land/search', {
     params: { district, address },
   })
@@ -32,7 +28,7 @@ export const getSearchLandInfo = async (
     })
     .catch((e) => {
       console.log('land Search Error : ', e);
-      return null;
+      return null; // 에러 발생 시 null 반환
     });
 };
 
