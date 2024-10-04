@@ -29,14 +29,14 @@ const Container = styled.div`
 const Logo = styled.img`
   align-self: flex-start;
   width: 33vw;
-  margin-bottom: 3vh;
+  margin-bottom: 5vh;
 `;
 
 // 큰 박스들을 감싸는 박스 (가로로 배치)
 const LargeIconGrid = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 90vw;
+  margin: 0 2vw;
 `;
 
 // 작은 박스들을 감싸는 박스 (가로로 배치)
