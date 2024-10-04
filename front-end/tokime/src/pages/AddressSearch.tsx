@@ -116,6 +116,12 @@ function AddressSearch() {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearchSubmit();
+    }
+  };
+
   return (
     <>
       <SearchContainer>
@@ -124,6 +130,7 @@ function AddressSearch() {
           placeholder="주소를 입력하세요."
           value={searchValue}
           onChange={handleSearchChange}
+          onKeyDown={handleKeyDown}
         />
         <button type="button" onClick={handleSearchSubmit}>
           검색

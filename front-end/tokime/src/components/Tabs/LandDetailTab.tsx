@@ -7,6 +7,15 @@ const LandDetailTab: React.FC = () => {
     (state: RootState) => state.landinfo.landDetails,
   );
   const [showInfo, setShowInfo] = useState<{ [key: string]: boolean }>({});
+  const [selectedDetail, setSelectedDetail] = useState<any>(null); // 선택된 토지 정보를 저장합니다.
+
+  const handleDetailClick = (detail: any) => {
+    setSelectedDetail(detail);
+  };
+
+  const handleBackClick = () => {
+    setSelectedDetail(null);
+  };
 
   const toggleInfo = (key: string) => {
     setShowInfo((prev) => ({
@@ -22,11 +31,11 @@ const LandDetailTab: React.FC = () => {
     }));
   };
 
-  const handleKeyDown = (key: string, event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      toggleInfo(key);
-    }
-  };
+  // const handleKeyDown = (key: string, event: React.KeyboardEvent) => {
+  //   if (event.key === 'Enter' || event.key === ' ') {
+  //     toggleInfo(key);
+  //   }
+  // };
 
   const getLandUseDescription = (landUse: string) => {
     const descriptions: { [key: string]: string } = {
@@ -218,131 +227,146 @@ const LandDetailTab: React.FC = () => {
 
   return (
     <div>
-      <h2>토지 상세 정보</h2>
-      {landDetails.length > 0 ? (
-        landDetails.map((detail) => (
-          <div
-            key={detail.landId}
-            style={{ position: 'relative', marginBottom: '16px' }}
-          >
-            <p>
-              주소: {detail.landDistrict} {detail.landAddress}
-            </p>
-
-            {/* 공통 정보 항목을 위한 컴포넌트 생성 */}
-            {[
-              {
-                label: '면적',
-                value: `${detail.landScale}㎡`,
-                tooltip: `토지의 평수는 ${(detail.landScale * 0.3025).toFixed(2)}평 입니다.`,
-                key: `landScale-${detail.landId}`,
-              },
-              {
-                label: '용도지역',
-                value: detail.landUse,
-                tooltip: getLandUseDescription(detail.landUse),
-                key: `landUse-${detail.landId}`,
-              },
-              {
-                label: '토지이용상황',
-                value: detail.landUseStatus,
-                tooltip: getLandUseStatusDescription(detail.landUseStatus),
-                key: `landUseStatus-${detail.landId}`,
-              },
-              {
-                label: '경사도',
-                value: detail.landGradient,
-                tooltip: getGradientDescription(detail.landGradient),
-                key: `landGradient-${detail.landId}`,
-              },
-              {
-                label: '도로접면',
-                value: detail.landRoad,
-                tooltip: getRoadAccessDescription(detail.landRoad),
-                key: `landRoad-${detail.landId}`,
-              },
-              {
-                label: '공시지가',
-                value: `㎡당 ${detail.landPrice} 원`,
-                tooltip:
-                  '공시지가는 정부가 매년 전국의 토지에 대해 공시하는 표준적인 땅값입니다. 주로 국토교통부에서 발표하며 세금 부과, 부동산 거래, 보상 평가 등의 기준이 되는 중요한 자료입니다. 다만, 공시지가는 토지의 거래 가격과는 다소 차이가 있을 수 있습니다.',
-                key: `landPrice-${detail.landId}`,
-              },
-              {
-                label: '개발 가능성',
-                value: detail.landDanger.toString(),
-                tooltip: getDevelopmentPotentialDescription(detail.landDanger),
-                key: `landDanger-${detail.landId}`,
-              },
-            ].map((item) => (
-              <div key={item.key}>
-                <p style={{ position: 'relative' }}>
-                  {item.label}: {item.value}
+      <h2>토지 정보</h2>
+      {selectedDetail ? ( // 선택된 상세 정보가 있으면
+        <div>
+          <button type="button" onClick={handleBackClick}>
+            뒤로가기
+          </button>
+          <h3>
+            주소: {selectedDetail.landDistrict} {selectedDetail.landAddress}
+          </h3>
+          {/* 공통 정보 항목을 위한 컴포넌트 생성 */}
+          {[
+            {
+              label: '면적',
+              value: `${selectedDetail.landScale}㎡`,
+              tooltip: `토지의 평수는 ${(selectedDetail.landScale * 0.3025).toFixed(2)}평 입니다.`,
+              key: `landScale-${selectedDetail.landId}`,
+            },
+            {
+              label: '용도지역',
+              value: selectedDetail.landUse,
+              tooltip: getLandUseDescription(selectedDetail.landUse),
+              key: `landUse-${selectedDetail.landId}`,
+            },
+            {
+              label: '토지이용상황',
+              value: selectedDetail.landUseStatus,
+              tooltip: getLandUseStatusDescription(
+                selectedDetail.landUseStatus,
+              ),
+              key: `landUseStatus-${selectedDetail.landId}`,
+            },
+            {
+              label: '경사도',
+              value: selectedDetail.landGradient,
+              tooltip: getGradientDescription(selectedDetail.landGradient),
+              key: `landGradient-${selectedDetail.landId}`,
+            },
+            {
+              label: '도로접면',
+              value: selectedDetail.landRoad,
+              tooltip: getRoadAccessDescription(selectedDetail.landRoad),
+              key: `landRoad-${selectedDetail.landId}`,
+            },
+            {
+              label: '공시지가',
+              value: `㎡당 ${selectedDetail.landPrice} 원`,
+              tooltip:
+                '공시지가는 정부가 매년 전국의 토지에 대해 공시하는 표준적인 땅값입니다. 주로 국토교통부에서 발표하며 세금 부과, 부동산 거래, 보상 평가 등의 기준이 되는 중요한 자료입니다. 다만, 공시지가는 토지의 거래 가격과는 다소 차이가 있을 수 있습니다.',
+              key: `landPrice-${selectedDetail.landId}`,
+            },
+            {
+              label: '개발 가능성',
+              value: selectedDetail.landDanger.toString(),
+              tooltip: getDevelopmentPotentialDescription(
+                selectedDetail.landDanger,
+              ),
+              key: `landDanger-${selectedDetail.landId}`,
+            },
+          ].map((item) => (
+            <div key={item.key}>
+              <p style={{ position: 'relative' }}>
+                {item.label}: {item.value}
+                <button
+                  type="button"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: 0,
+                    marginLeft: '8px',
+                    width: '16px',
+                    height: '16px',
+                  }}
+                  onClick={() => toggleInfo(item.key)}
+                  aria-label={`${item.label} 정보`}
+                >
+                  <img
+                    src="/icons/information.png"
+                    alt="info"
+                    style={{ width: '16px', height: '16px' }}
+                  />
+                </button>
+                {showInfo[item.key] && (
                   <button
                     type="button"
                     style={{
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: 0,
-                      marginLeft: '8px',
-                      width: '16px',
-                      height: '16px',
+                      position: 'absolute',
+                      backgroundColor: '#333',
+                      color: '#fff',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      top: '20px',
+                      left: '0px',
+                      whiteSpace: 'nowrap',
+                      zIndex: 100,
                     }}
-                    onClick={() => toggleInfo(item.key)}
-                    onKeyDown={(e) => handleKeyDown(item.key, e)}
-                    aria-label={`${item.label} 정보`}
+                    onClick={() => closeInfo(item.key)}
+                    aria-label="정보 닫기"
                   >
-                    <img
-                      src="/icons/information.png"
-                      alt="info"
-                      style={{ width: '16px', height: '16px' }}
+                    {item.tooltip}
+                    <span
+                      style={{
+                        content: '""',
+                        position: 'absolute',
+                        top: '100%',
+                        left: '10px',
+                        borderWidth: '5px',
+                        borderStyle: 'solid',
+                        borderColor: 'transparent transparent #333 transparent',
+                      }}
                     />
                   </button>
-                  {showInfo[item.key] && (
-                    <button
-                      type="button"
-                      style={{
-                        position: 'absolute',
-                        backgroundColor: '#333',
-                        color: '#fff',
-                        padding: '4px 8px',
-                        borderRadius: '4px',
-                        top: '20px',
-                        left: '0px',
-                        whiteSpace: 'nowrap',
-                        zIndex: 100,
-                      }}
-                      onClick={() => closeInfo(item.key)}
-                      aria-label="정보 닫기"
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          closeInfo(item.key);
-                        }
-                      }}
-                    >
-                      {item.tooltip}
-                      <span
-                        style={{
-                          content: '""',
-                          position: 'absolute',
-                          top: '100%',
-                          left: '10px',
-                          borderWidth: '5px',
-                          borderStyle: 'solid',
-                          borderColor:
-                            'transparent transparent #333 transparent',
-                        }}
-                      />
-                    </button>
-                  )}
-                </p>
-              </div>
-            ))}
-          </div>
-        ))
+                )}
+              </p>
+            </div>
+          ))}
+        </div>
       ) : (
-        <div>토지 정보가 없습니다.</div>
+        // 선택된 상세 정보가 없으면
+        <div>
+          {landDetails.length > 0 ? (
+            landDetails.map((detail) => (
+              <div key={detail.landId} style={{ marginBottom: '16px' }}>
+                <button
+                  type="button"
+                  onClick={() => handleDetailClick(detail)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  주소: {detail.landDistrict} {detail.landAddress}
+                </button>
+              </div>
+            ))
+          ) : (
+            <div>토지 정보가 없습니다.</div>
+          )}
+        </div>
       )}
     </div>
   );
