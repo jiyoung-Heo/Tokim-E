@@ -64,7 +64,7 @@ const QuizButton = styled.button`
   width: 83.3vw; // 반응형 너비 (300px)
   height: 7.8vh; // 반응형 높이 (50px)
   left: 8.8vw; // 반응형 left (32px)
-  top: 88.28vh; // 반응형 top (565px)
+  margin-top: 2.34vh;
   background: #27c384;
   border-radius: 3.125vh; // 반응형 보더 (20px)
   border: none;

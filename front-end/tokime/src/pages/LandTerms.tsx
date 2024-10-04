@@ -2,44 +2,43 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import searchIcon from '../assets/images/icon/search.svg';
-import { getAllTerms } from '../api/termAxios'; // API 서비스 호출
+import starIcon from '../assets/images/icon/star.svg'; // 기본 별 아이콘
+import starFilled from '../assets/images/icon/star_filled.svg'; // 즐겨찾기 시 사용될 채워진 별 아이콘
 
-// 컨테이너 스타일 정의
+import { getAllTerms, registTermLike, deleteTermLike } from '../api/termAxios'; // API 서비스 호출
+
 const Container = styled.div`
   width: 100%;
   height: 100vh;
   background: #f3f7fb;
 `;
 
-// 제목 스타일 정의
 const Title = styled.h2`
   position: absolute;
-  left: 40px;
-  top: 40px;
+  left: 11.11vw;
+  top: 6.25vh;
   font-size: 20px;
   font-weight: 700;
   font-family: 'KoddiUD OnGothic';
   color: #333333;
 `;
 
-// 부제 스타일 정의
 const SubTitle = styled.div`
   position: absolute;
-  left: 13px;
-  top: 85px;
+  left: 4.17vw;
+  top: 13.28vh;
   font-size: 20px;
   font-weight: 700;
   color: #333333;
   font-family: 'KoddiUD OnGothic';
 `;
 
-// 검색 박스 스타일 정의
 const SearchBox = styled.div`
   position: absolute;
-  width: 340px;
+  width: 94.44vw;
   height: 40px;
-  left: 10px;
-  top: 131px;
+  left: 1.56vw;
+  top: 20.31vh;
   background: #ffffff;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 10px;
@@ -53,7 +52,6 @@ const SearchIcon = styled.img`
   height: 24px;
 `;
 
-// 검색 입력창 스타일 정의
 const SearchInput = styled.input`
   border: none;
   font-size: 16px;
@@ -64,26 +62,52 @@ const SearchInput = styled.input`
   background: none;
   font-family: 'KoddiUD OnGothic';
 
+  &::placeholder {
+    color: rgba(39, 195, 132, 0.5);
+  }
   &:focus {
     outline: none;
     color: #27c384;
   }
 `;
 
-// 용어 목록 스타일 정의
 const TermContainer = styled.div`
   position: absolute;
-  width: 340px;
-  height: 385px;
-  left: 10px;
-  top: 178px;
+  width: 94.44vw;
+  height: 60.16vh;
+  left: 2.78vw;
+  top: 28.13vh;
   background: #ffffff;
   box-shadow:
     inset 0px 4px 4px rgba(0, 0, 0, 0.25),
     0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 10px;
-  padding: 20px;
-  overflow-y: scroll;
+  padding: 3.13vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const TermList = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+  gap: 33px;
+  position: absolute;
+  top: 4.69vh;
+  left: 8.33vw;
+  width: 75vw;
+  height: 43vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+`;
+
+const TermWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 `;
 
 const Term = styled(Link)`
@@ -91,24 +115,30 @@ const Term = styled(Link)`
   font-size: 18px;
   font-weight: 700;
   color: #333333;
-  margin-bottom: 33px;
-  font-family: 'KoddiUD OnGothic';
   text-decoration: none;
+  font-family: 'KoddiUD OnGothic';
 
   &:hover {
     color: #27c384;
   }
 `;
 
-// 알파벳 네비게이션 스타일 정의
+const StarIcon = styled.img<{ isLiked: boolean }>`
+  width: 4.17vw;
+  height: 2.34vh;
+  cursor: pointer;
+  transition: opacity 0.3s ease-in-out;
+  opacity: ${(props) => (props.isLiked ? 1 : 0.5)};
+`;
+
 const AlphabetNavContainer = styled.div`
   display: flex;
   overflow-x: auto;
-  padding-bottom: 10px;
+  padding-bottom: 1.56vh;
   position: fixed;
-  bottom: 80px;
-  width: 340px;
-  left: 10px;
+  bottom: 12.5vh;
+  width: 94.44vw;
+  left: 2.78vw;
   z-index: 999;
   border-top: 3px solid rgba(120, 120, 130, 0.1);
 
@@ -122,22 +152,45 @@ const AlphabetNavContainer = styled.div`
   }
 `;
 
-const AlphabetButton = styled.div<{ isSelected: boolean }>`
+const AlphabetButton = styled.div<{
+  isSelected: boolean;
+  showFavorites: boolean;
+}>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   flex: 0 0 auto;
-  padding: 8px;
-  margin-left: 17px; // 아이콘 사이 간격 설정
+  padding: 2vh;
+  margin-left: 3vw;
   border-radius: 4px;
-  font-size: 16px;
+  font-size: 4vw;
   font-family: 'KoddiUD OnGothic';
   font-weight: 700;
   text-align: center;
-  line-height: 24px;
-  color: ${(props) => (props.isSelected ? '#333333' : 'rgba(51, 51, 51, 0.8)')};
-  cursor: pointer;
 
-  &:hover {
-    color: #27c384;
-  }
+  color: ${(props) => {
+    if (props.showFavorites) {
+      return '#CCCCCC'; // 즐겨찾기 모드일 때 알파벳 색상을 회색으로
+    }
+    if (props.isSelected) {
+      return '#27c384'; // 선택된 알파벳 색상
+    }
+    return '#333333'; // 기본 알파벳 색상
+  }};
+
+  cursor: ${(props) =>
+    props.showFavorites
+      ? 'not-allowed'
+      : 'pointer'}; // 즐겨찾기 모드일 때 클릭 비활성화
+`;
+
+const FavoriteButton = styled(StarIcon)`
+  width: 4.17vw;
+  height: 2.34vh;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const alphabets = [
@@ -157,62 +210,96 @@ const alphabets = [
   '하',
 ];
 
-// 메인 컴포넌트
 const LandTerms = () => {
-  const [searchTerm, setSearchTerm] = useState(''); // 검색어 상태
-  const [allTerms, setAllTerms] = useState<any[]>([]); // 전체 용어 리스트
-  const [filteredTerms, setFilteredTerms] = useState<any[]>([]); // 필터링된 용어 리스트
-  const [loading, setLoading] = useState(true); // 로딩 상태
-  const [selectedAlphabet, setSelectedAlphabet] = useState('가'); // 선택된 알파벳
+  const [searchTerm, setSearchTerm] = useState('');
+  const [allTerms, setAllTerms] = useState<any[]>([]);
+  const [filteredTerms, setFilteredTerms] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedAlphabet, setSelectedAlphabet] = useState('');
+  const [likedTerms, setLikedTerms] = useState<number[]>([]); // 즐겨찾기된 용어 ID 목록
+  const [showFavorites, setShowFavorites] = useState(false); // 즐겨찾기 모드 여부
 
-  const termContainerRef = useRef<HTMLDivElement>(null); // 스크롤 참조
+  const termContainerRef = useRef<HTMLDivElement>(null);
 
-  // 전체 용어 조회
   const fetchTerms = async () => {
     try {
-      const data = await getAllTerms(''); // 모든 용어 불러오기
-      console.log('전체 API 응답 데이터:', data); // 응답 데이터 확인
-      setAllTerms(data); // 전체 데이터를 저장
-      setFilteredTerms(data); // 초기 필터링 데이터는 전체 데이터
+      const data = await getAllTerms('');
+      setAllTerms(data);
+
+      // likeCheck가 true인 항목을 찾아 likedTerms에 저장
+      const likedTermIds = data
+        .filter((term: any) => term.likeCheck === true) // term에 타입 명시
+        .map((term: any) => term.termId); // term에 타입 명시
+
+      setLikedTerms(likedTermIds);
+
+      setFilteredTerms(data);
     } catch (error) {
       console.error('용어를 불러오는데 실패했습니다:', error);
     } finally {
-      setLoading(false); // 로딩 완료
+      setLoading(false);
     }
   };
 
-  // 페이지 로드 시 전체 용어 조회
+  const toggleLike = async (termId: number, isLiked: boolean) => {
+    try {
+      if (isLiked) {
+        await deleteTermLike(termId);
+        setLikedTerms((prev) => prev.filter((id) => id !== termId));
+      } else {
+        await registTermLike(termId);
+        setLikedTerms((prev) => [...prev, termId]);
+      }
+    } catch (error) {
+      console.error('좋아요 처리 중 오류 발생:', error);
+    }
+  };
+
+  const handleFavoriteClick = () => {
+    setShowFavorites(!showFavorites);
+    setSelectedAlphabet(''); // 즐겨찾기 모드에서는 알파벳 선택 초기화
+    if (!showFavorites) {
+      setFilteredTerms(
+        allTerms.filter((term) => likedTerms.includes(term.termId)),
+      );
+    } else {
+      setFilteredTerms(allTerms);
+    }
+  };
+
   useEffect(() => {
-    fetchTerms(); // 초기에는 전체 조회
+    fetchTerms();
   }, []);
 
-  // 알파벳 선택에 따라 용어 필터링
   useEffect(() => {
-    const filtered = allTerms.filter((term) =>
-      term.termName.startsWith(selectedAlphabet),
-    );
-    console.log('필터링된 용어:', filtered); // 필터링된 용어 확인
-    setFilteredTerms(filtered); // 필터링된 데이터를 업데이트
-
-    // 선택된 알파벳의 첫 번째 용어로 스크롤
-    if (termContainerRef.current && filtered.length > 0) {
-      termContainerRef.current.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      });
+    if (selectedAlphabet === '') {
+      setFilteredTerms(allTerms);
+    } else {
+      const filtered = allTerms.filter((term) =>
+        term.termName.startsWith(selectedAlphabet),
+      );
+      setFilteredTerms(filtered);
     }
   }, [selectedAlphabet, allTerms]);
 
-  // 검색어가 변경될 때마다 클라이언트 측에서 추가 필터링
   useEffect(() => {
     const filtered = allTerms.filter((term) =>
       term.termName.includes(searchTerm),
     );
-    setFilteredTerms(filtered); // 검색어 필터링된 데이터를 업데이트
+    setFilteredTerms(filtered);
   }, [searchTerm, allTerms]);
 
+  const handleAlphabetClick = (alphabet: string) => {
+    if (selectedAlphabet === alphabet) {
+      setSelectedAlphabet('');
+    } else {
+      setSelectedAlphabet(alphabet);
+      setShowFavorites(false); // 알파벳을 클릭하면 즐겨찾기 모드를 해제
+    }
+  };
+
   if (loading) {
-    return <div>로딩 중...</div>; // 로딩 상태일 때 표시
+    return <div>로딩 중...</div>;
   }
 
   return (
@@ -220,41 +307,60 @@ const LandTerms = () => {
       <Title>토지 용어 사전</Title>
       <SubTitle>어떤 용어를 검색할까요?</SubTitle>
 
-      {/* 알파벳 네비게이션 */}
       <AlphabetNavContainer>
+        <AlphabetButton
+          isSelected={false}
+          onClick={handleFavoriteClick}
+          showFavorites={showFavorites}
+        >
+          <FavoriteButton
+            src={showFavorites ? starFilled : starIcon} // 즐겨찾기 모드에 따라 아이콘 변경
+            alt="즐겨찾기 전용 보기"
+            isLiked={showFavorites}
+          />
+        </AlphabetButton>
         {alphabets.map((alphabet) => (
           <AlphabetButton
             key={alphabet}
             isSelected={selectedAlphabet === alphabet}
-            onClick={() => setSelectedAlphabet(alphabet)}
+            showFavorites={showFavorites} // 즐겨찾기 모드에 따라 알파벳 색상 변경
+            onClick={() => handleAlphabetClick(alphabet)}
           >
             {alphabet}
           </AlphabetButton>
         ))}
       </AlphabetNavContainer>
 
-      {/* 검색 박스 */}
       <SearchBox>
         <SearchIcon src={searchIcon} alt="search" />
         <SearchInput
           type="text"
           placeholder="용어 검색"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)} // 검색어 입력 시 상태 업데이트
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
       </SearchBox>
 
-      {/* 용어 목록 */}
       <TermContainer ref={termContainerRef}>
-        {filteredTerms.length > 0 ? (
-          filteredTerms.map((term) => (
-            <Term to={`/land-terms/${term.termId}`} key={term.termId}>
-              {term.termName}
-            </Term>
-          ))
-        ) : (
-          <div>검색 결과가 없습니다.</div>
-        )}
+        <TermList>
+          {filteredTerms.length > 0 ? (
+            filteredTerms.map((term) => (
+              <TermWrapper key={term.termId}>
+                <Term to={`/land-terms/${term.termId}`}>{term.termName}</Term>
+                <StarIcon
+                  src={likedTerms.includes(term.termId) ? starFilled : starIcon} // isLiked에 따라 이미지 변경
+                  alt="즐겨찾기"
+                  isLiked={likedTerms.includes(term.termId)}
+                  onClick={() =>
+                    toggleLike(term.termId, likedTerms.includes(term.termId))
+                  }
+                />
+              </TermWrapper>
+            ))
+          ) : (
+            <div>검색 결과가 없습니다.</div>
+          )}
+        </TermList>
       </TermContainer>
     </Container>
   );
