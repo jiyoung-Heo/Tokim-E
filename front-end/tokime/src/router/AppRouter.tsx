@@ -41,7 +41,11 @@ function AppRouter() {
       />
       <Route
         path="/land-purchase-knowledge"
-        element={<LandPurchaseKnowledge />}
+        element={
+          <Layout>
+            <LandPurchaseKnowledge />
+          </Layout>
+        }
       />
       <Route
         path="/land-terms"

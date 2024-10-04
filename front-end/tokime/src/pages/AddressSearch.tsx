@@ -60,8 +60,7 @@ const Content = styled.div`
 function AddressSearch() {
   const [activeTab, setActiveTab] = useState('landInfo');
   const [searchValue, setSearchValue] = useState('');
-  const [district, setDistrict] = useState('');
-  const [address, setAddress] = useState('');
+
   const [errorMessage, setErrorMessage] = useState(''); // 에러 메시지 상태 추가
   const dispatch = useDispatch();
 
@@ -123,8 +122,6 @@ function AddressSearch() {
     }
 
     // district와 address 상태 설정
-    setDistrict(localDistrict);
-    setAddress(localAddress);
     console.log('district', localDistrict);
     console.log('address', localAddress);
 
@@ -200,9 +197,7 @@ function AddressSearch() {
 
       <Content>
         {activeTab === 'landInfo' && <LandDetailTab />}
-        {activeTab === 'riskMap' && (
-          <RiskMapTab district={district} address={address} />
-        )}
+        {activeTab === 'riskMap' && <RiskMapTab />}
         {activeTab === 'regionalInfo' && <OrdinanceInfoTab />}
       </Content>
     </>
