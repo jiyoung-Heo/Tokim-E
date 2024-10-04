@@ -53,11 +53,12 @@ const GaugeWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 2vh;
+  // margin-bottom: 2vh;
 `;
 
 // 점수 텍스트 스타일
 const Score = styled.p`
+  margin: 0;
   font-size: 5vw;
   font-weight: bold;
 `;
@@ -268,6 +269,7 @@ function Sidebar() {
           </GaugeWrapper>
 
           <UserInfo>
+            <Divider />
             <Icon src={sidebarUser} alt="유저 아이콘" />
             <UserName>{userInfo.name}</UserName>
             <Divider />
