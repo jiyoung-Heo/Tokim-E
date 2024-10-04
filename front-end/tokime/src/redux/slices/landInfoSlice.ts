@@ -17,10 +17,12 @@ interface LandDetail {
 
 interface LandInfoState {
   landDetails: LandDetail[];
+  landDetail: LandDetail | null;
 }
 
 const initialState: LandInfoState = {
   landDetails: [], // 초기 상태는 빈 배열
+  landDetail: null, // 단일 개체 초기값은 null
 };
 
 const landinfoSlice = createSlice({
@@ -30,8 +32,15 @@ const landinfoSlice = createSlice({
     setLandDetails(state, action: PayloadAction<LandDetail[]>) {
       state.landDetails = action.payload;
     },
+    setLandDetail(state, action: PayloadAction<LandDetail | null>) {
+      state.landDetail = action.payload; // 단일 개체 저장 또는 null로 초기화
+    },
+    resetLandInfo() {
+      return initialState; // 초기 상태로 리셋
+    },
   },
 });
 
-export const { setLandDetails } = landinfoSlice.actions;
+export const { setLandDetails, setLandDetail, resetLandInfo } =
+  landinfoSlice.actions;
 export default landinfoSlice;
