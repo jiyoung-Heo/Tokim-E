@@ -120,6 +120,45 @@ const NewsItem = styled.div`
   border-bottom: 1px solid #bfbfbf;
 `;
 
+// 모달 스타일 정의
+const ModalContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+`;
+
+const ModalContent = styled.div`
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 90vw; // 모달 너비 제한
+  max-height: 80vh; // 모달 최대 높이 설정
+`;
+
+const ModalCloseButton = styled.button`
+  margin-top: 20px;
+  background-color: #00c99c;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+`;
+
+const ModalBody = styled.div`
+  max-height: 300px; /* 원하는 최대 높이 설정 */
+  overflow-y: auto; /* 스크롤이 필요한 경우 활성화 */
+  margin-bottom: 20px; /* 다른 요소와의 간격 조정 */
+`;
+
 // 용어 상세 컴포넌트
 function LandTermDetail() {
   const { term } = useParams<{ term: string }>(); // useParams로 termId 가져오기
@@ -127,6 +166,7 @@ function LandTermDetail() {
   const [openAiResponse, setOpenAiResponse] = useState<string | null>(null); // OpenAI 응답 저장
   const [loading, setLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(false); // 즐겨찾기 상태
+  const [modalOpen, setModalOpen] = useState(false); // 모달 상태
 
   // 용어 데이터를 가져오는 useEffect
   useEffect(() => {
@@ -179,6 +219,21 @@ function LandTermDetail() {
     }
   };
 
+  const handleDescriptionClick = () => {
+    setModalOpen(true); // 모달 열기
+  };
+
+  const closeModal = () => {
+    setModalOpen(false); // 모달 닫기
+  };
+
+  // const getShortDescription = (description: string) => {
+  //   if (description.length > 100) {
+  //     return `${description.substring(0, 100)}...`;
+  //   }
+  //   return description;
+  // };
+
   if (loading) {
     return <div>용어 정보를 불러오는 중입니다...</div>;
   }
@@ -194,7 +249,9 @@ function LandTermDetail() {
       {/* 용어 정보 */}
       <TermDetailContainer>
         <TermTitle>{termData.termName}</TermTitle>
-        <TermDescription>{termData.termDescribe}</TermDescription>
+        <TermDescription onClick={handleDescriptionClick}>
+          {termData.termDescribe}
+        </TermDescription>
       </TermDetailContainer>
 
       {/* 즐겨찾기 아이콘 */}
@@ -223,6 +280,20 @@ function LandTermDetail() {
           <NewsItem>관련 뉴스가 없습니다.</NewsItem>
         )}
       </NewsContainer>
+
+      {/* 모달 */}
+      {/* 모달 */}
+      {modalOpen && (
+        <ModalContainer onClick={closeModal}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <h3>전체 설명</h3>
+            <ModalBody>
+              <p>{termData.termDescribe}</p>
+            </ModalBody>
+            <ModalCloseButton onClick={closeModal}>닫기</ModalCloseButton>
+          </ModalContent>
+        </ModalContainer>
+      )}
     </Container>
   );
 }
