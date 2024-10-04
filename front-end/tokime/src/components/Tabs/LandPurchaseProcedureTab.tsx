@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 
 const TabContent = styled.div`
-  width: 83.33vw;
   height: 60vh;
   background-color: #ffffff;
   border-radius: 5.56vw;
@@ -13,7 +12,7 @@ const TabContent = styled.div`
   box-shadow:
     0px 1.11vw 1.11vw rgba(0, 0, 0, 0.25),
     inset 0px 1.11vw 1.11vw rgba(0, 0, 0, 0.25);
-  margin-top: 25vh;
+  margin-top: 3vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -37,7 +36,7 @@ const Image = styled.img`
 
 const Text = styled.p`
   margin-top: 3vh;
-  font-size: 3.89vw;
+  font-size: 5vw;
   font-family: 'KoddiUD OnGothic';
   font-weight: 700;
   text-align: center;
@@ -46,7 +45,7 @@ const Text = styled.p`
 `;
 
 const Description = styled.p`
-  font-size: 3.33vw;
+  font-size: 3.5vw;
   text-align: center;
   color: #555;
   word-break: keep-all;
@@ -83,7 +82,7 @@ const Dot = styled.div<{ active: boolean }>`
 
 const SlideButton = styled.button`
   position: absolute;
-  top: 50%;
+  top: 35%;
   transform: translateY(-50%);
   background-color: transparent;
   border: none;
@@ -98,12 +97,12 @@ const SlideButton = styled.button`
 `;
 
 const LeftButton = styled(SlideButton)`
-  left: 2vw;
+  left: 3vw;
   color: #00c99c;
 `;
 
 const RightButton = styled(SlideButton)`
-  right: 2vw;
+  right: 3vw;
   color: #00c99c;
 `;
 

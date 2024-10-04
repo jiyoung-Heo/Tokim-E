@@ -3,16 +3,17 @@ import { useNavigate } from 'react-router-dom'; // useNavigate 훅 임포트
 import styled from 'styled-components';
 import LandPurchaseProcedureTab from '../components/Tabs/LandPurchaseProcedureTab';
 import EssentialKnowledgeTab from '../components/Tabs/EssentialKnowledgeTab';
+import backIcon from '../assets/images/icon/left-actionable.png';
 
 // 페이지 제목 스타일
 const Title = styled.h2`
-  position: absolute;
-  left: 10vw; // 반응형으로 조정
-  top: 6.25vh; // 40px을 vh로 환산
-  font-size: 5.5vw; // 반응형 폰트 크기 (20px)
-  font-weight: 700;
+  margin: 0 0 3vh 0;
+  font-size: 25px;
+  font-weight: bold;
   font-family: 'KoddiUD OnGothic';
   color: #333333;
+  display: flex;
+  justify-content: left;
 `;
 // 탭 버튼을 감싸는 컨테이너
 const TabsContainer = styled.div`
@@ -20,13 +21,12 @@ const TabsContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 22vw; // 반응형 간격 설정 (80px)
-  width: 100vw;
   height: 6vh; // 반응형 높이 (39px)
-  position: absolute;
-  top: 15.6vh; // 100px을 vh로 환산
-  left: 0;
   border-bottom: 0.27vh solid rgba(121, 121, 130, 0.1); // 아주 미세하게 두께 조정
 `;
+
+// 뒤로가기 아이콘 정의
+const BackIcon = styled.img``;
 
 // 탭 버튼 스타일
 const TabButton = styled.button<{ $active: boolean }>`
@@ -60,11 +60,8 @@ const TabButton = styled.button<{ $active: boolean }>`
 `;
 // 버튼 스타일
 const QuizButton = styled.button`
-  position: absolute;
   width: 83.3vw; // 반응형 너비 (300px)
   height: 7.8vh; // 반응형 높이 (50px)
-  left: 8.8vw; // 반응형 left (32px)
-  margin-top: 2.34vh;
   background: #27c384;
   border-radius: 3.125vh; // 반응형 보더 (20px)
   border: none;
@@ -76,24 +73,34 @@ const QuizButton = styled.button`
   font-weight: 700;
   font-size: 3.88vw; // 반응형 폰트 크기 (14px)
   line-height: 2.65vh; // 반응형 라인 높이 (17px)
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
   color: #ffffff;
 
   &:hover {
     background-color: #1ea873; // hover 시 조금 더 어두운 녹색
   }
 `;
+// 버튼을 감싸는 컨테이너
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1.5vh;
+`;
 
 function LandPurchaseKnowledge() {
   const [activeTab, setActiveTab] = useState<string>('purchaseProcedure');
   const navigate = useNavigate(); // useNavigate 훅 사용
 
+  const goBack = () => {
+    navigate(-1); // 이전 페이지로 이동
+  };
+
   return (
     <div>
-      <Title>용어 상세 설명</Title>
+      <Title>
+        <BackIcon src={backIcon} alt="back Icon" onClick={goBack} />
+        용어 상세 설명
+      </Title>
 
       <TabsContainer>
         <TabButton
@@ -114,9 +121,11 @@ function LandPurchaseKnowledge() {
       {activeTab === 'essentialKnowledge' && <EssentialKnowledgeTab />}
 
       {/* 문제 풀어보기 버튼 */}
-      <QuizButton onClick={() => navigate('/land-purchase-quiz')}>
-        토지 구매 상식 문제 풀어보기!
-      </QuizButton>
+      <ButtonContainer>
+        <QuizButton onClick={() => navigate('/land-purchase-quiz')}>
+          토지 구매 상식 문제 풀어보기!
+        </QuizButton>
+      </ButtonContainer>
     </div>
   );
 }
