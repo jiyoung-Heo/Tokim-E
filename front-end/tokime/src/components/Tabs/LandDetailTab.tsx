@@ -116,7 +116,7 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
     };
     return `${
       descriptions[landUse]
-    }\n건폐율과 용적률은 조례에 따라 달라질 수 있습니다.`;
+    }건폐율과 용적률은 조례에 따라 달라질 수 있습니다.`;
   };
 
   const getLandUseStatusDescription = (landUseStatus: string) => {
@@ -311,8 +311,9 @@ const LandDetailTab = ({ district, address }: LandDetailTabProps) => {
               },
               {
                 label: '공시지가',
-                value: `${detail.landPrice} 원`,
-                tooltip: '이 가격은 현재 시장 가격을 반영합니다.',
+                value: `㎡당 ${detail.landPrice} 원`,
+                tooltip:
+                  '공시지가는 정부가 매년 전국의 토지에 대해 공시하는 표준적인 땅값입니다. 주로 국토교통부에서 발표하며 세금 부과, 부동산 거래, 보상 평가 등의 기준이 되는 중요한 자료입니다. 다만, 공시지가는 토지의 거래 가격과는 다소 차이가 있을 수 있습니다.',
                 key: `landPrice-${detail.landId}`,
               },
               {
