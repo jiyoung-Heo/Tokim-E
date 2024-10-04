@@ -2,31 +2,64 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import backIcon from '../assets/images/icon/left-actionable.png';
 // 추후 axios를 이용하여 데이터 fetch를 할 예정
 // import axios from 'axios';
 
+// 필요한 스타일 정의
+const Container = styled.div`
+  width: 100%;
+  height: 100%;
+  background: #f3f7fb;
+`;
+
+const Title = styled.h2`
+  margin: 0 0 3vh 0;
+  font-size: 25px;
+  font-weight: bold;
+  font-family: 'KoddiUD OnGothic';
+  color: #333333;
+  display: flex;
+  justify-content: left;
+`;
+
+// 뒤로가기 아이콘 정의
+const BackIcon = styled.img``;
+
+const Divider = styled.hr`
+  width: 90%;
+  border: none;
+  border-top: 2px solid rgba(121, 121, 130, 0.1);
+`;
+
+const MapContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const Map = styled.div`
+  width: 70vw;
+  height: 65vh;
+  justify-content: center;
+`;
+
 const DangerButton = styled.button`
-  margin-top: 10px;
-  width: 37%;
+  width: 30vw;
+  height: 5vh;
   background-color: #00c99c;
   color: white;
-  padding: 10px;
   font-size: 15px;
   font-weight: bold;
   border-radius: 10px;
   cursor: pointer;
-  justify-content: right;
-  align-items: right;
   border: none;
 `;
 
 // 부모 요소 스타일 정의
 const ButtonContainer = styled.div`
   display: flex;
-  justify-content: flex-end; // 오른쪽 정렬
-  margin-top: 10px; // 버튼과의 간격
-  // padding: 3vh 5vw;
-  // padding-top: 0px;
+  justify-content: center; // 오른쪽 정렬
+  margin-top: 3vh; // 버튼과의 간격
 `;
 
 function RiskMapPage() {
@@ -79,14 +112,25 @@ function RiskMapPage() {
   const handleButtonClick = () => {
     navigate('/risk-map/report');
   };
+  const goBack = () => {
+    navigate(-1); // 이전 페이지로 이동
+  };
 
   return (
-    <div>
-      <div id="map" style={{ width: '400px', height: '500px' }} />
+    <Container>
+      <Title>
+        <BackIcon src={backIcon} alt="back Icon" onClick={goBack} />
+        개발 위험 지도
+      </Title>
+      <Divider />
+
+      <MapContainer>
+        <Map id="map" />
+      </MapContainer>
       <ButtonContainer>
-        <DangerButton onClick={handleButtonClick}>제보하기</DangerButton>
+        <DangerButton onClick={handleButtonClick}>신고하기</DangerButton>
       </ButtonContainer>
-    </div>
+    </Container>
   );
 }
 
