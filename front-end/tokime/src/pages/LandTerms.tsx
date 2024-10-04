@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import searchIcon from '../assets/images/icon/search.svg';
+import multiply from '../assets/images/icon/Multiply.png'; // x아이콘
 import starIcon from '../assets/images/icon/star.svg'; // 기본 별 아이콘
 import starFilled from '../assets/images/icon/star_filled.svg'; // 즐겨찾기 시 사용될 채워진 별 아이콘
 import backIcon from '../assets/images/icon/left-actionable.png';
@@ -52,11 +53,16 @@ const SearchIcon = styled.img`
   height: 5vh;
 `;
 
+const MultiplyIcon = styled.img`
+  width: 8vw;
+  margin-right: 2vw;
+`;
+
 const SearchInput = styled.input`
   border: none;
   font-size: 16px;
   font-weight: 700;
-  color: rgba(39, 195, 132, 0.5);
+  color: #27c384;
   margin-left: 10px;
   width: 100%;
   background: none;
@@ -281,8 +287,13 @@ const LandTerms = () => {
   };
 
   const handleFavoriteClick = () => {
-    setSelectedAlphabet(''); // 즐겨찾기 모드에서는 알파벳 선택 초기화
-    setShowFavorites(true);
+    if (showFavorites) {
+      // 즐겨찾기눌러있는상태면 풀어줘야합니다.
+      setShowFavorites(false);
+    } else {
+      setSelectedAlphabet(''); // 즐겨찾기 모드에서는 알파벳 선택 초기화
+      setShowFavorites(true);
+    }
   };
 
   const handleAlphabetClick = (alphabet: string) => {
@@ -306,26 +317,47 @@ const LandTerms = () => {
     if (showFavorites) {
       // 즐겨찾기 모드가 활성화되면 즐겨찾기 항목만 필터링
       setFilteredTerms(
-        allTerms.filter((term) => likedTerms.includes(term.termId)),
+        allTerms
+          .filter((term) => likedTerms.includes(term.termId))
+          .filter((term) => term.termName.includes(searchTerm)),
       );
     } else if (selectedAlphabet === '') {
       // 선택된 알파벳이 없으면 모든 항목을 표시
-      setFilteredTerms(allTerms);
+      const filtered = allTerms.filter((term) =>
+        term.termName.includes(searchTerm),
+      );
+      setFilteredTerms(filtered);
     } else {
       // 선택된 알파벳에 맞는 항목을 필터링
-      const filtered = allTerms.filter(
-        (term) => getChosung(term.termName) === selectedAlphabet,
-      );
+      const filtered = allTerms
+        .filter((term) => getChosung(term.termName) === selectedAlphabet)
+        .filter((term) => term.termName.includes(searchTerm));
       setFilteredTerms(filtered);
     }
   }, [showFavorites, selectedAlphabet, allTerms, likedTerms]);
 
   useEffect(() => {
-    const filtered = allTerms.filter((term) =>
-      term.termName.includes(searchTerm),
-    );
-    setFilteredTerms(filtered);
-  }, [searchTerm, allTerms]);
+    if (showFavorites) {
+      // 즐겨찾기 모드가 활성화되면 즐겨찾기 항목중 검색 진행
+      setFilteredTerms(
+        allTerms
+          .filter((term) => likedTerms.includes(term.termId))
+          .filter((term) => term.termName.includes(searchTerm)),
+      );
+    } else if (selectedAlphabet === '') {
+      // 선택된 알파벳이 없으면 전체검색 진행
+      const filtered = allTerms.filter((term) =>
+        term.termName.includes(searchTerm),
+      );
+      setFilteredTerms(filtered);
+    } else {
+      // 선택된 알파벳에 해당하는곳에서 있는 진행
+      const filtered = allTerms
+        .filter((term) => getChosung(term.termName) === selectedAlphabet)
+        .filter((term) => term.termName.includes(searchTerm));
+      setFilteredTerms(filtered);
+    }
+  }, [searchTerm]);
 
   if (loading) {
     return <div>로딩 중...</div>;
@@ -346,6 +378,11 @@ const LandTerms = () => {
           placeholder="용어 검색"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <MultiplyIcon
+          src={multiply}
+          alt="multiply"
+          onClick={() => setSearchTerm('')}
         />
       </SearchBox>
 
