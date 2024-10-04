@@ -8,11 +8,14 @@ import { setLandAddress } from '../redux/slices/landAddressSlice'; // 액션 임
 import { setLandDetails } from '../redux/slices/landInfoSlice'; // 액션 임포트
 import { setLawInfo } from '../redux/slices/lawInfoSlice'; // 액션 임포트
 import { getSearchLandInfo, getLandLawInfo } from '../api/landAxios'; // API 임포트
+import searchIcon from '../assets/images/icon/search.svg';
 
 // 검색창 스타일
 const SearchContainer = styled.div`
   padding: 10px;
   background-color: #f3f7fb;
+  display: flex;
+  align-items: center; // 세로 중앙 정렬
 `;
 
 const SearchInput = styled.input`
@@ -22,6 +25,12 @@ const SearchInput = styled.input`
   border: 1px solid #ccc;
   border-radius: 5px;
   outline: none;
+`;
+
+const SearchIcon = styled.img`
+  width: 24px;
+  height: 24px;
+  margin-left: 10px;
 `;
 
 // 탭 스타일
@@ -71,26 +80,53 @@ function AddressSearch() {
     let localDistrict = '';
     let localAddress = '';
 
+    // 구역 키워드 정규식 (예: 도, 시, 군, 구, 읍, 면, 리, 통, 동 등)
+    const districtKeywords = /(도|시|군|구|읍|면|리|통|동)$/;
+
+    // 숫자나 '-'가 포함된 경우 address로 간주
+    const isAddressCandidate = (part: any) => {
+      return /\d+/.test(part) || part.includes('-');
+    };
+
+    // 일반적인 지역명인지 판단
+    const isDistrictCandidate = (part: any) => {
+      return (
+        part.match(districtKeywords) ||
+        part.length === 2 ||
+        part.match(/^[가-힣]+$/)
+      );
+    };
+
     parts.forEach((part) => {
-      if (part.match(/(도|시|군|구|읍|면|리|통|동)$/)) {
+      // address 후보 판단
+      if (isAddressCandidate(part)) {
+        localAddress += `${part} `;
+      }
+      // district 후보 판단
+      else if (isDistrictCandidate(part)) {
         localDistrict += `${part} `;
-      } else if (part.match(/\d+/)) {
-        localAddress += `${part} `;
-      } else {
-        localAddress += `${part} `;
+      }
+      // 기타 상황: 일반적인 지역명으로 처리
+      else {
+        localDistrict += `${part} `;
       }
     });
 
-    localDistrict = localDistrict.trim(); // 불필요한 공백 제거
-    localAddress = localAddress.trim(); // 불필요한 공백 제거
+    // 불필요한 공백 제거
+    localDistrict = localDistrict.trim();
+    localAddress = localAddress.trim();
 
+    // 최종 처리: address만 있어도 가져오고 district만 있어도 가져오기
     if (!localDistrict && !localAddress) {
       setErrorMessage('주소 형식이 올바르지 않습니다.');
       return;
     }
 
+    // district와 address 상태 설정
     setDistrict(localDistrict);
     setAddress(localAddress);
+    console.log('district', localDistrict);
+    console.log('address', localAddress);
 
     // Redux에 district와 address 저장
     dispatch(
@@ -132,9 +168,11 @@ function AddressSearch() {
           onChange={handleSearchChange}
           onKeyDown={handleKeyDown}
         />
-        <button type="button" onClick={handleSearchSubmit}>
-          검색
-        </button>
+        <SearchIcon
+          src={searchIcon}
+          alt="search"
+          onClick={handleSearchSubmit}
+        />
         {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}{' '}
         {/* 에러 메시지 표시 */}
       </SearchContainer>
