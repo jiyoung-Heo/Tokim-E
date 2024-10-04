@@ -8,7 +8,6 @@ import ChartComponent from '../charts/ChartComponents'; // 분리한 차트 컴�
 
 // 컨테이너 스타일 정의 (스크롤 허용)
 const Container = styled.div`
-  width: 90vw;
   min-height: 100vh;
   margin-top: 3vh;
   display: flex;
@@ -60,6 +59,9 @@ const GraphContainer = styled.div`
 
 // 그래프 바 스타일
 const GraphBar = styled.div<{ width: string; color: string }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: ${(props) => props.width};
   height: 20px;
   background-color: ${(props) => props.color};
@@ -81,11 +83,8 @@ const ScoreText = styled.p`
   font-family: 'KoddiUD OnGothic';
   font-size: 12px;
   font-weight: 700;
-  color: #fff;
-  position: absolute;
-  left: 50%;
-  top: 3px;
-  transform: translateX(-50%);
+  color: #333333;
+  white-space: nowrap; /* 줄바꿈 방지 */
 `;
 
 // VS 텍스트 스타일 (그래프 사이에 위치)
@@ -104,17 +103,18 @@ const VsText = styled.div`
 // 전체 중 상위 퍼센트 텍스트 스타일
 const PercentText = styled.div`
   font-family: 'KoddiUD OnGothic';
-  font-weight: 700;
-  font-size: 4vw;
+  font-weight: bold;
+  font-size: 20px;
   color: #333333;
-  margin-bottom: 20px;
-  text-align: center;
+  margin-left: 8.33vw;
+  width: 100%; /* 부모 컨테이너의 너비를 꽉 채움 */
+  text-align: left; /* 명시적으로 왼쪽 정렬 */
 `;
 
 function AnalysisTab() {
   const [userScore, setUserScore] = useState<number>(0);
   const [peerAverage, setPeerAverage] = useState<number>(0);
-  const [userTop, setUserTop] = useState<number>(0);
+  const [userTop, setUserTop] = useState<number>(0); // 상위 % 값
   const [scoreList, setScoreList] = useState<number[][]>([]);
 
   useEffect(() => {
@@ -124,7 +124,7 @@ function AnalysisTab() {
 
         setUserScore(data.quizScore);
         setPeerAverage(data.ageAverage);
-        setUserTop(data.top);
+        setUserTop(data.top); // 상위 % 값 가져오기
         setScoreList(data.scoreList);
       } catch (error) {
         console.error('데이터를 불러오는 중 오류 발생:', error);
@@ -187,10 +187,13 @@ function AnalysisTab() {
         </div>
       </GraphContainer>
 
+      {/* 전체 중 상위 % 텍스트 추가 */}
       <PercentText>전체 중 상위 {userTop}%</PercentText>
 
       {/* 차트 컴포넌트 추가 */}
-      {scoreList.length > 0 && <ChartComponent scoreList={scoreList} />}
+      {scoreList.length > 0 && (
+        <ChartComponent scoreList={scoreList} userScore={userScore} />
+      )}
     </Container>
   );
 }
