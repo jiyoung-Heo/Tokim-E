@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   getSelectedTerm,
   registTermLike,
@@ -9,42 +9,42 @@ import {
 import OpenAiUtil from '../utils/OpenAiUtill';
 import starIcon from '../assets/images/icon/star.svg';
 import starFilled from '../assets/images/icon/star_filled.svg';
+import backIcon from '../assets/images/icon/left-actionable.png';
 
 // 스타일 정의
 const Container = styled.div`
   width: 100%;
+  height: 100%;
   background: #f3f7fb;
 `;
 
 const Title = styled.h2`
-  position: absolute;
-  left: 11.11vw;
-  top: 6.25vh;
-  font-size: 20px;
-  font-weight: 700;
+  margin: 0 0 3vh 0;
+  font-size: 25px;
+  font-weight: bold;
   font-family: 'KoddiUD OnGothic';
   color: #333333;
+  display: flex;
+  justify-content: space-between; /* 양쪽 끝으로 배치 */
+  align-items: center;
 `;
 
+// 뒤로가기 아이콘 정의
+const BackIcon = styled.img``;
+
 const TermDetailContainer = styled.div`
-  width: 90vw;
-  max-width: 340px;
-  height: 180px;
+  height: 25vh;
   background: #ffffff;
   border: 1px solid #000000;
   border-radius: 10px;
-  padding: 2.34vh;
+  padding: 2vh;
   box-sizing: border-box;
   overflow-y: auto;
-  margin-top: 7vh;
+  margin-top: 3vh;
 `;
 
 const FavoriteIcon = styled.img<{ isLiked: boolean }>`
-  position: absolute;
-  top: 7.19vh;
-  right: 5.83vw;
-  width: 6vw;
-  height: 6vw;
+  width: 8vw;
   max-width: 40px;
   max-height: 40px;
   cursor: pointer;
@@ -70,35 +70,30 @@ const TermDescription = styled.div`
 `;
 
 const RelatedLawsContainer = styled.div`
-  width: 90vw;
-  max-width: 340px;
-  height: 110px;
+  height: 25vh;
   background: #ffffff;
-  box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.2);
   border-radius: 10px;
   padding: 15px;
   box-sizing: border-box;
   overflow-y: auto;
-  margin-top: 2.03vh;
+  margin-bottom: 3vh;
 `;
 
 const RelatedLawsTitle = styled.div`
   font-family: 'KoddiUD OnGothic';
   font-weight: 700;
   font-size: 4vw;
-  text-align: center;
+  text-align: left;
   color: #333333;
-  margin-bottom: 10px;
+  margin-bottom: 1vh;
 `;
 
 const RelatedNewsTitle = styled.div`
-  width: 90vw;
-  max-width: 340px;
   font-family: 'KoddiUD OnGothic';
   font-weight: 700;
   font-size: 4vw;
   color: #333333;
-  margin-top: 4.38vh;
 `;
 
 const NewsContainer = styled.div`
@@ -161,6 +156,8 @@ const ModalBody = styled.div`
 
 // 용어 상세 컴포넌트
 function LandTermDetail() {
+  const navigate = useNavigate();
+
   const { term } = useParams<{ term: string }>(); // useParams로 termId 가져오기
   const [termData, setTermData] = useState<any>(null);
   const [openAiResponse, setOpenAiResponse] = useState<string | null>(null); // OpenAI 응답 저장
@@ -206,16 +203,16 @@ function LandTermDetail() {
   }, [termData]);
 
   // 즐겨찾기 토글 함수
-  const toggleLike = async () => {
+  const toggleLike = async (termId: number) => {
     try {
       if (isLiked) {
-        await deleteTermLike(Number(term)); // 즐겨찾기 해제
+        await deleteTermLike(termId);
       } else {
-        await registTermLike(Number(term)); // 즐겨찾기 등록
+        await registTermLike(termId);
       }
       setIsLiked(!isLiked); // 상태 업데이트
     } catch (error) {
-      console.error('즐겨찾기 처리 중 오류 발생:', error);
+      console.error('좋아요 처리 중 오류 발생:', error);
     }
   };
 
@@ -227,12 +224,9 @@ function LandTermDetail() {
     setModalOpen(false); // 모달 닫기
   };
 
-  // const getShortDescription = (description: string) => {
-  //   if (description.length > 100) {
-  //     return `${description.substring(0, 100)}...`;
-  //   }
-  //   return description;
-  // };
+  const goBack = () => {
+    navigate(-1); // 이전 페이지로 이동
+  };
 
   if (loading) {
     return <div>용어 정보를 불러오는 중입니다...</div>;
@@ -244,29 +238,33 @@ function LandTermDetail() {
 
   return (
     <Container>
-      <Title>용어 상세 설명</Title>
+      <Title>
+        <BackIcon src={backIcon} alt="back Icon" onClick={goBack} />
+        {termData.termName}
+        {/* 즐겨찾기 아이콘 */}
+        <FavoriteIcon
+          src={isLiked ? starFilled : starIcon}
+          alt="즐겨찾기"
+          isLiked={isLiked}
+          onClick={() => toggleLike(termData.termId)} // 클릭 시 함수 호출
+        />
+      </Title>
 
       {/* 용어 정보 */}
-      <TermDetailContainer>
-        <TermTitle>{termData.termName}</TermTitle>
+      <RelatedLawsContainer>
+        <RelatedLawsTitle>용어설명</RelatedLawsTitle>
         <TermDescription onClick={handleDescriptionClick}>
           {termData.termDescribe}
         </TermDescription>
-      </TermDetailContainer>
-
-      {/* 즐겨찾기 아이콘 */}
-      <FavoriteIcon
-        src={isLiked ? starFilled : starIcon}
-        alt="즐겨찾기"
-        isLiked={isLiked}
-        onClick={toggleLike}
-      />
+      </RelatedLawsContainer>
 
       {/* 관련 법률 및 규제 정보 */}
       <RelatedLawsContainer>
         <RelatedLawsTitle>관련 법률 및 규제 정보</RelatedLawsTitle>
-        <div>{termData.termLaw}</div>
-        <div>{openAiResponse || '응답을 불러오는 중입니다...'}</div>
+        <TermDescription>
+          {termData.termLaw}
+          {openAiResponse || '응답을 불러오는 중입니다...'}
+        </TermDescription>
       </RelatedLawsContainer>
 
       {/* 관련 뉴스 */}
