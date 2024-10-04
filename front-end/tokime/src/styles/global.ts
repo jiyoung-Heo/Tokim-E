@@ -18,9 +18,7 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
+    padding: 3vh 5vw;
     align-items: flex-start;
     min-height: 100vh;
   }
