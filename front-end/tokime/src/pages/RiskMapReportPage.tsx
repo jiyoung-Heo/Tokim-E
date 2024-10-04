@@ -1,6 +1,41 @@
 // src/pages/RiskMapReportPage.tsx
 import React, { useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
 import { registDanger } from '../api/dangerAxios';
+
+const DangerButton = styled.button`
+  margin-top: 10px;
+  width: 23%;
+  background-color: #00c99c;
+  color: white;
+  padding: 10px;
+  font-size: 15px;
+  font-weight: bold;
+  border-radius: 10px;
+  cursor: pointer;
+  justify-content: right;
+  align-items: right;
+  border: none;
+`;
+
+const DangerP = styled.p`
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-weight: bold;
+`;
+
+const MapP = styled.p`
+  margin-top: 15px;
+  margin-bottom: 15px;
+  font-weight: bold;
+`;
+
+const ButtonDiv = styled.p`
+  margin-top: 0.5px;
+  display: flex; // flex container로 설정
+  justify-content: flex-end; // 오른쪽 정렬
+  gap: 20px;
+`;
 
 function RiskMapReportPage() {
   const mapContainer = useRef<HTMLDivElement | null>(null);
@@ -71,70 +106,57 @@ function RiskMapReportPage() {
   return (
     <>
       <div>
-        <p>제목</p>
+        <DangerP>제목</DangerP>
         <input
           type="text"
           placeholder="텍스트를 입력하세요"
           value={dangerTitle}
           onChange={(e) => setDangerTitle(e.target.value)} // 제목 상태 업데이트
           style={{
-            width: '300px',
+            width: '100%',
             height: '30px',
             padding: '5px',
             fontSize: '16px',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
+            border: '1.4px solid #333',
+            borderRadius: '10px',
           }}
         />
       </div>
-      <div>
-        <p>주소</p>
+      <MapP>
         {/* 네이버 맵을 표시할 div */}
         <div
           ref={mapContainer}
           style={{
             width: '100%',
             height: '400px',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
+            border: 'none',
+            borderRadius: '10px',
           }}
         />
-      </div>
+      </MapP>
       <div>
-        <p>내용</p>
+        <DangerP>내용</DangerP>
         <input
           type="text"
           placeholder="텍스트를 입력하세요"
           value={dangerContent}
           onChange={(e) => setDangerContent(e.target.value)} // 내용 상태 업데이트
           style={{
-            width: '300px',
+            width: '100%',
             height: '150px',
             padding: '5px',
             fontSize: '16px',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
+            border: '1.4px solid #333',
+            borderRadius: '10px',
+            textAlign: 'center', // 텍스트 가운데 정렬
+            lineHeight: '1.5', // 필요에 따라 조절
           }}
         />
       </div>
-      <div>
-        <button
-          type="button"
-          onClick={handleSubmit} // 등록 버튼 클릭 시 handleSubmit 함수 호출
-          style={{
-            marginTop: '20px',
-            padding: '10px 20px',
-            fontSize: '16px',
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
-          등록
-        </button>
-      </div>
+      <ButtonDiv>
+        <DangerButton onClick={handleSubmit}>작성</DangerButton>
+        <DangerButton>취소</DangerButton>
+      </ButtonDiv>
     </>
   );
 }
