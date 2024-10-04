@@ -26,6 +26,9 @@
     "import/no-unresolved": "off", // 경로 관련 경고 비활성화
     "react/no-array-index-key": "off",
     "react/jsx-props-no-spreading": "off",
+    "no-nested-ternary": "off",
+    "no-unused-vars": "off", // 'no-unused-vars' 규칙을 꺼서 전역적으로 사용하지 않음
+
     "no-param-reassign": [
       "error",
       {
