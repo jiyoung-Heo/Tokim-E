@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import LandDetailTab from '../components/Tabs/LandDetailTab';
 import OrdinanceInfoTab from '../components/Tabs/OrdinanceInfoTab';
 import RiskMapTab from '../components/Tabs/RiskMapTab';
-import { setLandAddress } from '../redux/slices/landAddressSlice'; // 액션 임포트
-import { setLandDetails } from '../redux/slices/landInfoSlice'; // 액션 임포트
-import { setLawInfo } from '../redux/slices/lawInfoSlice'; // 액션 임포트
+import {
+  setLandAddress,
+  resetLandAddress,
+} from '../redux/slices/landAddressSlice'; // 액션 임포트
+import { setLandDetails, resetLandInfo } from '../redux/slices/landInfoSlice'; // 액션 임포트
+import { setLawInfo, resetLawInfo } from '../redux/slices/lawInfoSlice'; // 액션 임포트
 import { getSearchLandInfo, getLandLawInfo } from '../api/landAxios'; // API 임포트
 import searchIcon from '../assets/images/icon/search.svg';
 
@@ -68,6 +71,15 @@ function AddressSearch() {
     setSearchValue(e.target.value);
     setErrorMessage(''); // 입력할 때 에러 메시지 초기화
   };
+
+  useEffect(() => {
+    // 페이지가 언마운트될 때 landInfoSlice를 초기화
+    return () => {
+      dispatch(resetLandInfo());
+      dispatch(resetLawInfo());
+      dispatch(resetLandAddress());
+    };
+  }, [dispatch]);
 
   const handleSearchSubmit = async () => {
     const parts = searchValue
@@ -170,10 +182,8 @@ function AddressSearch() {
           alt="search"
           onClick={handleSearchSubmit}
         />
-        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}{' '}
-        {/* 에러 메시지 표시 */}
       </SearchContainer>
-
+      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}{' '}
       <TabsContainer>
         <TabItem
           $isActive={activeTab === 'landInfo'}
@@ -194,7 +204,6 @@ function AddressSearch() {
           지역별 조례정보
         </TabItem>
       </TabsContainer>
-
       <Content>
         {activeTab === 'landInfo' && <LandDetailTab />}
         {activeTab === 'riskMap' && <RiskMapTab />}

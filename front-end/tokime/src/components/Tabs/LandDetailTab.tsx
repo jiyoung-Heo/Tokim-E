@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../redux/store';
+import { setLandDetail } from '../../redux/slices/landInfoSlice';
 import backIcon from '../../assets/images/icon/left-actionable.png';
 import gradientIcon from '../../assets/images/landInfo/gradient.png';
 import moneyIcon from '../../assets/images/landInfo/money.png';
@@ -50,18 +51,22 @@ const InfoBox = styled.div`
 `;
 
 const LandDetailTab: React.FC = () => {
+  const dispatch = useDispatch();
   const landDetails = useSelector(
     (state: RootState) => state.landinfo.landDetails,
   );
+  const selectedDetail = useSelector(
+    (state: RootState) => state.landinfo.landDetail, // Redux에서 선택된 상세 정보 가져오기
+  );
   const [showInfo, setShowInfo] = useState<{ [key: string]: boolean }>({});
-  const [selectedDetail, setSelectedDetail] = useState<any>(null); // 선택된 토지 정보를 저장합니다.
+  // const [selectedDetail, setSelectedDetail] = useState<any>(null); // 선택된 토지 정보를 저장합니다.
 
   const handleDetailClick = (detail: any) => {
-    setSelectedDetail(detail);
+    dispatch(setLandDetail(detail));
   };
 
   const handleBackClick = () => {
-    setSelectedDetail(null);
+    dispatch(setLandDetail(null));
   };
 
   const toggleInfo = (key: string) => {

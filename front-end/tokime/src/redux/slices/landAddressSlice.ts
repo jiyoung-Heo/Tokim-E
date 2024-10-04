@@ -18,8 +18,11 @@ const landAddressSlice = createSlice({
       state.district = action.payload.district;
       state.address = action.payload.address;
     },
+    resetLandAddress() {
+      return initialState;
+    },
   },
 });
 
-export const { setLandAddress } = landAddressSlice.actions;
+export const { setLandAddress, resetLandAddress } = landAddressSlice.actions;
 export default landAddressSlice;
