@@ -344,7 +344,7 @@ const LandDetailTab: React.FC = () => {
               },
               {
                 label: '공시지가',
-                value: `㎡당 ${selectedDetail.landPrice} 원`,
+                value: `㎡당 ${selectedDetail.landPrice.toLocaleString()} 원`,
                 tooltip:
                   '공시지가는 정부가 매년 전국의 토지에 대해 공시하는 표준적인 땅값입니다. 주로 국토교통부에서 발표하며 세금 부과, 부동산 거래, 보상 평가 등의 기준이 되는 중요한 자료입니다. 다만, 공시지가는 토지의 거래 가격과는 다소 차이가 있을 수 있습니다.',
                 key: `landPrice-${selectedDetail.landId}`,
@@ -396,7 +396,7 @@ const LandDetailTab: React.FC = () => {
                     aria-label={`${item.label} 정보`}
                   >
                     <img
-                      src="/icons/information.png"
+                      src="/icons/info.png"
                       alt="info"
                       style={{
                         width: 'calc(1.2vw + 1.2vh)',
@@ -410,19 +410,22 @@ const LandDetailTab: React.FC = () => {
                       style={{
                         position: 'absolute',
                         backgroundColor: '#333',
+                        border: '#808080',
                         color: '#fff',
                         padding: '1vw 2vw',
-                        borderRadius: '4px',
+                        borderRadius: 'calc(1vw + 1vh)',
                         top: 'calc(1.5vw + 1.5vh)',
-                        left: '0px',
-                        whiteSpace: 'nowrap',
+                        left: '0vw',
+                        whiteSpace: 'normal',
+                        fontWeight: '500',
                         zIndex: 100,
+                        opacity: 0.8,
                       }}
                       onClick={() => closeInfo(item.key)}
                       aria-label="정보 닫기"
                     >
                       {item.tooltip}
-                      <span
+                      {/* <span
                         style={{
                           content: '""',
                           position: 'absolute',
@@ -433,7 +436,7 @@ const LandDetailTab: React.FC = () => {
                           borderColor:
                             'transparent transparent #333 transparent',
                         }}
-                      />
+                      /> */}
                     </button>
                   )}
                 </p>
