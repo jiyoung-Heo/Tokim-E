@@ -1,38 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Line } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  LineElement,
-  PointElement,
-  LinearScale,
-  CategoryScale,
-  Tooltip,
-} from 'chart.js'; // 필요한 모듈 임포트
-
-import highImage from '../../assets/images/score/high.png'; // 이미지 import
-import lowImage from '../../assets/images/score/low.png'; // 이미지 import
-import evenImage from '../../assets/images/score/even.png'; // 이미지 import
-
-// Chart.js 모듈 등록
-ChartJS.register(
-  LineElement,
-  PointElement,
-  LinearScale,
-  CategoryScale,
-  Tooltip,
-);
+import highImage from '../../assets/images/score/high.png';
+import lowImage from '../../assets/images/score/low.png';
+import evenImage from '../../assets/images/score/even.png';
+import userQuizAverageAxios from '../../api/userQuizAverageAxios';
+import ChartComponent from '../charts/ChartComponents'; // 분리한 차트 컴포넌트 import
 
 // 컨테이너 스타일 정의 (스크롤 허용)
 const Container = styled.div`
-  width: 90vw;
   min-height: 100vh;
   margin-top: 3vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
-  overflow-y: auto; // 스크롤 허용
+  overflow-y: auto;
   position: relative;
 `;
 
@@ -72,11 +54,14 @@ const GraphContainer = styled.div`
   align-items: center;
   width: 100%;
   margin-bottom: 50px;
-  position: relative; // VS 텍스트 배치 위한 relative 추가
+  position: relative;
 `;
 
 // 그래프 바 스타일
 const GraphBar = styled.div<{ width: string; color: string }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: ${(props) => props.width};
   height: 20px;
   background-color: ${(props) => props.color};
@@ -98,11 +83,8 @@ const ScoreText = styled.p`
   font-family: 'KoddiUD OnGothic';
   font-size: 12px;
   font-weight: 700;
-  color: #fff;
-  position: absolute;
-  left: 50%;
-  top: 3px;
-  transform: translateX(-50%);
+  color: #333333;
+  white-space: nowrap; /* 줄바꿈 방지 */
 `;
 
 // VS 텍스트 스타일 (그래프 사이에 위치)
@@ -118,85 +100,71 @@ const VsText = styled.div`
   z-index: 1;
 `;
 
-// 전체 중 상위 퍼센트 텍스트
+// 전체 중 상위 퍼센트 텍스트 스타일
 const PercentText = styled.div`
   font-family: 'KoddiUD OnGothic';
-  font-weight: 700;
-  font-size: 4vw;
+  font-weight: bold;
+  font-size: 20px;
   color: #333333;
-  margin-bottom: 20px;
-  text-align: center;
+  margin-left: 8.33vw;
+  width: 100%; /* 부모 컨테이너의 너비를 꽉 채움 */
+  text-align: left; /* 명시적으로 왼쪽 정렬 */
 `;
-
-// 부드러운 꺾은선 그래프 스타일
-const ChartContainer = styled.div`
-  width: 90%;
-  height: 30vh; // 반응형 높이 설정
-  margin-top: 10px;
-`;
-
-// 차트 데이터와 옵션 설정
-const chartData = {
-  labels: ['0점', '20점', '40점', '60점', '80점', '100점'],
-  datasets: [
-    {
-      label: '전체 중 상위 43%',
-      data: [0, 10, 30, 43, 60, 90], // 예시 데이터, 실제 데이터는 받아서 설정
-      fill: false,
-      borderColor: '#00C99C',
-      tension: 0.4, // 부드러운 라인
-    },
-  ],
-};
-
-const chartOptions = {
-  responsive: true,
-  maintainAspectRatio: false, // 반응형 크기 조정
-  scales: {
-    y: {
-      display: false, // y축 숨기기
-    },
-    x: {
-      display: true, // x축 표시
-    },
-  },
-};
 
 function AnalysisTab() {
-  const userScore = 76;
-  const peerAverage = 54;
-  const age = 27;
-  const ageRange = age < 30 ? '20대' : '다른연령대';
+  const [userScore, setUserScore] = useState<number>(0);
+  const [peerAverage, setPeerAverage] = useState<number>(0);
+  const [userTop, setUserTop] = useState<number>(0); // 상위 % 값
+  const [scoreList, setScoreList] = useState<number[][]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await userQuizAverageAxios();
+
+        setUserScore(data.quizScore);
+        setPeerAverage(data.ageAverage);
+        setUserTop(data.top); // 상위 % 값 가져오기
+        setScoreList(data.scoreList);
+      } catch (error) {
+        console.error('데이터를 불러오는 중 오류 발생:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const scoreDifference = Math.abs(userScore - peerAverage);
-  const percentRank = 43; // 실제로는 axios로 받아올 값
-
-  let scoreComparisonText = '';
-  if (userScore > peerAverage) {
-    scoreComparisonText = `${ageRange} 평균보다\n${scoreDifference}점 높아요`;
-  } else if (userScore < peerAverage) {
-    scoreComparisonText = `${ageRange} 평균보다\n${scoreDifference}점 낮아요`;
-  } else {
-    scoreComparisonText = `${ageRange} 평균과 같아요`;
-  }
-
-  const getImageForScore = (score: number, average: number) => {
-    if (score > average) return highImage;
-    if (score < average) return lowImage;
-    return evenImage;
-  };
 
   return (
     <Container>
-      <TextContainer>{scoreComparisonText}</TextContainer>
+      <TextContainer>
+        {userScore > peerAverage
+          ? `평균보다 ${scoreDifference}점 높아요`
+          : userScore < peerAverage
+            ? `평균보다 ${scoreDifference}점 낮아요`
+            : '평균과 같아요'}
+      </TextContainer>
 
       <ImageContainer>
         <Image
-          src={getImageForScore(userScore, peerAverage)}
+          src={
+            userScore > peerAverage
+              ? highImage
+              : userScore < peerAverage
+                ? lowImage
+                : evenImage
+          }
           alt="나의 점수 이미지"
         />
         <Image
-          src={getImageForScore(peerAverage, userScore)}
+          src={
+            peerAverage > userScore
+              ? highImage
+              : peerAverage < userScore
+                ? lowImage
+                : evenImage
+          }
           alt="또래 점수 이미지"
         />
       </ImageContainer>
@@ -209,7 +177,7 @@ function AnalysisTab() {
             </GraphBar>
           </GraphBackground>
         </div>
-        <VsText>VS</VsText> {/* 그래프 사이에 VS 텍스트 */}
+        <VsText>VS</VsText>
         <div>
           <GraphBackground>
             <GraphBar width={`${(peerAverage / 100) * 130}px`} color="#797982">
@@ -219,12 +187,13 @@ function AnalysisTab() {
         </div>
       </GraphContainer>
 
-      <PercentText>전체 중 상위 {percentRank}%</PercentText>
+      {/* 전체 중 상위 % 텍스트 추가 */}
+      <PercentText>전체 중 상위 {userTop}%</PercentText>
 
-      {/* 부드러운 꺾은선 그래프 */}
-      <ChartContainer>
-        <Line data={chartData} options={chartOptions} />
-      </ChartContainer>
+      {/* 차트 컴포넌트 추가 */}
+      {scoreList.length > 0 && (
+        <ChartComponent scoreList={scoreList} userScore={userScore} />
+      )}
     </Container>
   );
 }
