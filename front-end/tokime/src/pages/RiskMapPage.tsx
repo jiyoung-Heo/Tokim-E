@@ -1,8 +1,33 @@
 // src/pages/RiskMap.tsx
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 // 추후 axios를 이용하여 데이터 fetch를 할 예정
 // import axios from 'axios';
+
+const DangerButton = styled.button`
+  margin-top: 10px;
+  width: 37%;
+  background-color: #00c99c;
+  color: white;
+  padding: 10px;
+  font-size: 15px;
+  font-weight: bold;
+  border-radius: 10px;
+  cursor: pointer;
+  justify-content: right;
+  align-items: right;
+  border: none;
+`;
+
+// 부모 요소 스타일 정의
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end; // 오른쪽 정렬
+  margin-top: 10px; // 버튼과의 간격
+  // padding: 3vh 5vw;
+  // padding-top: 0px;
+`;
 
 function RiskMapPage() {
   const navigate = useNavigate();
@@ -19,40 +44,36 @@ function RiskMapPage() {
   ];
 
   // 네이버 맵 로드
+  // 네이버 맵 로드
   useEffect(() => {
-    const { naver } = window;
-    const mapOptions = {
-      center: new naver.maps.LatLng(37.5665, 126.978), // 초기 지도 중심: 서울
-      zoom: 7, // 줌 레벨
+    // 스크립트 로드
+    const script = document.createElement('script');
+    script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.REACT_APP_NAVERMAP_API_KEY}`;
+    script.async = true;
+    script.onload = () => {
+      const { naver } = window; // 스크립트가 로드된 후 naver 객체 접근
+      const mapOptions = {
+        center: new naver.maps.LatLng(37.5665, 126.978), // 초기 지도 중심: 서울
+        zoom: 7, // 줌 레벨
+      };
+
+      const map = new naver.maps.Map('map', mapOptions);
+
+      // ESLint의 no-new 규칙 무시
+      dummyMarkers.forEach((markerData) => {
+        // eslint-disable-next-line no-new
+        new naver.maps.Marker({
+          position: new naver.maps.LatLng(markerData.lat, markerData.lng),
+          map,
+        });
+      });
     };
 
-    const map = new naver.maps.Map('map', mapOptions);
+    document.body.appendChild(script);
 
-    // ESLint의 no-new 규칙 무시
-    dummyMarkers.forEach((markerData) => {
-      // eslint-disable-next-line no-new
-      new naver.maps.Marker({
-        position: new naver.maps.LatLng(markerData.lat, markerData.lng),
-        map,
-      });
-    });
-
-    // 추후 axios로 서버에서 마커 데이터를 받아와서 처리하는 로직 (주석)
-    /*
-    axios.get('/api/markers') // API에서 데이터를 받아옴
-      .then(response => {
-        const markers = response.data;
-        markers.forEach((marker) => {
-          new naver.maps.Marker({
-            position: new naver.maps.LatLng(marker.lat, marker.lng),
-            map: map,
-          });
-        });
-      })
-      .catch(error => {
-        console.error('Error fetching marker data:', error);
-      });
-    */
+    return () => {
+      document.body.removeChild(script); // 컴포넌트 언마운트 시 스크립트 제거
+    };
   }, []);
 
   const handleButtonClick = () => {
@@ -62,9 +83,9 @@ function RiskMapPage() {
   return (
     <div>
       <div id="map" style={{ width: '400px', height: '500px' }} />
-      <button type="button" onClick={handleButtonClick}>
-        제보하기
-      </button>
+      <ButtonContainer>
+        <DangerButton onClick={handleButtonClick}>제보하기</DangerButton>
+      </ButtonContainer>
     </div>
   );
 }
