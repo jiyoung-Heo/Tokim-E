@@ -8,7 +8,6 @@ import Sidebar from './Sidebar'; // 사이드바 컴포넌트
 const Header = styled.div`
   position: absolute;
   right: 0;
-  top: 3vh;
   margin-right: 5vw;
   // background-color: red; /* 헤더 배경색 테스트용입니다.*/
 `;
