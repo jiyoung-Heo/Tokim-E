@@ -27,8 +27,11 @@ const lawInfoSlice = createSlice({
     setLawInfo(state, action: PayloadAction<LawInfo[]>) {
       state.lawInfos = action.payload; // 배열로 업데이트
     },
+    resetLawInfo() {
+      return initialState; // 초기 상태로 리셋
+    },
   },
 });
 
-export const { setLawInfo } = lawInfoSlice.actions;
+export const { setLawInfo, resetLawInfo } = lawInfoSlice.actions;
 export default lawInfoSlice;
