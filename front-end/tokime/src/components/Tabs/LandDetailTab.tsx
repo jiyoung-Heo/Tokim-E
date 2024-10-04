@@ -1,6 +1,10 @@
+import styled from 'styled-components';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
+import backIcon from '../../assets/images/icon/left-actionable.png';
+
+const BackIcon = styled.img``;
 
 const LandDetailTab: React.FC = () => {
   const landDetails = useSelector(
@@ -227,12 +231,20 @@ const LandDetailTab: React.FC = () => {
 
   return (
     <div>
-      <h2>토지 정보</h2>
+      <h2 style={{ display: 'flex', alignItems: 'center' }}>
+        {selectedDetail && ( // 선택된 상세 정보가 있을 때만 BackIcon 표시
+          <BackIcon
+            src={backIcon}
+            alt="back Icon"
+            onClick={handleBackClick}
+            style={{ marginRight: '10px', cursor: 'pointer' }} // 아이콘과 제목 사이의 여백 추가 및 커서 포인터 추가
+          />
+        )}
+        {selectedDetail ? '토지 상세 정보' : '토지 목록'}
+      </h2>
+
       {selectedDetail ? ( // 선택된 상세 정보가 있으면
         <div>
-          <button type="button" onClick={handleBackClick}>
-            뒤로가기
-          </button>
           <h3>
             주소: {selectedDetail.landDistrict} {selectedDetail.landAddress}
           </h3>
