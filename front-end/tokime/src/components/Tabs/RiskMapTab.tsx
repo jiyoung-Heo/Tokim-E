@@ -96,8 +96,7 @@ const RiskMap: React.FC<RiskMapProps> = ({ district, address }) => {
   useEffect(() => {
     if (!window.naver) {
       const naverMapScript = document.createElement('script');
-      naverMapScript.src =
-        'https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=%REACT_APP_NAVERMAP_API_KEY%&submodules=geocoder,panorama';
+      naverMapScript.src = `https://j11b207.p.ssafy.io/maps/openapi/v3/maps.js?ncpClientId=${process.env.REACT_APP_NAVERMAP_API_KEY}&submodules=geocoder,panorama`;
       naverMapScript.onload = () => {
         // naver.maps가 정상적으로 로드된 경우에만 initializeMap 호출
         if (window.naver && window.naver.maps) {
