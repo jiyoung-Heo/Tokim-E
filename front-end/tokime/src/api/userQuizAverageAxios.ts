@@ -4,7 +4,7 @@ export default async function userQuizAverageAxios() {
   return API.get('/quiz/average')
     .then((res) => {
       console.log(res);
-      return res.data.data[0];
+      return res.data;
     })
     .catch((e) => {
       console.log(e);
