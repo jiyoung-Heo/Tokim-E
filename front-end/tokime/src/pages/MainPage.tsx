@@ -20,8 +20,8 @@ const Container = styled.div`
   width: 100%;
   background: #f3f7fb;
   display: flex;
+  justify-content: center;
   flex-direction: column;
-  align-items: center;
   overflow-y: hidden; // 세로 스크롤 방지
 `;
 
@@ -29,7 +29,7 @@ const Container = styled.div`
 const Logo = styled.img`
   align-self: flex-start;
   width: 33vw;
-  margin-top: 3vh;
+  margin-bottom: 3vh;
 `;
 
 // 큰 박스들을 감싸는 박스 (가로로 배치)
@@ -37,7 +37,6 @@ const LargeIconGrid = styled.div`
   display: flex;
   justify-content: space-between;
   width: 90vw;
-  margin-top: 2vh;
 `;
 
 // 작은 박스들을 감싸는 박스 (가로로 배치)
