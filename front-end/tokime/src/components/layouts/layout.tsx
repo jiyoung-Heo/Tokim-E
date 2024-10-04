@@ -21,7 +21,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   // 경로 로그 출력해서 확인하기
   console.log('Current path:', location.pathname);
-  const hideComponentsOnPaths = ['/']; // 하단탭과 사이드바를 숨길 경로 목록 (StartPage 경로 '/')
+  const hideComponentsOnPaths = ['/main']; // 사이드바를 숨길 경로 목록 (StartPage 경로 '/')
 
   const shouldHideComponents = hideComponentsOnPaths.includes(
     location.pathname,
@@ -30,10 +30,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <>
       <Header>
-        {!shouldHideComponents && <Sidebar />} {/* 조건부 렌더링 */}
+        {shouldHideComponents && <Sidebar />} {/* 조건부 렌더링 */}
       </Header>
       {children} {/* 페이지 내용 */}
-      {!shouldHideComponents && <BottomTab />} {/* 조건부 렌더링 */}
+      <BottomTab />
     </>
   );
 };
