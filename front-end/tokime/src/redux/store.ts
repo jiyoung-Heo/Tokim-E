@@ -3,12 +3,16 @@ import user from './slices/userSlice';
 import landAddress from './slices/landAddressSlice';
 import landInfo from './slices/landInfoSlice';
 import lawInfo from './slices/lawInfoSlice';
+import landpurchaseProcedure from './slices/landpurchaseProcedureSlice';
+import landEssentialKnowledge from './slices/landEssentialKnowledgeSlice';
 
 const rootReducer = combineReducers({
   user: user.reducer,
   landaddress: landAddress.reducer,
   landinfo: landInfo.reducer,
   lawInfo: lawInfo.reducer,
+  landpurchaseProcedure: landpurchaseProcedure.reducer,
+  landEssentialKnowledge: landEssentialKnowledge.reducer,
 });
 
 // RootState 타입을 rootReducer에서 추론

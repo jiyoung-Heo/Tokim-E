@@ -11,6 +11,9 @@ import CarouselImage1 from '../assets/images/icon/scoreicon.png'; // 캐러셀 �
 import { changeUser } from '../redux/slices/userSlice';
 import userInfoAxios from '../api/userInfoAxios';
 import TokimLogo from '../assets/images/TokimEnglogo.png'; // 로고 이미지
+import fetchKnowledgeByCategory from '../api/LandPurchaseKnowledge';
+import { changeLandpurchaseProcedure } from '../redux/slices/landpurchaseProcedureSlice';
+import { changeLandEssentialKnowledge } from '../redux/slices/landEssentialKnowledgeSlice';
 
 // 컨테이너 스타일 정의 (스크롤 방지 및 높이 조정)
 const Container = styled.div`
@@ -169,6 +172,20 @@ function MainPage() {
       }
     };
     fetchParentInfo();
+
+    const fetchData = async () => {
+      try {
+        const data = await fetchKnowledgeByCategory(0);
+        const data2 = await fetchKnowledgeByCategory(1);
+
+        dispatch(changeLandpurchaseProcedure(data));
+        dispatch(changeLandEssentialKnowledge(data2));
+      } catch (error) {
+        console.error('데이터를 불러오는 중 오류 발생:', error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   return (
