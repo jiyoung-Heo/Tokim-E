@@ -1,14 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { useSwipeable } from 'react-swipeable';
-import fetchKnowledgeByCategory from '../../api/LandPurchaseKnowledge';
-
-interface KnowledgeItem {
-  knowledgeCategory: number;
-  knowledgeName: string;
-  knowledgeDescribe: string;
-  knowledgeImageUrl: string;
-}
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
 const TabContent = styled.div`
   width: 83.33vw;
@@ -114,26 +108,12 @@ const RightButton = styled(SlideButton)`
 `;
 
 function EssentialKnowledgeTab() {
-  const [knowledgeList, setKnowledgeList] = useState<KnowledgeItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 1;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await fetchKnowledgeByCategory(1);
-        setKnowledgeList(data);
-      } catch (error) {
-        console.error('데이터를 불러오는 중 오류 발생:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
+  const knowledgeList = useSelector(
+    (state: RootState) => state.landEssentialKnowledge.procedures,
+  );
   const totalPages = Math.ceil(knowledgeList.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -156,10 +136,6 @@ function EssentialKnowledgeTab() {
     onSwipedRight: handlePreviousPage,
     trackMouse: true,
   });
-
-  if (loading) {
-    return <TabContent>로딩 중...</TabContent>;
-  }
 
   return (
     <TabContent {...handlers}>
