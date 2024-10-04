@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { setQuizScore } from '../redux/slices/userSlice'; // 리덕스 액션 가져오기
 import userQuizListAxios from '../api/quizListAxios'; // 퀴즈 API 호출
 import modifyUserQuizAxios from '../api/modifyUserQuizAxios'; // 퀴즈 점수 수정 API 호출
 import Modal from './Modal'; // 모달 컴포넌트 가져오기
+import backIcon from '../assets/images/icon/left-actionable.png';
 
 // 이미지 미리 import
 import Option1Icon from '../assets/images/icon/1.png';
@@ -34,69 +36,58 @@ import Tokim20 from '../assets/images/quiz/토킴이20누끼.png';
 
 // 필요한 스타일 정의
 const Container = styled.div`
-  width: 100vw;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0;
-  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  background: #f3f7fb;
 `;
 
 const Title = styled.h2`
-  font-family: 'Pretendard Variable';
-  font-weight: 800;
-  font-size: 8vw;
+  margin: 0 0 3vh 0;
+  font-size: 25px;
+  font-weight: bold;
+  font-family: 'KoddiUD OnGothic';
   color: #333333;
-  margin-top: 5vh;
-  text-align: center;
+  display: flex;
+  justify-content: left;
 `;
-
+const BackIcon = styled.img``;
 const Divider = styled.hr`
   width: 90%;
   border: none;
-  border-top: 2px solid #333333;
-  margin: 2vh 0;
+  border-top: 2px solid rgba(121, 121, 130, 0.1);
 `;
 
 const QuestionText = styled.p`
+  margin-top: 5vh;
+  margin-bottom: 5vh;
   font-family: 'Pretendard';
-  font-weight: 700;
-  font-size: 5vw;
   color: #27c384;
-  text-align: center;
-  margin-top: 3vh;
-  max-width: 90%;
   white-space: normal;
-  word-break: keep-all;
-  overflow-wrap: break-word;
+  //word-break: keep-all;
+  //overflow-wrap: break-word;
 `;
 
 const QuizContent = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100vw;
-  margin-top: 6vh;
-  padding: 0 5vw;
 `;
 
 const OptionContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 50%;
-  margin-left: 2vh;
 `;
 
 const Option = styled.button<{ isCorrect: boolean; isWrong: boolean }>`
   display: flex;
   align-items: center;
   padding: 10px;
-  margin-bottom: 2vh;
+  margin-bottom: 5vh;
   border: none;
   cursor: pointer;
   font-family: 'Pretendard';
-  font-size: 4vw;
+  font-size: 5vw;
+  font-weight: bold;
   text-align: left;
   background-color: ${({ isCorrect, isWrong }) => {
     if (isCorrect) return '#27c384'; // 정답일 때 초록색
@@ -150,6 +141,7 @@ const tokimImages = [
 
 // 퀴즈 컴포넌트
 function LandPurchaseQuiz() {
+  const navigate = useNavigate();
   const [quizzes, setQuizzes] = useState<any[]>([]);
   const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
   const [correctAnswersCount, setCorrectAnswersCount] = useState(0); // 맞은 개수
@@ -169,6 +161,9 @@ function LandPurchaseQuiz() {
 
     fetchQuizzes();
   }, []);
+  const goBack = () => {
+    navigate(-1); // 이전 페이지로 이동
+  };
 
   const openModal = (score: number) => {
     setFinalScore(score);
@@ -227,7 +222,10 @@ function LandPurchaseQuiz() {
 
   return (
     <Container>
-      <Title>토지 상식 퀴즈</Title>
+      <Title>
+        <BackIcon src={backIcon} alt="back Icon" onClick={goBack} />
+        토지 상식 퀴즈
+      </Title>
       <Divider />
       <QuestionText>
         {questionNumber}. {currentQuiz.question}
