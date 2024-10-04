@@ -1,20 +1,21 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Graph from '../charts/GaugeGraph'; // 그래프 컴포넌트
+import userQuizAverageAxios from '../../api/userQuizAverageAxios'; // 점수 API 호출
 
 // 점수와 백분위 컨테이너 스타일 정의
 const GaugeWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 20px;
+  margin-top: 10vh;
   width: 100%;
 `;
 
 // 점수 텍스트 스타일
 const Score = styled.p`
-  font-size: 6vw; // 반응형으로 360px 기준 20px
+  font-size: 6vw;
   font-weight: bold;
   margin-top: -20px;
   color: #333333;
@@ -22,7 +23,8 @@ const Score = styled.p`
 
 // 백분위 텍스트 스타일
 const Percentile = styled.p`
-  font-size: 4vw; // 반응형으로 360px 기준 14px
+  font-size: 4vw;
+  margin-top: -20px;
   color: #333333;
 `;
 
@@ -62,34 +64,71 @@ const Container = styled.div`
   padding: 0 20px;
   box-sizing: border-box;
   overflow: hidden;
-  position: fixed; // fixed로 설정하여 스크롤 방지
+  position: fixed;
   top: 0;
   left: 0;
 `;
 
 function MyLandScoreTab() {
+  const [score, setScore] = useState<number | null>(null);
+  const [percentile, setPercentile] = useState<string | null>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const score = 76; // 예시 점수
-  const percentile = '상위 43%'; // 예시 백분위
+
+  useEffect(() => {
+    // 사용자 퀴즈 데이터를 불러오는 함수
+    const fetchUserQuizData = async () => {
+      try {
+        const response = await userQuizAverageAxios();
+
+        // 응답 데이터 확인
+        console.log('API 응답 데이터:', response);
+
+        if (response) {
+          const { quizScore, top } = response; // quizScore와 top 필드 접근
+
+          if (quizScore !== undefined && top !== undefined) {
+            setScore(quizScore);
+            setPercentile(`상위 ${top}%`);
+          } else {
+            throw new Error('유효한 데이터를 받지 못했습니다.');
+          }
+        } else {
+          throw new Error('응답에 데이터가 없습니다.');
+        }
+      } catch (err) {
+        console.error('사용자 점수를 불러오는 중 오류 발생:', err);
+        setFetchError((err as Error).message); // 에러 메시지 설정
+      }
+    };
+
+    fetchUserQuizData();
+  }, []);
 
   return (
     <Container>
       <GaugeWrapper>
-        <Graph score={score} /> {/* 그래프 크기는 적절히 설정 */}
-        <Score>{score}점</Score>
-        <Percentile>{percentile}</Percentile>
+        {fetchError ? (
+          <p>{fetchError}</p> // 에러 메시지 출력
+        ) : score !== null ? (
+          <>
+            <Graph score={score} />
+            <Score>{score}점</Score>
+            <Percentile>{percentile}</Percentile>
+          </>
+        ) : (
+          <p>로딩 중...</p>
+        )}
       </GaugeWrapper>
 
-      {/* "토지 구매 상식 더 공부하러 가기" 버튼 */}
       <StyledButton
         $bgColor="rgba(121, 121, 130, 0.1)"
         $textColor="#27C384"
         onClick={() => navigate('/land-purchase-knowledge')}
       >
-        토지 구매 상식 더 공부하러가기
+        토지 구매 상식 더 공부하러 가기
       </StyledButton>
 
-      {/* "토지 상식 퀴즈 다시 풀어보기" 버튼 */}
       <StyledButton
         $bgColor="#27C384"
         $textColor="#FFFFFF"
