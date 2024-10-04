@@ -34,7 +34,6 @@ public class LandService {
     }
 
     public List<Land> searchByDistrictFullText(String district, Pageable pageable) {
-
         return landRepository.findTop5ByDistrictFullText(district, pageable);
     }
 
