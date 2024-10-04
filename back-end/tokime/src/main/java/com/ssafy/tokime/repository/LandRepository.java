@@ -34,7 +34,7 @@ List<Land> findTop5ByDistrictAndAddress(@Param("district") String district, @Par
     @Query(value = "SELECT * FROM land WHERE MATCH(land_district) AGAINST (CONCAT(:district, '*') IN BOOLEAN MODE)", nativeQuery = true)
     List<Land> findTop5ByDistrictFullText(@Param("district") String district, Pageable pageable);
 
-    @Query("SELECT l FROM Land l WHERE l.landAddress LIKE %:address%")
+    @Query("SELECT l FROM Land l WHERE l.landAddress LIKE :address%")
     List<Land> findTop5ByAddress(@Param("address") String address, Pageable pageable);
 
 //    // 최대 5개 결과 반환
