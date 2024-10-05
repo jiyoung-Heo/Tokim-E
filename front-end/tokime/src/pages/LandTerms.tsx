@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
-import { PulseLoader } from 'react-spinners';
 import searchIcon from '../assets/images/icon/search.svg';
 import multiply from '../assets/images/icon/Multiply.png'; // x아이콘
 import starIcon from '../assets/images/icon/star.svg'; // 기본 별 아이콘
 import starFilled from '../assets/images/icon/star_filled.svg'; // 즐겨찾기 시 사용될 채워진 별 아이콘
 import backIcon from '../assets/images/icon/left-actionable.png';
-
 import { getAllTerms, registTermLike, deleteTermLike } from '../api/termAxios'; // API 서비스 호출
+import LoadingSpinner from '../components/layouts/LoadingSpinner';
 
 const Container = styled.div`
   width: 100%;
@@ -225,21 +224,17 @@ const LandTerms = () => {
   const [selectedAlphabet, setSelectedAlphabet] = useState('');
   const [likedTerms, setLikedTerms] = useState<number[]>([]); // 즐겨찾기된 용어 ID 목록
   const [showFavorites, setShowFavorites] = useState(false); // 즐겨찾기 모드 여부
-
   const termContainerRef = useRef<HTMLDivElement>(null);
 
   const fetchTerms = async () => {
     try {
       const data = await getAllTerms('');
       setAllTerms(data);
-
       // likeCheck가 true인 항목을 찾아 likedTerms에 저장
       const likedTermIds = data
         .filter((term: any) => term.likeCheck === true) // term에 타입 명시
         .map((term: any) => term.termId); // term에 타입 명시
-
       setLikedTerms(likedTermIds);
-
       setFilteredTerms(data);
     } catch (error) {
       console.error('용어를 불러오는데 실패했습니다:', error);
@@ -366,25 +361,8 @@ const LandTerms = () => {
   }, [searchTerm]);
 
   if (loading) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh', // 화면 전체 높이
-        }}
-      >
-        <div>
-          <h2>용어 사전 로딩 중...</h2>
-          <SpinnerPlace>
-            <PulseLoader color="#00c99c" size={25} />
-          </SpinnerPlace>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
-
   return (
     <Container>
       <Title>

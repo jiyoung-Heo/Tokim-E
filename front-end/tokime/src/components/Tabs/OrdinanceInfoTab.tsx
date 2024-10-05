@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useSwipeable } from 'react-swipeable';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store'; // RootState 경로에 맞게 수정 필요
-
+import LoadingSpinner from '../layouts/LoadingSpinner';
 // 스타일 정의
 const LawInfoContainer = styled.div`
   height: 20vh;
@@ -137,7 +137,7 @@ function OrdinanceInfoTab() {
   });
 
   if (loading) {
-    return <div>로딩 중...</div>;
+    return <LoadingSpinner />;
   }
 
   if (errorMessage) {
