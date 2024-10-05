@@ -212,10 +212,10 @@ const LandDetailTab: React.FC = () => {
     const descriptions: { [key: string]: string } = {
       저지: '저지란 간선도로 또는 주위의 지형지세보다 현저히 낮은 지대의 토지를 말합니다.',
       평지: '평지란 간선도로 또는 주위의 지형지세의 높이와 비슷하거나 경사도가 미미한 지대의 토지를 말합니다.',
-      완경사지:
-        '완경사지는 간선도로 또는 주위의 지형지세보다는 높으면서 경사도가 15도 이하인 지대의 토지를 말합니다.',
-      급경사지:
-        '급경사지는 간선도로 또는 주위의 지형지세보다 높으면서 경사도가 15도를 초과하는 지대의 토지를 말합니다.',
+      완경사:
+        '완경사는 간선도로 또는 주위의 지형지세보다는 높으면서 경사도가 15도 이하인 지대의 토지를 말합니다.',
+      급경사:
+        '급경사는 간선도로 또는 주위의 지형지세보다 높으면서 경사도가 15도를 초과하는 지대의 토지를 말합니다.',
       고지: '고지란 간선도로 또는 주위의 지형지세보다 현저하게 높은 지대의 토지를 말합니다.',
     };
 
@@ -223,6 +223,26 @@ const LandDetailTab: React.FC = () => {
   };
 
   const getRoadAccessDescription = (roadAccess: string) => {
+    let accessKey = roadAccess; // 새로운 변수 생성
+
+    // 데이터로 들어오는 값을 변환
+    switch (accessKey) {
+      case '세로(가)':
+        accessKey = '세로가';
+        break;
+      case '세각(가)':
+        accessKey = '세각가';
+        break;
+      case '세로(불)':
+        accessKey = '세로불';
+        break;
+      case '세각(불)':
+        accessKey = '세각불';
+        break;
+      default:
+        break;
+    }
+
     const descriptions: { [key: string]: string } = {
       광대한면:
         "'광대한면'은 폭 25m 이상의 도로에 한 면이 접하고 있는 토지입니다.",
@@ -249,7 +269,7 @@ const LandDetailTab: React.FC = () => {
       맹지: "'맹지'는 이륜자동차의 통행이 불가능한 도로에 접한 토지와 도로에 접하지 않는 토지입니다.",
     };
 
-    return descriptions[roadAccess] || "'도로접면'에 대한 정보가 없습니다.";
+    return descriptions[accessKey] || '해당 도로 접근 설명이 없습니다.';
   };
 
   const getDevelopmentPotentialDescription = (developmentPotential: number) => {
