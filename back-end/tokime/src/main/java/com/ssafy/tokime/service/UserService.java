@@ -22,8 +22,9 @@ public class UserService {
     private LikeWordRepository likeWordRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, LikeWordRepository likeWordRepository) {
         this.userRepository = userRepository;
+        this.likeWordRepository = likeWordRepository;
     }
 
     public User signIn(User user) {
