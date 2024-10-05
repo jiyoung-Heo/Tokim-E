@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { setLandDetail } from '../../redux/slices/landInfoSlice';
+import { setLawInfo } from '../../redux/slices/lawInfoSlice'; // 액션 임포트
+import { getLandLawInfo } from '../../api/landAxios'; // API 임포트
 import backIcon from '../../assets/images/icon/left-actionable.png';
 import gradientIcon from '../../assets/images/landInfo/gradient.png';
 import moneyIcon from '../../assets/images/landInfo/money.png';
@@ -47,8 +49,11 @@ const LandDetailTab: React.FC = () => {
   );
   const [showInfo, setShowInfo] = useState<{ [key: string]: boolean }>({});
 
-  const handleDetailClick = (detail: any) => {
+  const handleDetailClick = async (detail: any) => {
     dispatch(setLandDetail(detail));
+
+    const lawData = await getLandLawInfo(detail.landDistrictCode); // detail에서 필요한 값을 사용해야 합니다.
+    dispatch(setLawInfo(lawData));
   };
 
   const handleBackClick = () => {
