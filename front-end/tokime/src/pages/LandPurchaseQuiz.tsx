@@ -143,6 +143,11 @@ const TextBox = styled.div`
   transition: box-shadow 0.2s ease; // 변환 효과 추가
 `;
 
+const SpinnerPlace = styled.div`
+  display: flex;
+  justify-content: center; // 가로 가운데 정렬
+`;
+
 const optionIcons = [Option1Icon, Option2Icon, Option3Icon, Option4Icon];
 
 const tokimImages = [
@@ -264,9 +269,9 @@ function LandPurchaseQuiz() {
       >
         <div>
           <h2>퀴즈 로딩 중...</h2>
-          <div>
+          <SpinnerPlace>
             <PulseLoader color="#00c99c" size={25} />
-          </div>
+          </SpinnerPlace>
         </div>
       </div>
     );
