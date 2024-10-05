@@ -30,7 +30,7 @@ public class InvestmentPlannedLandService {
     // 투자 예정지 등록
     public void registInvestmentPlannedLand(InvestmentPlannedLandDTO dto, String email) {
         // 로그인 유저
-        User user = userRepository.findByEmailIsDeletedFalse(email)
+        User user = userRepository.findByEmailAndIsDeletedFalse(email)
                 .orElseThrow(() -> new RuntimeException("email로 조회 했으나 존재 하지 않는 유저"));
 
             // 투자예정지 등록정보 entity로 변환
@@ -115,7 +115,7 @@ public class InvestmentPlannedLandService {
         InvestmentPlannedLand investmentPlannedLand = investmentPlannedLandRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("투자 예정지를 찾을 수 없습니다."));
 
-        User user = userRepository.findByEmailIsDeletedFalse(email)
+        User user = userRepository.findByEmailAndIsDeletedFalse(email)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 유저입니다."));
 
         if (!investmentPlannedLand.getUser().getUserId().equals(user.getUserId())) {
@@ -144,7 +144,7 @@ public class InvestmentPlannedLandService {
 
     // 전체 조회
     public List<InvestmentPlannedLandDTO> getInvestmentPlannedLandsByUserEmail(String email){
-        User user = userRepository.findByEmailIsDeletedFalse(email).orElseThrow(()->
+        User user = userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(()->
                 new RuntimeException("email로 조회 했으나 존재 하지 않는 유저"));
                 List<InvestmentPlannedLand> lands = investmentPlannedLandRepository.findByUser(user);
 
@@ -161,7 +161,7 @@ public class InvestmentPlannedLandService {
         InvestmentPlannedLand investmentPlannedLand = investmentPlannedLandRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("투자예정지를 찾을 수 없습니다."));
 
-        User user = userRepository.findByEmailIsDeletedFalse(email).orElseThrow(()->new RuntimeException("email로 조회 했으나 존재 하지 않는 유저"));
+        User user = userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(()->new RuntimeException("email로 조회 했으나 존재 하지 않는 유저"));
 
         if(user.getUserId()!=investmentPlannedLand.getUser().getUserId()){
             throw new RuntimeException("접근 권한이 없습니다");
@@ -177,7 +177,7 @@ public class InvestmentPlannedLandService {
     public void deleteinvestmentPlannedLand(Long id,String email){
         InvestmentPlannedLand investmentPlannedLand = investmentPlannedLandRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("투자예정지를 찾을 수 없습니다"));
-        User user = userRepository.findByEmailIsDeletedFalse(email).orElseThrow(()->new RuntimeException("존재하지않는 유저입니다"));
+        User user = userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(()->new RuntimeException("존재하지않는 유저입니다"));
         if(user.getUserId()!=investmentPlannedLand.getUser().getUserId()){
             throw new RuntimeException("삭제할 권한이 없습니다.");
         }
