@@ -12,7 +12,7 @@ import { setLandDetails, resetLandInfo } from '../redux/slices/landInfoSlice'; /
 import { setLawInfo, resetLawInfo } from '../redux/slices/lawInfoSlice'; // 액션 임포트
 import { getSearchLandInfo, getLandLawInfo } from '../api/landAxios'; // API 임포트
 import searchIcon from '../assets/images/icon/search.svg';
-
+import nodataimg from '../../assets/images/Tokimlogo.png';
 // 검색창 스타일
 const SearchContainer = styled.div`
   padding: 10px;
