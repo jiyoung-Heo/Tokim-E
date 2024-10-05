@@ -11,9 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByEmail(String email);
-
-//    @Query("select u from User u where u.email = :email and u.isDeleted = false")
     Optional<User> findByEmailAndIsDeletedFalse(@Param("email") String email);
 
     // 특정 연령대의 퀴즈점수 모두 가져오기 - 중복 허용 X 내림차순으로
