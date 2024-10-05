@@ -36,18 +36,60 @@ const CloseButton = styled.button`
   border-radius: 5px;
 `;
 
+const RetryButton = styled.button`
+  margin-top: 10px;
+  padding: 10px 20px;
+  background: #007bff; /* 재시도 버튼 색상 */
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+`;
+
+const ResultButton = styled.button`
+  margin-top: 10px;
+  padding: 10px 20px;
+  background: #ff6b6b; /* 결과 페이지 버튼 색상 */
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+`;
+
 interface ModalProps {
   message: string;
+  score: number;
+  correctAnswers: number;
+  totalQuestions: number;
+  feedbackMessage: string;
   onClose: () => void;
+  onRetry: () => void;
+  onGoToResults: () => void;
 }
 
-const Modal: React.FC<ModalProps> = ({ message, onClose }) => {
+const Modal: React.FC<ModalProps> = ({
+  message,
+  score,
+  correctAnswers,
+  totalQuestions,
+  feedbackMessage,
+  onClose,
+  onRetry,
+  onGoToResults,
+}) => {
   return (
     <Overlay>
       <ModalContainer>
-        <h2>퀴즈 </h2>
-        <p>{message}</p>
-        <CloseButton onClick={onClose}>닫기</CloseButton>
+        <h2>💯 퀴즈 결과 💯 </h2>
+        <p>{message}🎉</p>
+        <p>
+          정답 : {correctAnswers} / {totalQuestions}
+        </p>
+        <p>점수: {score}</p>
+        <p>{feedbackMessage}</p>
+        {/* <CloseButton onClick={onClose}>닫기</CloseButton> */}
+        <RetryButton onClick={onRetry}>다시 풀기</RetryButton>
+        <ResultButton onClick={onGoToResults}>결과 페이지로</ResultButton>
       </ModalContainer>
     </Overlay>
   );
