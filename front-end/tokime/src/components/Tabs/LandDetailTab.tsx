@@ -14,11 +14,13 @@ import useIcon from '../../assets/images/landInfo/use.png';
 
 const BackIcon = styled.img`
   cursor: pointer;
+  margin-right: calc(0.5vw + 0.5vh);
 `;
 
 const MapBox = styled.div`
   height: 200px;
-  margin-top: 16px;
+  margin-top: 1vh;
+  margin-bottom: 3vh;
   border: 2px solid #ccc;
   border-radius: 8px;
   background-color: #f0f0f0;
@@ -257,24 +259,18 @@ const LandDetailTab: React.FC = () => {
   };
 
   return (
-    <div>
-      <h2 style={{ display: 'flex', alignItems: 'center' }}>
+    <div style={{ backgroundColor: '#f3f7fb' }}>
+      <h3 style={{ display: 'flex', alignItems: 'center' }}>
         {selectedDetail && ( // 선택된 상세 정보가 있을 때만 BackIcon 표시
           <BackIcon src={backIcon} alt="back Icon" onClick={handleBackClick} />
         )}
-        {selectedDetail ? '토지 상세 정보' : '토지 목록'}
-      </h2>
+        {selectedDetail
+          ? `${selectedDetail.landDistrict} ${selectedDetail.landAddress}`
+          : '토지 목록'}
+      </h3>
       {selectedDetail ? ( // 선택된 상세 정보가 있으면
         <div>
           <MapBox>지도 박스 (지도 이미지 또는 컴포넌트)</MapBox>
-          <h3
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-            }}
-          >
-            {selectedDetail.landDistrict} {selectedDetail.landAddress}
-          </h3>
           {/* 공통 정보 항목을 위한 컴포넌트 생성 */}
           <InfoBox>
             {[
@@ -423,7 +419,15 @@ const LandDetailTab: React.FC = () => {
               </div>
             ))
           ) : (
-            <div>토지 정보가 없습니다.</div>
+            <div
+              style={{
+                color: 'red',
+                fontWeight: 'bold',
+                fontSize: 'calc(2vw + 2vh)',
+              }}
+            >
+              검색을 해주세요^^
+            </div>
           )}
         </div>
       )}
