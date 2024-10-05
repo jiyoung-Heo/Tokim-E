@@ -62,6 +62,12 @@ public class InvestmentPlannedLand {
     @Column
     private Integer plannedLandPrice;
 
+    @Column
+    private String landNickname;
+
+    @Column
+    private Integer landDanger=0;
+
     @Builder .Default
     @Column(nullable = false)
     private Integer checkedCount=0;
@@ -83,6 +89,8 @@ public class InvestmentPlannedLand {
                 .plannedLandPyeong(this.plannedLandPyeong)
                 .plannedLandPrice(this.plannedLandPrice)
                 .checkedCount(this.checkedCount)
+                .landDanger(this.landDanger)
+                .landNickname(this.landNickname)
                 .build();
     }
 

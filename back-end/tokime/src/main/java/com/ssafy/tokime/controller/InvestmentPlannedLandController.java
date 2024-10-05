@@ -1,10 +1,8 @@
 package com.ssafy.tokime.controller;
 
 import com.ssafy.tokime.dto.ChecklistDTO;
-import com.ssafy.tokime.dto.ChecklistStatusDTO;
+import com.ssafy.tokime.dto.LandFilterDTO;
 import com.ssafy.tokime.dto.InvestmentPlannedLandDTO;
-import com.ssafy.tokime.model.ChecklistStatus;
-import com.ssafy.tokime.model.InvestmentPlannedLand;
 import com.ssafy.tokime.service.InvestmentPlannedLandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
@@ -13,9 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.IllegalFormatException;
 import java.util.List;
 
 @RestController
@@ -50,7 +48,6 @@ public class InvestmentPlannedLandController {
             return new ResponseEntity<>("서버 오류가 발생했습니다: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 
     // 체크리스트 처음 불러오기
     @GetMapping("/checklist")
@@ -125,7 +122,19 @@ public class InvestmentPlannedLandController {
         }
     }
 
-
+    // 필터링
+    @GetMapping("/filter")
+    public ResponseEntity<?> getPlannedLandByaddress(@RequestBody LandFilterDTO dto){
+     try{
+         String email =getAuth();
+         List<InvestmentPlannedLandDTO> filteredlands = investmentPlannedLandService.filterInvestmentPlannedLands(dto);
+        return new ResponseEntity<>(filteredlands,HttpStatus.OK);
+     }catch(IllegalFormatException e){
+         return new ResponseEntity<>("데이터 타입이 올바르지 않습니다.", HttpStatus.BAD_REQUEST);
+     }catch(Exception e ){
+         return new ResponseEntity<>("서버 오류가 발생했습니다.",HttpStatus.INTERNAL_SERVER_ERROR);
+     }
+    }
 
     private String getAuth() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -134,5 +143,4 @@ public class InvestmentPlannedLandController {
         }
         throw new RuntimeException("인가되지 않은 접근");
     }
-
 }
