@@ -264,7 +264,9 @@ function LandPurchaseQuiz() {
       >
         <div>
           <h2>퀴즈 로딩 중...</h2>
-          <PulseLoader color="#00c99c" size={25} />
+          <div>
+            <PulseLoader color="#00c99c" size={25} />
+          </div>
         </div>
       </div>
     );
