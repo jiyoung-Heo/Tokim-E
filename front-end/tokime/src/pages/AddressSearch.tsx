@@ -40,7 +40,7 @@ const SearchIcon = styled.img`
 const TabsContainer = styled.div`
   display: flex;
   justify-content: space-around;
-  background-color: white;
+  background-color: #f3f7fb;
   border-bottom: 1px solid #ddd;
 `;
 
@@ -57,7 +57,7 @@ const TabItem = styled.div<{ $isActive: boolean }>`
 
 const Content = styled.div`
   padding: 20px;
-  background-color: #fff;
+  background-color: #f3f7fb;
 `;
 
 function AddressSearch() {
