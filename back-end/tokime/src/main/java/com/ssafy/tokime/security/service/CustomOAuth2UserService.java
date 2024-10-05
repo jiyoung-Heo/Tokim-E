@@ -44,7 +44,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String email = oAuth2Response.getEmail();
 
         //유저 이메일을 통해서 검색함
-        Optional<User> existData = userRepository.findByEmail(email);
+        Optional<User> existData = userRepository.findByEmailAndIsDeletedFalse(email);
         //db에 유저가 없는경우
         if(existData.isEmpty()){
             logger.info("유저가 없는경우");
