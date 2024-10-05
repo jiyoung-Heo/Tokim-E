@@ -88,7 +88,7 @@ function AppRouter() {
         }
       />
       <Route
-        path="/investment-detail"
+        path="/investment-detail/:invest"
         element={
           <Layout>
             <InvestmentDetailPage />
