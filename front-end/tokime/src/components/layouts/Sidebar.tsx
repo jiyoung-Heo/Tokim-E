@@ -13,6 +13,7 @@ import { RootState } from '../../redux/store';
 import userQuizPercentAxios from '../../api/userQuizPercentAxios';
 import logoutAxios from '../../api/logoutAxios';
 import { persistor } from '../../redux/reduxStore';
+import withdrawAxios from '../../api/withdrawAxios';
 
 // 사이드바 전체 스타일 정의
 const SidebarContainer = styled.div<{ $isOpen: boolean }>`
@@ -167,12 +168,21 @@ const ModalButton = styled.button`
   cursor: pointer;
 `;
 
+const WithdrawBtn = styled.p`
+  display: flex;
+  justify-content: center;
+  color: grey;
+  text-decoration: underline;
+  opacity: 0.6;
+`;
+
 function Sidebar() {
   const dispatch = useDispatch();
   const userInfo = useSelector((state: RootState) => state.user);
   const [percent, setPercent] = useState(0);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalWithdrawOpen, setModalWithdrawOpen] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -196,7 +206,8 @@ function Sidebar() {
     if (
       sidebarRef.current &&
       !sidebarRef.current.contains(event.target as Node) &&
-      !modalOpen // 모달이 열려 있을 경우 사이드바 닫기 방지
+      !modalOpen && // 모달이 열려 있을 경우 사이드바 닫기 방지
+      !modalWithdrawOpen
     ) {
       setIsSidebarOpen(false);
     }
@@ -215,7 +226,7 @@ function Sidebar() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [modalOpen]);
+  }, [modalOpen, modalWithdrawOpen]);
 
   useEffect(() => {
     const fetchParentInfo = async () => {
@@ -225,7 +236,7 @@ function Sidebar() {
       }
     };
     fetchParentInfo();
-  }, [modalOpen]);
+  }, [modalOpen, modalWithdrawOpen]);
 
   const handleLogout = () => {
     const fetchLogout = async () => {
@@ -241,6 +252,19 @@ function Sidebar() {
 
   const handleNavigateToLogin = () => {
     navigate('/login-required'); // LoginRequiredPage로 이동
+  };
+
+  const handleWithdraw = () => {
+    const fetchLogout = async () => {
+      const data = await withdrawAxios();
+      if (data) {
+        persistor.purge();
+        dispatch({ type: 'RESET_ALL' });
+      }
+    };
+    fetchLogout();
+    setModalWithdrawOpen(false); // 모달 닫기
+    navigate('/');
   };
 
   return (
@@ -284,6 +308,9 @@ function Sidebar() {
             <Button $bgColor="#00C99C" onClick={() => setModalOpen(true)}>
               로그아웃
             </Button>
+            <WithdrawBtn onClick={() => setModalWithdrawOpen(true)}>
+              회원탈퇴
+            </WithdrawBtn>
           </ButtonContainer>
         </SidebarContainer>
       ) : (
@@ -322,6 +349,19 @@ function Sidebar() {
             <ModalButtonList>
               <ModalButton onClick={handleLogout}>확인</ModalButton>
               <ModalButton onClick={() => setModalOpen(false)}>
+                취소
+              </ModalButton>
+            </ModalButtonList>
+          </ModalContent>
+        </ModalContainer>
+      )}
+      {modalWithdrawOpen && (
+        <ModalContainer onClick={() => setModalWithdrawOpen(false)}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <h3>정말 탈퇴하시겠습니까?</h3>
+            <ModalButtonList>
+              <ModalButton onClick={handleWithdraw}>확인</ModalButton>
+              <ModalButton onClick={() => setModalWithdrawOpen(false)}>
                 취소
               </ModalButton>
             </ModalButtonList>
