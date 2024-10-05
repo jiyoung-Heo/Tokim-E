@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
+import { PulseLoader } from 'react-spinners';
 import searchIcon from '../assets/images/icon/search.svg';
 import multiply from '../assets/images/icon/Multiply.png'; // x아이콘
 import starIcon from '../assets/images/icon/star.svg'; // 기본 별 아이콘
@@ -360,7 +361,21 @@ const LandTerms = () => {
   }, [searchTerm]);
 
   if (loading) {
-    return <div>로딩 중...</div>;
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh', // 화면 전체 높이
+        }}
+      >
+        <div>
+          <h2>용어 사전 로딩 중...</h2>
+          <PulseLoader color="#00c99c" size={25} />
+        </div>
+      </div>
+    );
   }
 
   return (
