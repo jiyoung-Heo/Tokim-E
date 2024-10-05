@@ -4,6 +4,7 @@ import { useSwipeable } from 'react-swipeable';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store'; // RootState 경로에 맞게 수정 필요
 import LoadingSpinner from '../layouts/LoadingSpinner';
+import nodataimg from '../../assets/images/Tokimlogo.png';
 // 스타일 정의
 const LawInfoContainer = styled.div`
   height: 20vh;
@@ -69,6 +70,14 @@ const SlideButton = styled.button`
     opacity: 0.3;
     cursor: not-allowed;
   }
+`;
+
+const NoDataMessage = styled.div`
+  color: #27c384; // 원하는 색상
+  font-weight: bold; // 볼드체
+  font-size: 1.5em; // 폰트 크기
+  margin-top: 10px; // 위쪽 여백
+  text-align: center; // 중앙 정렬
 `;
 
 const Dot = styled.div<{ active: boolean }>`
@@ -141,7 +150,16 @@ function OrdinanceInfoTab() {
   }
 
   if (errorMessage) {
-    return <div>{errorMessage}</div>; // 상태 업데이트된 에러 메시지 출력
+    return (
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <img
+          src={nodataimg}
+          alt="No data available"
+          style={{ width: '300px', height: 'auto', opacity: 0.85 }} // 이미지 크기와 투명도
+        />
+        <NoDataMessage>법령 정보가 없습니다.</NoDataMessage>
+      </div>
+    );
   }
 
   return (
