@@ -147,7 +147,7 @@ function OrdinanceInfoTab() {
   return (
     <div>
       {ordinances.length > 0 ? (
-        <div>
+        <div {...handlers}>
           <h3>{ordinances[currentIndex].lawName}</h3>
           <LawInfoContainer>
             <LawTitle>법령 정보</LawTitle>
