@@ -49,9 +49,9 @@ const TabItem = styled.div<{ $isActive: boolean }>`
   text-align: center;
   padding: 10px;
   font-size: 14px;
-  color: ${(props) => (props.$isActive ? '#007bff' : '#000')};
+  color: ${(props) => (props.$isActive ? '#27C384' : '#000')};
   font-weight: ${(props) => (props.$isActive ? 'bold' : 'normal')};
-  border-bottom: ${(props) => (props.$isActive ? '2px solid #007bff' : 'none')};
+  border-bottom: ${(props) => (props.$isActive ? '2px solid #27C384' : 'none')};
   cursor: pointer;
 `;
 
