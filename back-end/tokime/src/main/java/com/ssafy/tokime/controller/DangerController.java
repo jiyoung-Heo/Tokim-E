@@ -58,6 +58,7 @@ public class DangerController {
     @PostMapping("")
     public ResponseEntity<?> addDanger(@RequestBody Danger danger) {
         try {
+            logger.info("가져온 상태 : "+danger.getLng()+" "+danger.getLat());
             dangerService.addDanger(danger);
             return ResponseEntity.ok().build();
         } catch (Exception e) {

@@ -1,6 +1,7 @@
 package com.ssafy.tokime.service;
 
 import com.ssafy.tokime.model.User;
+import com.ssafy.tokime.repository.LikeWordRepository;
 import com.ssafy.tokime.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private UserRepository userRepository;
+    private LikeWordRepository likeWordRepository;
 
     @Autowired
     public UserService(UserRepository userRepository) {
@@ -34,6 +36,7 @@ public class UserService {
     public void deleteUser(String email) {
         User user = selectUserInfoByEmail(email);
         user.setIsDeleted(true);
+        likeWordRepository.deleteByEmail(user.getEmail());
     }
 
     public User updateQuizScore(String email, Long quizScore) {
