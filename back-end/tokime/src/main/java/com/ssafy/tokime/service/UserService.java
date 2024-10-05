@@ -19,12 +19,10 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private UserRepository userRepository;
-    private LikeWordRepository likeWordRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository, LikeWordRepository likeWordRepository) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.likeWordRepository = likeWordRepository;
     }
 
     public User signIn(User user) {
@@ -37,7 +35,6 @@ public class UserService {
     public void deleteUser(String email) {
         User user = selectUserInfoByEmail(email);
         user.setIsDeleted(true);
-        likeWordRepository.deleteByEmail(user.getEmail());
     }
 
     public User updateQuizScore(String email, Long quizScore) {
