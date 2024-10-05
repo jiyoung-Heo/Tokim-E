@@ -43,7 +43,7 @@ const LargeIconGrid = styled.div`
 const SmallIconGrid = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 90vw;
+  width: 89vw;
   margin-top: 5vh;
 `;
 
@@ -65,7 +65,7 @@ const LargeIconBox = styled(Link)`
 
 // 작은 아이콘 박스 스타일
 const SmallIconBox = styled(Link)`
-  width: 27.77vw;
+  width: 27vw;
   height: 16.66vh;
   background: #ffffff;
   border-radius: 2.78vw;
@@ -124,7 +124,7 @@ const SmallIconSubtitle = styled.span`
 
 // 캐러셀 섹션 스타일 (text-decoration: none 추가)
 const CarouselContainer = styled(Link)`
-  width: 91.1vw;
+  width: 89vw;
   height: 21.56vh;
   background: linear-gradient(
     180deg,
