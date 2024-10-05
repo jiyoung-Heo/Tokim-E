@@ -146,6 +146,11 @@ const Term = styled(Link)`
   }
 `;
 
+const SpinnerPlace = styled.div`
+  display: flex;
+  justify-content: center; // 가로 가운데 정렬
+`;
+
 const StarIcon = styled.img.withConfig({
   shouldForwardProp: (prop) => prop !== 'isLiked',
 })<{ isLiked: boolean }>`
@@ -372,9 +377,9 @@ const LandTerms = () => {
       >
         <div>
           <h2>용어 사전 로딩 중...</h2>
-          <div>
+          <SpinnerPlace>
             <PulseLoader color="#00c99c" size={25} />
-          </div>
+          </SpinnerPlace>
         </div>
       </div>
     );
