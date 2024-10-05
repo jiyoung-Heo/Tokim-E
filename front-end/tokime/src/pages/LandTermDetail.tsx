@@ -10,6 +10,7 @@ import OpenAiUtil from '../utils/OpenAiUtill';
 import starIcon from '../assets/images/icon/star.svg';
 import starFilled from '../assets/images/icon/star_filled.svg';
 import backIcon from '../assets/images/icon/left-actionable.png';
+import LoadingSpinner from '../components/layouts/LoadingSpinner';
 
 // 스타일 정의
 const Container = styled.div`
@@ -229,7 +230,7 @@ function LandTermDetail() {
   };
 
   if (loading) {
-    return <div>용어 정보를 불러오는 중입니다...</div>;
+    return <LoadingSpinner />;
   }
 
   if (!termData) {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getCheckList } from '../../api/landInvestAxios'; // Adjust the import path as necessary
+import LoadingSpinner from '../layouts/LoadingSpinner';
 
 interface ChecklistItem {
   checklistId: number;
@@ -61,7 +62,7 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
   };
 
   if (loading) {
-    return <div>로딩 중...</div>; // Show loading message
+    return <LoadingSpinner />;
   }
 
   if (error) {
