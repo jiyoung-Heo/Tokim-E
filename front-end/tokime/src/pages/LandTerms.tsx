@@ -372,7 +372,9 @@ const LandTerms = () => {
       >
         <div>
           <h2>용어 사전 로딩 중...</h2>
-          <PulseLoader color="#00c99c" size={25} />
+          <div>
+            <PulseLoader color="#00c99c" size={25} />
+          </div>
         </div>
       </div>
     );
