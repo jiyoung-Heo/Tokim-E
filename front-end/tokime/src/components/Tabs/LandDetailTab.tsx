@@ -13,6 +13,7 @@ import purposeIcon from '../../assets/images/landInfo/purpose.png';
 import roadIcon from '../../assets/images/landInfo/road.png';
 import scaleIcon from '../../assets/images/landInfo/scale.png';
 import useIcon from '../../assets/images/landInfo/use.png';
+import NaverMap from './NaverMap';
 
 const BackIcon = styled.img`
   cursor: pointer;
@@ -275,7 +276,9 @@ const LandDetailTab: React.FC = () => {
       </h3>
       {selectedDetail ? ( // 선택된 상세 정보가 있으면
         <div>
-          <MapBox>지도 박스 (지도 이미지 또는 컴포넌트)</MapBox>
+          <MapBox>
+            <NaverMap />
+          </MapBox>
           {/* 공통 정보 항목을 위한 컴포넌트 생성 */}
           <InfoBox>
             {[
