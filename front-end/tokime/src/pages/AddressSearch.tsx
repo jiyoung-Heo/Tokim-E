@@ -149,9 +149,6 @@ function AddressSearch() {
       // landInfo가 유효한지 체크
       if (landInfo && landInfo.length > 0) {
         dispatch(setLandDetails(landInfo));
-
-        // const lawData = await getLandLawInfo(landInfo[0].landDistrictCode);
-        // dispatch(setLawInfo(lawData)); // 법령 정보 저장
       } else {
         setErrorMessage('해당 주소에 대한 정보가 없습니다.'); // 주소가 없을 경우 에러 메시지
       }

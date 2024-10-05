@@ -1,6 +1,62 @@
+import styled from 'styled-components';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store'; // RootState 경로에 맞게 수정 필요
+
+// 스타일 정의
+const LawContainer = styled.div`
+  height: 25vh;
+  background: #ffffff;
+  box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding: 15px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  margin-bottom: 3vh;
+`;
+
+const LawDescription = styled.div`
+  font-family: 'KoddiUD OnGothic';
+  font-weight: 400;
+  font-size: 4vw;
+  line-height: 5vw;
+  color: #000000;
+`;
+
+const LawTitle = styled.div`
+  font-family: 'KoddiUD OnGothic';
+  font-weight: 700;
+  font-size: 4vw;
+  text-align: left;
+  color: #333333;
+  margin-bottom: 1vh;
+`;
+
+const SlideButton = styled.button`
+  position: absolute;
+  top: 53%;
+  transform: translateY(-50%);
+  background-color: transparent;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 10;
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+`;
+
+const LeftButton = styled(SlideButton)`
+  left: 3vw;
+  color: #00c99c;
+`;
+
+const RightButton = styled(SlideButton)`
+  right: 3vw;
+  color: #00c99c;
+`;
 
 function OrdinanceInfoTab() {
   const ordinances = useSelector((state: RootState) => state.lawInfo.lawInfos); // 법령 정보 가져오기
@@ -39,35 +95,39 @@ function OrdinanceInfoTab() {
 
   return (
     <div>
-      <h1>지역별 조례정보</h1>
       {ordinances.length > 0 ? (
         <div>
-          <h2>{ordinances[currentIndex].lawName}</h2>
-          <p>{ordinances[currentIndex].lawContent}</p>
-          <p>법령 번호: {ordinances[currentIndex].lawItemNumber}</p>
-          <p>용도: {ordinances[currentIndex].lawLandUse}</p>
-          <p>지구: {ordinances[currentIndex].lawDistrict}</p>
-          <p>
-            시행일:{' '}
-            {new Date(
-              ordinances[currentIndex].lawImplementAt,
-            ).toLocaleDateString()}
-          </p>
+          <h3>{ordinances[currentIndex].lawName}</h3>
+          <LawContainer>
+            <LawTitle>법령 정보</LawTitle>
+            <LawDescription>
+              <p>법령 번호: {ordinances[currentIndex].lawItemNumber}</p>
+              <p>용도: {ordinances[currentIndex].lawLandUse}</p>
+              <p>지구: {ordinances[currentIndex].lawDistrict}</p>
+              <p>
+                시행일:{' '}
+                {new Date(
+                  ordinances[currentIndex].lawImplementAt,
+                ).toLocaleDateString()}
+              </p>
+            </LawDescription>
+          </LawContainer>
+          <LawContainer>
+            <LawTitle>법령 본문</LawTitle>
+            <LawDescription>
+              {ordinances[currentIndex].lawContent}
+            </LawDescription>
+          </LawContainer>
           <div>
-            <button
-              type="button"
-              onClick={handlePrevious}
-              disabled={currentIndex === 0}
-            >
-              이전
-            </button>
-            <button
-              type="button"
+            <LeftButton onClick={handlePrevious} disabled={currentIndex === 0}>
+              {'<'}
+            </LeftButton>
+            <RightButton
               onClick={handleNext}
               disabled={currentIndex === ordinances.length - 1}
             >
-              다음
-            </button>
+              {'>'}
+            </RightButton>
           </div>
         </div>
       ) : (
