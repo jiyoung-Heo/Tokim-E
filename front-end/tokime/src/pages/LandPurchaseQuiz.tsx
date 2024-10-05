@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { PulseLoader } from 'react-spinners';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setQuizScore } from '../redux/slices/userSlice'; // 리덕스 액션 가져오기
@@ -252,7 +253,21 @@ function LandPurchaseQuiz() {
   };
 
   if (quizzes.length === 0) {
-    return <div>퀴즈 로딩 중...</div>;
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh', // 화면 전체 높이
+        }}
+      >
+        <div>
+          <h2>퀴즈 로딩 중...</h2>
+          <PulseLoader color="#00c99c" size={25} />
+        </div>
+      </div>
+    );
   }
 
   const currentQuiz = quizzes[currentQuizIndex];
