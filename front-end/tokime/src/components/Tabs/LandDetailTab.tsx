@@ -12,21 +12,6 @@ import roadIcon from '../../assets/images/landInfo/road.png';
 import scaleIcon from '../../assets/images/landInfo/scale.png';
 import useIcon from '../../assets/images/landInfo/use.png';
 
-// 아이콘 정의
-const GradientIcon = styled.img``;
-
-const MoneyIcon = styled.img``;
-
-const PercentageIcon = styled.img``;
-
-const PurposeIcon = styled.img``;
-
-const RoadIcon = styled.img``;
-
-const ScaleIcon = styled.img``;
-
-const UseIcon = styled.img``;
-
 const BackIcon = styled.img`
   cursor: pointer;
 `;
@@ -59,7 +44,6 @@ const LandDetailTab: React.FC = () => {
     (state: RootState) => state.landinfo.landDetail, // Redux에서 선택된 상세 정보 가져오기
   );
   const [showInfo, setShowInfo] = useState<{ [key: string]: boolean }>({});
-  // const [selectedDetail, setSelectedDetail] = useState<any>(null); // 선택된 토지 정보를 저장합니다.
 
   const handleDetailClick = (detail: any) => {
     dispatch(setLandDetail(detail));
@@ -70,24 +54,19 @@ const LandDetailTab: React.FC = () => {
   };
 
   const toggleInfo = (key: string) => {
-    setShowInfo((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
+    setShowInfo((prev) => {
+      // 이전 상태를 스프레드 연산자를 사용하여 새로운 객체로 복사
+      const newShowInfo = { ...prev };
 
-  const closeInfo = (key: string) => {
-    setShowInfo((prev) => ({
-      ...prev,
-      [key]: false,
-    }));
-  };
+      // 모든 툴팁을 닫음
+      Object.keys(newShowInfo).forEach((k) => {
+        newShowInfo[k] = false;
+      });
+      newShowInfo[key] = !prev[key]; // 클릭한 툴팁 상태를 토글
 
-  // const handleKeyDown = (key: string, event: React.KeyboardEvent) => {
-  //   if (event.key === 'Enter' || event.key === ' ') {
-  //     toggleInfo(key);
-  //   }
-  // };
+      return newShowInfo; // 새로운 상태를 반환
+    });
+  };
 
   const getLandUseDescription = (landUse: string) => {
     const descriptions: { [key: string]: string } = {
@@ -291,7 +270,6 @@ const LandDetailTab: React.FC = () => {
           <h3
             style={{
               display: 'flex',
-              alignItems: 'center',
               justifyContent: 'center',
             }}
           >
@@ -305,7 +283,6 @@ const LandDetailTab: React.FC = () => {
                 value: `${selectedDetail.landScale}㎡`,
                 tooltip: `토지의 평수는 ${(selectedDetail.landScale * 0.3025).toFixed(2)}평 입니다.`,
                 key: `landScale-${selectedDetail.landId}`,
-                icon: ScaleIcon,
                 src: scaleIcon,
               },
               {
@@ -313,7 +290,6 @@ const LandDetailTab: React.FC = () => {
                 value: selectedDetail.landUse,
                 tooltip: getLandUseDescription(selectedDetail.landUse),
                 key: `landUse-${selectedDetail.landId}`,
-                icon: PurposeIcon,
                 src: purposeIcon,
               },
               {
@@ -323,7 +299,6 @@ const LandDetailTab: React.FC = () => {
                   selectedDetail.landUseStatus,
                 ),
                 key: `landUseStatus-${selectedDetail.landId}`,
-                icon: UseIcon,
                 src: useIcon,
               },
               {
@@ -331,7 +306,6 @@ const LandDetailTab: React.FC = () => {
                 value: selectedDetail.landGradient,
                 tooltip: getGradientDescription(selectedDetail.landGradient),
                 key: `landGradient-${selectedDetail.landId}`,
-                icon: GradientIcon,
                 src: gradientIcon,
               },
               {
@@ -339,7 +313,6 @@ const LandDetailTab: React.FC = () => {
                 value: selectedDetail.landRoad,
                 tooltip: getRoadAccessDescription(selectedDetail.landRoad),
                 key: `landRoad-${selectedDetail.landId}`,
-                icon: RoadIcon,
                 src: roadIcon,
               },
               {
@@ -348,7 +321,6 @@ const LandDetailTab: React.FC = () => {
                 tooltip:
                   '공시지가는 정부가 매년 전국의 토지에 대해 공시하는 표준적인 땅값입니다. 주로 국토교통부에서 발표하며 세금 부과, 부동산 거래, 보상 평가 등의 기준이 되는 중요한 자료입니다. 다만, 공시지가는 토지의 거래 가격과는 다소 차이가 있을 수 있습니다.',
                 key: `landPrice-${selectedDetail.landId}`,
-                icon: MoneyIcon,
                 src: moneyIcon,
               },
               {
@@ -358,7 +330,6 @@ const LandDetailTab: React.FC = () => {
                   selectedDetail.landDanger,
                 ),
                 key: `landDanger-${selectedDetail.landId}`,
-                icon: PercentageIcon,
                 src: percentageIcon,
               },
             ].map((item) => (
@@ -421,22 +392,9 @@ const LandDetailTab: React.FC = () => {
                         zIndex: 100,
                         opacity: 0.8,
                       }}
-                      onClick={() => closeInfo(item.key)}
                       aria-label="정보 닫기"
                     >
                       {item.tooltip}
-                      {/* <span
-                        style={{
-                          content: '""',
-                          position: 'absolute',
-                          top: '100%',
-                          left: '2vw',
-                          borderWidth: 'calc(0.5vw + 0.5vh)',
-                          borderStyle: 'solid',
-                          borderColor:
-                            'transparent transparent #333 transparent',
-                        }}
-                      /> */}
                     </button>
                   )}
                 </p>
