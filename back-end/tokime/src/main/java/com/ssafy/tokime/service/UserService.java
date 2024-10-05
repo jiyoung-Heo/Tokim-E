@@ -53,7 +53,7 @@ public class UserService {
     }
 
     public User selectUserInfoByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
+        return userRepository.findByEmailIsDeletedFalse(email).orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
     }
 
     // 특정 출생년도 기준의 사용자의 퀴즈 점수 모두 가져오기
