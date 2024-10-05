@@ -29,6 +29,8 @@ public class InvestmentPlannedLandDTO {
     private Integer plannedLandPrice;
     private Integer checkedCount;
     private List<Integer> checklistIds; ;
+    private String landNickname;
+    private Integer landDanger;
 
     public InvestmentPlannedLand toEntity() {
         return InvestmentPlannedLand.builder()
@@ -45,6 +47,8 @@ public class InvestmentPlannedLandDTO {
                 .plannedLandPyeong(plannedLandPyeong)
                 .plannedLandPrice(plannedLandPrice)
                 .checkedCount(checkedCount)
+                .landNickname(landNickname)
+                .landDanger(landDanger)
                 .build();
     }
 }

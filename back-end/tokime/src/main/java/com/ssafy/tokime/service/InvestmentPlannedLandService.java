@@ -1,18 +1,19 @@
 package com.ssafy.tokime.service;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.tokime.dto.ChecklistDTO;
 import com.ssafy.tokime.dto.ChecklistStatusDTO;
 import com.ssafy.tokime.dto.InvestmentPlannedLandDTO;
-import com.ssafy.tokime.model.Checklist;
-import com.ssafy.tokime.model.ChecklistStatus;
-import com.ssafy.tokime.model.InvestmentPlannedLand;
-import com.ssafy.tokime.model.User;
+import com.ssafy.tokime.dto.LandFilterDTO;
+import com.ssafy.tokime.model.*;
 import com.ssafy.tokime.repository.ChecklistRepository;
 import com.ssafy.tokime.repository.ChecklistStatusRepository;
 import com.ssafy.tokime.repository.InvestmentPlannedLandRepository;
 import com.ssafy.tokime.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,7 @@ public class InvestmentPlannedLandService {
     private final UserRepository userRepository;
     private final ChecklistRepository checklistRepository;
     private final ChecklistStatusRepository statusRepository;
+    private final JPAQueryFactory queryFactory;
 
     // 투자 예정지 등록
     public void registInvestmentPlannedLand(InvestmentPlannedLandDTO dto, String email) {
@@ -50,6 +52,8 @@ public class InvestmentPlannedLandService {
                     .plannedLandPyeong(dto.getPlannedLandPyeong())
                     .plannedLandPrice(dto.getPlannedLandPrice())
                     .checkedCount(dto.getCheckedCount()) // 초기값 설정
+                    .landNickname(dto.getLandNickname())
+                    .landDanger(dto.getLandDanger())
                     .build();
 
             // 투자 예정지 저장
@@ -133,14 +137,13 @@ public class InvestmentPlannedLandService {
         investmentPlannedLand.setPlannedLandPyeong(dto.getPlannedLandPyeong());
         investmentPlannedLand.setPlannedLandPrice(dto.getPlannedLandPrice());
         investmentPlannedLand.setCheckedCount(dto.getCheckedCount());
-
+        investmentPlannedLand.setLandNickname(dto.getLandNickname());
+        investmentPlannedLand.setLandDanger(dto.getLandDanger());
         // 수정된 투자 예정지 저장
         investmentPlannedLandRepository.save(investmentPlannedLand);
 
         return investmentPlannedLand.toDTO();
     }
-
-
 
 
     // 전체 조회
@@ -188,4 +191,32 @@ public class InvestmentPlannedLandService {
         investmentPlannedLandRepository.delete(investmentPlannedLand);
 
     }
+
+    //필터 조회
+    public List<InvestmentPlannedLandDTO> filterInvestmentPlannedLands(LandFilterDTO dto) {
+        // Q타입 생성
+        QInvestmentPlannedLand investmentPlannedLand = QInvestmentPlannedLand.investmentPlannedLand;
+        // 모든 엔티티가 아닌 경우
+        BooleanExpression predicate = investmentPlannedLand.isNotNull();
+
+
+        if (dto.getLandAddress() != null && !dto.getLandAddress().isEmpty()) {
+            predicate = predicate.and(investmentPlannedLand.landAddress.contains(dto.getLandAddress()));
+        }
+
+        if (dto.getLandNickname() != null && !dto.getLandNickname().isEmpty()) {
+            predicate = predicate.and(investmentPlannedLand.landNickname.contains(dto.getLandNickname()));
+        }
+        List<InvestmentPlannedLand> lands = queryFactory.selectFrom(investmentPlannedLand)
+                .where(predicate)
+                .fetch();
+
+        return lands.stream()
+                .map(InvestmentPlannedLand::toDTO)
+                .toList();
+    }
+
+
+
+
 }
