@@ -13,8 +13,8 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
-    @Query("select u from User u where u.email = :email and u.isDeleted = false")
-    Optional<User> findByEmailIsDeletedFalse(@Param("email") String email);
+//    @Query("select u from User u where u.email = :email and u.isDeleted = false")
+    Optional<User> findByEmailAndIsDeletedFalse(@Param("email") String email);
 
     // 특정 연령대의 퀴즈점수 모두 가져오기 - 중복 허용 X 내림차순으로
     @Query("SELECT DISTINCT u.quizScore FROM User u WHERE YEAR(u.birth) BETWEEN :startYear AND :endYear AND u.quizScore >= 0 AND u.isDeleted = false order by u.quizScore desc")
