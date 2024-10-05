@@ -123,7 +123,7 @@ public class InvestmentPlannedLandController {
     }
 
     // 필터링
-    @GetMapping("/filter")
+    @PostMapping("/filter")
     public ResponseEntity<?> getPlannedLandByaddress(@RequestBody LandFilterDTO dto){
      try{
          String email =getAuth();
