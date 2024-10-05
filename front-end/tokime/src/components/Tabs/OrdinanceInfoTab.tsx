@@ -1,11 +1,23 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import React, { useEffect, useState } from 'react';
+import { useSwipeable } from 'react-swipeable';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store'; // RootState 경로에 맞게 수정 필요
 
 // 스타일 정의
-const LawContainer = styled.div`
-  height: 25vh;
+const LawInfoContainer = styled.div`
+  height: 20vh;
+  background: #ffffff;
+  box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding: 15px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  margin-bottom: 3vh;
+`;
+
+const LawDetailContainer = styled.div`
+  height: 30vh;
   background: #ffffff;
   box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.2);
   border-radius: 10px;
@@ -32,9 +44,20 @@ const LawTitle = styled.div`
   margin-bottom: 1vh;
 `;
 
+const PaginationContainer = styled.div`
+  position: absolute;
+  bottom: 15vh;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1vw;
+`;
+
 const SlideButton = styled.button`
   position: absolute;
-  top: 53%;
+  top: 48%;
   transform: translateY(-50%);
   background-color: transparent;
   border: none;
@@ -46,6 +69,23 @@ const SlideButton = styled.button`
     opacity: 0.3;
     cursor: not-allowed;
   }
+`;
+
+const Dot = styled.div<{ active: boolean }>`
+  width: 2.5vw;
+  height: 2.5vw;
+  border-radius: 50%;
+  background-color: ${(props) => (props.active ? '#00C99C' : '#ddd')};
+  transition:
+    width 0.3s ease-in-out,
+    height 0.3s ease-in-out;
+
+  ${(props) =>
+    props.active &&
+    css`
+      width: 2.5vw;
+      height: 2.5vw;
+    `}
 `;
 
 const LeftButton = styled(SlideButton)`
@@ -63,6 +103,7 @@ function OrdinanceInfoTab() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // error 상태 변수 이름 변경
+  const totalItems = ordinances.length;
 
   useEffect(() => {
     if (ordinances.length === 0) {
@@ -85,6 +126,16 @@ function OrdinanceInfoTab() {
     }
   };
 
+  const handleIndexChange = (Index: number) => {
+    setCurrentIndex(Index);
+  };
+
+  const handlers = useSwipeable({
+    onSwipedLeft: handleNext,
+    onSwipedRight: handlePrevious,
+    trackMouse: true,
+  });
+
   if (loading) {
     return <div>로딩 중...</div>;
   }
@@ -98,12 +149,11 @@ function OrdinanceInfoTab() {
       {ordinances.length > 0 ? (
         <div>
           <h3>{ordinances[currentIndex].lawName}</h3>
-          <LawContainer>
+          <LawInfoContainer>
             <LawTitle>법령 정보</LawTitle>
             <LawDescription>
               <p>법령 번호: {ordinances[currentIndex].lawItemNumber}</p>
               <p>용도: {ordinances[currentIndex].lawLandUse}</p>
-              <p>지구: {ordinances[currentIndex].lawDistrict}</p>
               <p>
                 시행일:{' '}
                 {new Date(
@@ -111,13 +161,13 @@ function OrdinanceInfoTab() {
                 ).toLocaleDateString()}
               </p>
             </LawDescription>
-          </LawContainer>
-          <LawContainer>
+          </LawInfoContainer>
+          <LawDetailContainer>
             <LawTitle>법령 본문</LawTitle>
             <LawDescription>
               {ordinances[currentIndex].lawContent}
             </LawDescription>
-          </LawContainer>
+          </LawDetailContainer>
           <div>
             <LeftButton onClick={handlePrevious} disabled={currentIndex === 0}>
               {'<'}
@@ -129,6 +179,15 @@ function OrdinanceInfoTab() {
               {'>'}
             </RightButton>
           </div>
+          <PaginationContainer>
+            {Array.from({ length: totalItems }, (_, i) => (
+              <Dot
+                key={i}
+                active={i === currentIndex}
+                onClick={() => handleIndexChange(i)}
+              />
+            ))}
+          </PaginationContainer>
         </div>
       ) : (
         <p>조례 정보를 불러오는 중입니다...</p>
