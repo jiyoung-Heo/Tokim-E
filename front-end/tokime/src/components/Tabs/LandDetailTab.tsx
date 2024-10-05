@@ -14,6 +14,7 @@ import roadIcon from '../../assets/images/landInfo/road.png';
 import scaleIcon from '../../assets/images/landInfo/scale.png';
 import useIcon from '../../assets/images/landInfo/use.png';
 import NaverMap from './NaverMap';
+import nodataimg from '../../assets/images/Tokimlogo.png';
 
 const BackIcon = styled.img`
   cursor: pointer;
@@ -272,7 +273,7 @@ const LandDetailTab: React.FC = () => {
         )}
         {selectedDetail
           ? `${selectedDetail.landDistrict} ${selectedDetail.landAddress}`
-          : '토지 목록'}
+          : null}
       </h3>
       {selectedDetail ? ( // 선택된 상세 정보가 있으면
         <div>
@@ -428,13 +429,23 @@ const LandDetailTab: React.FC = () => {
             ))
           ) : (
             <div
-              style={{
-                color: 'red',
-                fontWeight: 'bold',
-                fontSize: 'calc(2vw + 2vh)',
-              }}
+              style={{ textAlign: 'center', marginTop: '20px', opacity: 0.85 }}
             >
-              검색을 해주세요^^
+              <img
+                src={nodataimg}
+                alt="No data available"
+                style={{ width: '300px', height: 'auto' }} // 이미지 크기 조정
+              />
+              <div
+                style={{
+                  color: '#27C384',
+                  fontWeight: 'bold',
+                  marginTop: '10px',
+                  fontSize: '1.5em',
+                }}
+              >
+                <p>원하는 토지를 검색해보세요!</p>
+              </div>
             </div>
           )}
         </div>
