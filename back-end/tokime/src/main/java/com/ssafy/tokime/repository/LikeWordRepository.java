@@ -22,10 +22,5 @@ public interface LikeWordRepository extends JpaRepository<Likeword, Long> {
     @Modifying
     @Query(value="DELETE FROM Likeword l where l.userId = :userId AND l.termId = :termId")
     void deleteByUserIdAndTermId(@Param("userId") Long userId, @Param("termId") Long termId);
-    
-    //회원 탈퇴 시 해당 사용자가 즐겨찾기 한 부분 모두 삭제
-    @Transactional
-    @Modifying
-    @Query("DELETE FROM Likeword l WHERE l.userId = (SELECT u.userId FROM User u WHERE u.email = :email)")
-    void deleteByEmail(@Param("email") String email);
+
 }
