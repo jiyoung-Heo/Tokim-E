@@ -20,6 +20,14 @@ interface LandInfo {
 }
 
 interface LandInformationRegistrationTabProps {
+  address: string;
+  setAddress: React.Dispatch<React.SetStateAction<string>>;
+  landInfo: LandInfo | null;
+  setLandInfo: React.Dispatch<React.SetStateAction<LandInfo | null>>;
+  expectedArea: number | '';
+  setExpectedArea: React.Dispatch<React.SetStateAction<number | ''>>;
+  expectedPrice: number | '';
+  setExpectedPrice: React.Dispatch<React.SetStateAction<number | ''>>;
   onNext: () => void;
 }
 
@@ -125,14 +133,18 @@ const RegisterButton = styled.button`
 `;
 
 function LandInformationRegistrationTab({
+  address,
+  setAddress,
+  landInfo,
+  expectedArea,
+  setExpectedArea,
+  expectedPrice,
+  setExpectedPrice,
+  setLandInfo,
   onNext,
 }: LandInformationRegistrationTabProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const [address, setAddress] = useState(''); // Selected address state
-  const [landInfo, setLandInfo] = useState<LandInfo | null>(null); // API response state
-  const [expectedArea, setExpectedArea] = useState<number | ''>(''); // State for expected area
-  const [expectedPrice, setExpectedPrice] = useState<number | ''>(''); // State for expected price
 
   const selectedDetail = location.state?.selectedDetail;
 
@@ -208,6 +220,7 @@ function LandInformationRegistrationTab({
       alert('투자예정가격을 입력하세요.'); // Alert for missing expected price
       return;
     }
+
     onNext();
   };
 
