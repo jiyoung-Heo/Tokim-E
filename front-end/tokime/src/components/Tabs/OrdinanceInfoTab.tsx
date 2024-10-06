@@ -100,6 +100,15 @@ const Dot = styled.div<{ active: boolean }>`
     `}
 `;
 
+// Ellipsis 스타일 컴포넌트
+const Ellipsis = styled.span`
+  display: inline-block;
+  margin: 0 5px; // 도트 간격
+  font-size: 30px; // 원하는 폰트 크기로 조정
+  color: #00c99c; // 원하는 색상으로 조정
+  cursor: default; // 기본 커서
+`;
+
 const LeftButton = styled(SlideButton)`
   left: 3vw;
   color: #00c99c;
@@ -172,6 +181,88 @@ function OrdinanceInfoTab({
     return <LoadingSpinner />;
   }
 
+  // Ellipsis 클릭 핸들러 추가
+  const handleEllipsisClick = (direction: 'left' | 'right') => {
+    if (direction === 'left') {
+      setCurrentIndex((prevIndex) => Math.max(0, prevIndex - 5));
+    } else {
+      setCurrentIndex((prevIndex) => Math.min(totalItems - 1, prevIndex + 5));
+    }
+  };
+
+  // renderDots 함수 수정
+  const renderDots = () => {
+    const dots = [];
+    const MAX_DOTS = 9; // 최대 도트 수 (홀수로 설정)
+    const half = Math.floor(MAX_DOTS / 2);
+
+    if (totalItems > MAX_DOTS) {
+      // 페이지 범위 설정
+      let start = Math.max(0, currentIndex - half);
+      let end = Math.min(totalItems, currentIndex + half + 1);
+
+      if (start === 0) {
+        end = Math.min(MAX_DOTS, totalItems);
+      } else if (end === totalItems) {
+        start = Math.max(0, totalItems - MAX_DOTS);
+      }
+
+      for (let i = start; i < end; i += 1) {
+        dots.push(
+          <Dot
+            key={i}
+            active={i === currentIndex}
+            onClick={() => handleIndexChange(i)}
+          />,
+        );
+      }
+
+      // 왼쪽 Ellipsis
+      if (start > 0) {
+        dots.unshift(
+          <Ellipsis
+            key="left-ellipsis"
+            onClick={() => handleEllipsisClick('left')}
+            style={{
+              opacity: currentIndex > 0 ? 1 : 0.5,
+              cursor: currentIndex > 0 ? 'pointer' : 'default',
+            }}
+          >
+            <span>{'<'}</span>
+          </Ellipsis>,
+        );
+      }
+
+      // 오른쪽 Ellipsis
+      if (end < totalItems) {
+        dots.push(
+          <Ellipsis
+            key="right-ellipsis"
+            onClick={() => handleEllipsisClick('right')}
+            style={{
+              opacity: currentIndex < totalItems - 1 ? 1 : 0.5,
+              cursor: currentIndex < totalItems - 1 ? 'pointer' : 'default',
+            }}
+          >
+            <span>{'>'}</span>
+          </Ellipsis>,
+        );
+      }
+    } else {
+      for (let i = 0; i < totalItems; i += 1) {
+        dots.push(
+          <Dot
+            key={i}
+            active={i === currentIndex}
+            onClick={() => handleIndexChange(i)}
+          />,
+        );
+      }
+    }
+
+    return dots;
+  };
+
   if (errorMessage) {
     return (
       <div style={{ textAlign: 'center', marginTop: '20px' }}>
@@ -220,15 +311,7 @@ function OrdinanceInfoTab({
               {'>'}
             </RightButton>
           </div>
-          <PaginationContainer>
-            {Array.from({ length: totalItems }, (_, i) => (
-              <Dot
-                key={i}
-                active={i === currentIndex}
-                onClick={() => handleIndexChange(i)}
-              />
-            ))}
-          </PaginationContainer>
+          <PaginationContainer>{renderDots()}</PaginationContainer>
         </div>
       ) : (
         <p>조례 정보를 불러오는 중입니다...</p>
