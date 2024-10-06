@@ -1,32 +1,35 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { View, TextInput, Button, StyleSheet } from 'react-native';
 import { useNavigate } from 'react-router-dom'; // useNavigate 추가
 import LandInformationRegistrationTab from '../components/Tabs/LandInformationRegistrationTab';
 import ChecklistRegistrationTab from '../components/Tabs/ChecklistRegistrationTab';
 import StoryWritingRegistrationTab from '../components/Tabs/StoryWritingRegistrationTab';
 
-const Tabs = styled.div`
-  display: flex;
-  justify-content: space-around;
-  margin-bottom: 20px;
-  background-color: #f3f7fb;
-  border-bottom: 1px solid #ddd;
+// 필요한 스타일 정의
+const Container = styled.div`
+  width: 100%;
+  height: 100%;
+  background: #f3f7fb;
 `;
 
-const TabButton = styled.button<{ active: boolean }>`
-  padding: 10px;
-  text-align: center;
+// 탭 스타일
+const TabsContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  background-color: #f3f7fb;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 3vh;
+`;
+
+const TabItem = styled.div<{ $isActive: boolean }>`
   flex: 1;
-  font-size: 16px;
-  border: none;
-  border-radius: 5px;
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+  color: ${(props) => (props.$isActive ? '#27C384' : '#000')};
+  font-weight: ${(props) => (props.$isActive ? 'bold' : 'normal')};
+  border-bottom: ${(props) => (props.$isActive ? '2px solid #27C384' : 'none')};
   cursor: pointer;
-  color: ${(props) => (props.active ? '#27C384' : '#000')};
-  font-weight: ${(props) => (props.active ? 'bold' : 'normal')};
-  border-bottom: ${(props) => (props.active ? '2px solid #27C384' : 'none')};
-  opacity: ${(props) => (props.active ? 0.6 : 1)};
-  pointer-events: ${(props) => (props.active ? 'none' : 'auto')};
 `;
 
 const RegisterButton = styled.button`
@@ -37,28 +40,16 @@ const RegisterButton = styled.button`
   border-radius: 5px;
   font-weight: bold;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 15px;
   transition: background-color 0.3s;
 
   &:hover {
     background-color: #219a6d;
   }
 `;
-const StyledTextInput = styled.textarea`
-  height: 300px; /* Adjust height as needed */
-  width: 100%;
-  border: 1px solid #ccc; /* Add border */
-  border-radius: 5px; /* Rounded corners */
-  padding: 10px; /* Padding inside the input */
-  margin-bottom: 20px; /* Space below the input */
-  font-size: 16px; /* Text size */
-  background-color: #00000; /* Background color */
-  resize: none; /* Disable resizing */
-`;
 
 function InvestmentRegistrationPage() {
   const [activeTab, setActiveTab] = useState('landInfo');
-  const [storyContent, setStoryContent] = useState(''); // State to hold story content
   const navigate = useNavigate(); // useNavigate 훅 사용
 
   const handleNextFromLandInfo = () => {
@@ -84,40 +75,27 @@ function InvestmentRegistrationPage() {
   };
 
   return (
-    <div>
-      <h2>투자 예정지</h2>
-      <Tabs>
-        <TabButton
-          active={activeTab === 'landInfo'}
-          onClick={() => {
-            if (activeTab !== 'landInfo') {
-              setActiveTab('landInfo'); // Switch to land info tab if not already active
-            }
-          }}
+    <Container>
+      <TabsContainer>
+        <TabItem
+          $isActive={activeTab === 'landInfo'}
+          onClick={() => setActiveTab('landInfo')}
         >
-          토지 정보
-        </TabButton>
-        <TabButton
-          active={activeTab === 'checklist'}
-          onClick={() => {
-            if (activeTab !== 'checklist') {
-              setActiveTab('checklist'); // Switch to checklist tab if not already active
-            }
-          }}
+          1. 토지 정보
+        </TabItem>
+        <TabItem
+          $isActive={activeTab === 'checklist'}
+          onClick={() => setActiveTab('checklist')}
         >
-          체크리스트
-        </TabButton>
-        <TabButton
-          active={activeTab === 'storyWriting'}
-          onClick={() => {
-            if (activeTab !== 'storyWriting') {
-              setActiveTab('storyWriting'); // Switch to story writing tab if not already active
-            }
-          }}
+          2. 체크리스트
+        </TabItem>
+        <TabItem
+          $isActive={activeTab === 'storyAdvice'}
+          onClick={() => setActiveTab('storyAdvice')}
         >
-          사연 작성
-        </TabButton>
-      </Tabs>
+          3. 사연 작성
+        </TabItem>
+      </TabsContainer>
 
       {activeTab === 'landInfo' && (
         <LandInformationRegistrationTab onNext={handleNextFromLandInfo} />
@@ -129,21 +107,12 @@ function InvestmentRegistrationPage() {
         />
       )}
       {activeTab === 'storyWriting' && (
-        <div>
-          <StyledTextInput
-            placeholder="사연을 입력하세요."
-            value={storyContent}
-            onChange={(e) => setStoryContent(e.target.value)} // Update state on change
-          />
-          <div style={{ display: 'flex', justifyContent: 'end', gap: '10px' }}>
-            <RegisterButton onClick={handlePreviousFromStoryWriting}>
-              이전
-            </RegisterButton>
-            <RegisterButton onClick={handleRegister}>등록</RegisterButton>
-          </div>
-        </div>
+        <StoryWritingRegistrationTab
+          onPrevious={handlePreviousFromStoryWriting} // 이전 버튼 기능 추가
+          onRegister={handleRegister} // 등록 버튼 기능 추가
+        />
       )}
-    </div>
+    </Container>
   );
 }
 

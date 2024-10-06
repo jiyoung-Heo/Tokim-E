@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { getSearchLandInfo } from '../../api/landAxios'; // Adjust this path as necessary.
+import multiply from '../../assets/images/icon/Multiply.png'; // x아이콘
 
 interface LandInfo {
   landId: string;
@@ -22,95 +23,105 @@ interface LandInformationRegistrationTabProps {
   onNext: () => void;
 }
 
+// 필요한 스타일 정의
+const Container = styled.div`
+  width: 100%;
+  height: 100%;
+  background: #f3f7fb;
+`;
+
+const InputContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const InputLabel = styled.label`
+  font-size: 15px;
+  font-weight: bold;
+  width: 15%;
+`;
+
+const Address = styled.div`
+  font-weight: bold;
+  width: 55%;
+`;
+
 // 버튼 클래스
-const Button = styled.button`
+const SearchButton = styled.button`
+  width: 25%;
   padding: 6px 16px;
+  background-color: #27c384;
   color: #fff;
   border: none;
   border-radius: 10px;
   font-weight: bold;
   cursor: pointer;
-  margin-top: vh;
-
-  @media (max-width: 768px) {
-    padding: 5px 10px;
-    font-size: 15px;
-  }
 `;
 
-// 다음 버튼
-const NextButton = styled(Button)`
-  background-color: #27c384;
-  font-size: 4.5vw;
+// x아이콘
+const MultiplyIcon = styled.img`
+  width: 8vw;
 `;
 
-// 취소 버튼
-const CancelButton = styled(Button)`
-  background-color: rgb(255, 0, 0);
-  font-size: 4.5vw;
+const LandInfoContainer = styled.div`
+  border: 1px solid #ccc;
+  padding: 10px;
+  width: 100%;
 `;
 
 const LandInfoFieldContainer = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+  margin: 1vh 0;
 `;
 
 const LandInfoFieldLabel = styled.span`
-  flex: 1;
+  width: 50%;
+  font-weight: bold;
+  margin-right: 1vh;
   @media (max-width: 768px) {
     margin-bottom: 5px;
   }
 `;
 
-const LandInfoFieldValue = styled.span`
-  flex: 2;
+const UserSearchInput = styled.input`
   box-sizing: border-box;
-  width: 253.81px;
-  height: 30px;
   background: #ffffff;
   border: 1px solid #000000;
   border-radius: 10px;
-  padding: 5px;
-
+  padding: 1vh;
+  width: 50%;
   @media (max-width: 768px) {
     width: 100%; /* 전체 너비로 설정 */
   }
 `;
 
-const InputContainer = styled.div`
-  margin-bottom: 20px;
-  display: flex; /* Flexbox 추가 */
-  align-items: center; /* 수직 중앙 정렬 */
-`;
-
-const InputLabel = styled.label`
-  display: block;
-  margin-bottom: 10px;
-`;
-
-const Input = styled.input`
+// 가로선
+const Divider = styled.hr`
   width: 100%;
-  padding: 8px;
-  margin-right: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-
-  @media (max-width: 768px) {
-    margin-left: 0; /* 왼쪽 여백 제거 */
-  }
+  border: none;
+  border-top: 3px solid rgba(121, 121, 130, 0.1);
+  margin: 3vh 0;
 `;
 
-const ButtonContainer = styled.div`
-  @media (max-width: 768px) {
-    flex-direction: column; /* 세로 방향으로 변경 */
-    gap: 5px; /* 간격 조정 */
-  }
+const RegistContainer = styled.div`
+  display: flex;
+  justify-content: right;
+`;
+
+// 투자 예정지 등록 버튼 스타일
+const RegisterButton = styled.button`
+  padding: 1.5vh 5vw;
+  background-color: #27c384;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 800; /* z-index 추가 */
+  margin-top: 3vh;
+  font-size: 15px;
+  margin: 3vh 2vw 0 2vw;
 `;
 
 function LandInformationRegistrationTab({
@@ -121,11 +132,6 @@ function LandInformationRegistrationTab({
   const [landInfo, setLandInfo] = useState<LandInfo | null>(null); // API response state
   const [expectedArea, setExpectedArea] = useState<number | ''>(''); // State for expected area
   const [expectedPrice, setExpectedPrice] = useState<number | ''>(''); // State for expected price
-
-  const handleCancel = () => {
-    console.log('Cancel button clicked, navigating to /investment');
-    navigate('/investment');
-  };
 
   const handleAddressSearch = () => {
     console.log('Address search initiated');
@@ -163,7 +169,11 @@ function LandInformationRegistrationTab({
         getSearchLandInfo(district, addressDetail)
           .then((response: LandInfo[]) => {
             // Save the first item from the response
-            setLandInfo(response[0] || null);
+            if (response[0] === undefined) {
+              setAddress('');
+            } else {
+              setLandInfo(response[0] || null);
+            }
             console.log('Land information:', response[0]);
           })
           .catch((error: Error) => {
@@ -173,125 +183,140 @@ function LandInformationRegistrationTab({
     }).open();
   };
 
+  const handleCancel = () => {
+    navigate('/investment');
+  };
+
   const handleNext = () => {
-    // Validation check
     if (!address) {
+      // 이거 모달로 바꿔야해요
       alert('주소를 입력하세요.'); // Alert for missing address
       return;
     }
     if (expectedArea === '') {
+      // 이거 모달로 바꿔야해요
       alert('투자예정평수를 입력하세요.'); // Alert for missing expected area
       return;
     }
     if (expectedPrice === '') {
+      // 이거 모달로 바꿔야해요
       alert('투자예정가격을 입력하세요.'); // Alert for missing expected price
       return;
     }
-
-    console.log('Next button clicked');
     onNext();
   };
 
   return (
-    <div>
+    <Container>
+      <h3>투자예정지 검색</h3>
+
       <InputContainer>
         <InputLabel htmlFor="address">주소</InputLabel>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Input
-            id="address"
-            type="text"
-            value={address}
-            readOnly
-            placeholder="주소를 검색하세요"
-          />
-        </div>
+        {address === '' ? (
+          <SearchButton type="button" onClick={handleAddressSearch}>
+            검색
+          </SearchButton>
+        ) : (
+          <>
+            <Address>{address}</Address>
+            <SearchButton type="button" onClick={handleAddressSearch}>
+              재검색
+            </SearchButton>
+            <MultiplyIcon
+              src={multiply}
+              alt="multiply"
+              onClick={() => {
+                setLandInfo(null);
+                setAddress('');
+              }}
+            />
+          </>
+        )}
       </InputContainer>
-      <NextButton type="button" onClick={handleAddressSearch}>
-        검색
-      </NextButton>
-
-      {landInfo && (
-        <div style={{ marginTop: '20px' }}>
-          <h4>토지 정보</h4>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-              padding: '10px',
-            }}
-          >
-            {/* Use LandInfoField for each property */}
+      <InputContainer>
+        <InputLabel> </InputLabel>
+        {landInfo !== null ? (
+          <LandInfoContainer>
             <LandInfoFieldContainer>
               <LandInfoFieldLabel>용도</LandInfoFieldLabel>
-              <LandInfoFieldValue>{landInfo.landUse}</LandInfoFieldValue>
+              <UserSearchInput value={landInfo.landUse} readOnly />
             </LandInfoFieldContainer>
             <LandInfoFieldContainer>
               <LandInfoFieldLabel>용도 상태</LandInfoFieldLabel>
-              <LandInfoFieldValue>{landInfo.landUseStatus}</LandInfoFieldValue>
+              <UserSearchInput value={landInfo.landUseStatus} readOnly />
             </LandInfoFieldContainer>
             <LandInfoFieldContainer>
               <LandInfoFieldLabel>지형</LandInfoFieldLabel>
-              <LandInfoFieldValue>{landInfo.landGradient}</LandInfoFieldValue>
+              <UserSearchInput value={landInfo.landGradient} readOnly />
             </LandInfoFieldContainer>
             <LandInfoFieldContainer>
               <LandInfoFieldLabel>도로</LandInfoFieldLabel>
-              <LandInfoFieldValue>{landInfo.landRoad}</LandInfoFieldValue>
+              <UserSearchInput value={landInfo.landRoad} readOnly />
             </LandInfoFieldContainer>
             <LandInfoFieldContainer>
               <LandInfoFieldLabel>가격 ㎡당</LandInfoFieldLabel>
-              <LandInfoFieldValue>
-                {`${landInfo.landPrice.toLocaleString()} 원`}
-              </LandInfoFieldValue>
+              <UserSearchInput
+                value={`${landInfo.landPrice.toLocaleString()} 원`}
+                readOnly
+              />
             </LandInfoFieldContainer>
             <LandInfoFieldContainer>
-              <LandInfoFieldLabel>개발가능성</LandInfoFieldLabel>
-              <LandInfoFieldValue>{landInfo.landDanger}</LandInfoFieldValue>
+              <LandInfoFieldLabel>위험정도</LandInfoFieldLabel>
+              <UserSearchInput
+                value={
+                  landInfo.landDanger === 1
+                    ? '중간'
+                    : landInfo.landDanger === 2
+                      ? '높음'
+                      : '낮음'
+                }
+                readOnly
+              />
             </LandInfoFieldContainer>
-          </div>
-        </div>
-      )}
+          </LandInfoContainer>
+        ) : (
+          <div> </div>
+        )}
+      </InputContainer>
+      <Divider />
 
-      {/* New input fields for expected area and price */}
-      <InputContainer>
-        <InputLabel htmlFor="expectedArea">투자예정평수</InputLabel>
-        <Input
-          id="expectedArea"
+      <h3>투자예정지 정보</h3>
+      <LandInfoFieldContainer>
+        <LandInfoFieldLabel>평수</LandInfoFieldLabel>
+        <UserSearchInput
           type="number"
-          min="0" // Minimum value set to 0
-          value={expectedArea}
+          min="0"
+          value={expectedArea === '' ? '' : expectedArea} // 빈 문자열 처리
           onChange={(e) => {
-            const value = Number(e.target.value);
-            setExpectedArea(value >= 0 ? value : ''); // Only allow non-negative numbers
+            const value = e.target.value === '' ? '' : Number(e.target.value);
+            setExpectedArea(
+              typeof value === 'number' && value >= 0 ? value : '',
+            ); // 빈 문자열 또는 0 이상인 값만 허용
           }}
           placeholder="예: 100"
         />
-      </InputContainer>
-      <InputContainer>
-        <InputLabel htmlFor="expectedPrice">투자예정가격</InputLabel>
-        <Input
-          id="expectedPrice"
+      </LandInfoFieldContainer>
+
+      <LandInfoFieldContainer>
+        <LandInfoFieldLabel>가격</LandInfoFieldLabel>
+        <UserSearchInput
           type="number"
-          min="0" // Minimum value set to 0
-          value={expectedPrice}
+          min="0"
+          value={expectedPrice === '' ? '' : expectedPrice} // 빈 문자열 처리
           onChange={(e) => {
-            const value = Number(e.target.value);
-            setExpectedPrice(value >= 0 ? value : ''); // Only allow non-negative numbers
+            const value = e.target.value === '' ? '' : Number(e.target.value);
+            setExpectedPrice(
+              typeof value === 'number' && value >= 0 ? value : '',
+            ); // 빈 문자열 또는 0 이상인 값만 허용
           }}
           placeholder="예: 50000000"
         />
-      </InputContainer>
-
-      <ButtonContainer>
-        <CancelButton type="button" onClick={handleCancel}>
-          취소
-        </CancelButton>
-        <NextButton type="button" onClick={handleNext}>
-          다음
-        </NextButton>
-      </ButtonContainer>
-    </div>
+      </LandInfoFieldContainer>
+      <RegistContainer>
+        <RegisterButton onClick={handleCancel}>취소</RegisterButton>
+        <RegisterButton onClick={handleNext}>다음</RegisterButton>
+      </RegistContainer>
+    </Container>
   );
 }
 
