@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { RootState } from '../../redux/store';
 import { setLandDetail } from '../../redux/slices/landInfoSlice';
 import { setLawInfo } from '../../redux/slices/lawInfoSlice'; // 액션 임포트
@@ -43,12 +44,17 @@ const InfoBox = styled.div`
 
 const LandDetailTab: React.FC = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const landDetails = useSelector(
     (state: RootState) => state.landinfo.landDetails,
   );
   const selectedDetail = useSelector(
     (state: RootState) => state.landinfo.landDetail, // Redux에서 선택된 상세 정보 가져오기
   );
+  const handleInvestClick = () => {
+    navigate('/investment-register', { state: { selectedDetail } }); // state를 통해 데이터 전달
+    console.log(selectedDetail);
+  };
   const [showInfo, setShowInfo] = useState<{ [key: string]: boolean }>({});
   const prevLandDetailsRef = useRef(landDetails);
 
@@ -436,6 +442,24 @@ const LandDetailTab: React.FC = () => {
                 </p>
               </div>
             ))}
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                style={{
+                  display: 'flex',
+                  fontWeight: 'bold',
+                  backgroundColor: '#00C99C',
+                  color: '#fff',
+                  border: '#00C99C',
+                  padding: 'calc(0.5vw + 0.5vh)',
+                  margin: 'calc(1vw + 1vh)',
+                  borderRadius: 'calc(1vw + 1vh)',
+                }}
+                onClick={handleInvestClick}
+              >
+                투자 예정지 등록
+              </button>
+            </div>
           </InfoBox>
         </div>
       ) : (
