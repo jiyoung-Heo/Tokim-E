@@ -1,14 +1,63 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate from React Router
 import { getDangerInfoDetail } from '../api/dangerAxios'; // Import your API function
+import backIcon from '../assets/images/icon/left-actionable.png'; // Back icon import
+
+// Styled-components for positioning and styling
+const Container = styled.div`
+  width: 100%;
+  height: 100%;
+  background: #f3f7fb;
+`;
+
+const Title = styled.h2`
+  margin: 0 0 3vh 0;
+  font-size: 25px;
+  font-weight: bold;
+  font-family: 'KoddiUD OnGothic';
+  color: #333333;
+  display: flex;
+  justify-content: left;
+`;
+
+// Back icon styling
+const BackIcon = styled.img`
+  margin-right: 10px; // Optional: add margin to the back icon
+`;
+
+// Styled components for registration button and map container
+const RegistContainer = styled.div`
+  position: fixed; /* Fix the position on the screen */
+  bottom: 13vh; /* Space from the bottom of the screen */
+  right: 5vw; /* Space from the right of the screen */
+`;
+
+const RegisterButton = styled.button`
+  padding: 1.5vh 5vw;
+  background-color: #27c384;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 800; /* Ensure button is on top */
+  margin-top: 3vh;
+  font-size: 15px;
+
+  &:hover {
+    background-color: #1ea774; /* Slightly darker green on hover */
+  }
+`;
 
 const MapContainer = styled.div`
   width: 100%;
-  height: 100vh; // Set height to viewport height
+  height: 70vh; // Set height to viewport height
 `;
 
 const RiskMapPage: React.FC = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate(); // Initialize navigate function
 
   useEffect(() => {
     const loadNaverMapApi = () => {
@@ -83,7 +132,23 @@ const RiskMapPage: React.FC = () => {
       .catch((error) => console.error(error));
   }, []);
 
-  return <MapContainer ref={mapContainer} />; // Render the map container
+  const handleReportClick = () => {
+    navigate('report'); // Navigate to /risk-map/report (relative to current path)
+  };
+
+  return (
+    <Container>
+      <Title>
+        <BackIcon src={backIcon} alt="Back Icon" onClick={() => navigate(-1)} />
+        위험 지도
+      </Title>
+      <MapContainer ref={mapContainer} /> {/* Render the map container */}
+      <RegistContainer>
+        <RegisterButton onClick={handleReportClick}>신고하기</RegisterButton>{' '}
+        {/* Add the styled report button */}
+      </RegistContainer>
+    </Container>
+  );
 };
 
 export default RiskMapPage;
