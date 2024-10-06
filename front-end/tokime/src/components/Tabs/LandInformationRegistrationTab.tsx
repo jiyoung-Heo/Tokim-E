@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { getSearchLandInfo } from '../../api/landAxios'; // Adjust this path as necessary.
 import multiply from '../../assets/images/icon/Multiply.png'; // x아이콘
 
@@ -128,10 +128,15 @@ function LandInformationRegistrationTab({
   onNext,
 }: LandInformationRegistrationTabProps) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [address, setAddress] = useState(''); // Selected address state
   const [landInfo, setLandInfo] = useState<LandInfo | null>(null); // API response state
   const [expectedArea, setExpectedArea] = useState<number | ''>(''); // State for expected area
   const [expectedPrice, setExpectedPrice] = useState<number | ''>(''); // State for expected price
+
+  const selectedDetail = location.state?.selectedDetail;
+
+  console.log(selectedDetail); // selectedDetail을 콘솔에 출력
 
   const handleAddressSearch = () => {
     console.log('Address search initiated');
