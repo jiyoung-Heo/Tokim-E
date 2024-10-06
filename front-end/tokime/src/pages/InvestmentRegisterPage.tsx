@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'; // useNavigate 추가
 import LandInformationRegistrationTab from '../components/Tabs/LandInformationRegistrationTab';
 import ChecklistRegistrationTab from '../components/Tabs/ChecklistRegistrationTab';
 import StoryWritingRegistrationTab from '../components/Tabs/StoryWritingRegistrationTab';
+import { registInvestLand } from '../api/landInvestAxios';
 
 // 필요한 스타일 정의
 const Container = styled.div`
@@ -81,11 +82,40 @@ function InvestmentRegistrationPage() {
     setActiveTab('checklist'); // 체크리스트 등록 탭 활성화
   };
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     // 서버로 POST 요청 보내는 로직 구현
     console.log({ address, landInfo, check, story });
+    if (!landInfo || expectedArea === '' || expectedPrice === '') {
+      alert('모든 필드를 입력해주세요.');
+      return;
+    }
 
-    navigate('/investment'); // /investment 경로로 이동
+    const investmentData = {
+      landAddress: address, // 주소
+      landGradient: landInfo.landGradient, // 지형
+      landPrice: landInfo.landPrice, // 가격
+      landRoad: landInfo.landRoad, // 도로
+      landOwner: '', // 임시로 소유자 입력
+      landUseStatus: landInfo.landUseStatus, // 용도 상태
+      landStory: story, // 사연
+      plannedLandPyeong: expectedArea, // 투자 예정 평수
+      plannedLandPrice: expectedPrice, // 투자 예정 가격
+      checkedCount: check.length, // 체크된 항목 개수
+      checklistIds: check, // 체크된 체크리스트 ID 배열
+    };
+
+    try {
+      const result = await registInvestLand(investmentData); // POST 요청
+      if (result) {
+        alert('투자 예정지 등록이 완료되었습니다!');
+        navigate('/investment'); // 등록이 완료되면 /investment 페이지로 이동
+      } else {
+        alert('등록에 실패했습니다. 다시 시도해주세요.');
+      }
+    } catch (error) {
+      console.error('등록 중 오류 발생:', error);
+      alert('등록 중 오류가 발생했습니다. 다시 시도해주세요.');
+    }
   };
 
   return (
