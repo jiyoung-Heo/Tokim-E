@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { setLandDetail } from '../../redux/slices/landInfoSlice';
@@ -50,6 +50,17 @@ const LandDetailTab: React.FC = () => {
     (state: RootState) => state.landinfo.landDetail, // Redux에서 선택된 상세 정보 가져오기
   );
   const [showInfo, setShowInfo] = useState<{ [key: string]: boolean }>({});
+  const prevLandDetailsRef = useRef(landDetails);
+
+  useEffect(() => {
+    // landDetails가 변경되었을 때만 상태를 리셋
+    if (landDetails !== prevLandDetailsRef.current) {
+      if (landDetails.length > 0) {
+        dispatch(setLandDetail(null));
+      }
+      prevLandDetailsRef.current = landDetails; // 이전 값 업데이트
+    }
+  }, [landDetails, dispatch]);
 
   const handleDetailClick = async (detail: any) => {
     dispatch(setLandDetail(detail));
