@@ -4,7 +4,7 @@ import API from '../utils/API';
 export const getAllInvestLand = async () => {
   return API.get('/land/invest')
     .then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       return res.data;
     })
     .catch((e) => {

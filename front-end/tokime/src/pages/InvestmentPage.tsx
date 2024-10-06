@@ -165,12 +165,17 @@ const InvestContainer = styled.div`
     border-radius: 10px;
   }
 `;
+
+const InvestList = styled.div`
+  align-items: center;
+  width: 100%;
+`;
+
 // 하나의 투자예정지 랩
 const InvestWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
 `;
 // 투자예정지 왼쪽 글 정보
 const Invest = styled.div`
@@ -457,8 +462,8 @@ function InvestmentPage() {
       <InvestContainer>
         {filterInvest.length > 0 ? (
           filterInvest.map((invest) => (
-            <>
-              <InvestWrapper key={invest.investmentPlannedLandId}>
+            <InvestList key={invest.investmentPlannedLandId}>
+              <InvestWrapper>
                 <Map />
                 <Invest onClick={() => clickDetail(invest)}>
                   <NickName>[ {invest.landNickname} ]</NickName>
@@ -474,7 +479,7 @@ function InvestmentPage() {
                 </Invest>
               </InvestWrapper>
               <Divider />
-            </>
+            </InvestList>
           ))
         ) : (
           <div>저장한 투자 예정지가 없습니다.</div>
