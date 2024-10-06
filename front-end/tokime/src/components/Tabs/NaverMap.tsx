@@ -13,9 +13,11 @@ const NaverMap: React.FC = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const markerRef = useRef<any>(null); // 마커를 저장하기 위한 ref
 
-  const { district, address } = useSelector(
-    (state: RootState) => state.landaddress,
+  const selectedDetail = useSelector(
+    (state: RootState) => state.landinfo.landDetail, // Redux에서 선택된 상세 정보 가져오기
   );
+  const district = selectedDetail?.landDistrict;
+  const address = selectedDetail?.landAddress;
 
   useEffect(() => {
     const loadNaverMapApi = () => {

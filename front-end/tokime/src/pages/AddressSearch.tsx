@@ -188,12 +188,12 @@ function AddressSearch() {
         >
           토지 상세 정보
         </TabItem>
-        <TabItem
+        {/* <TabItem
           $isActive={activeTab === 'riskMap'}
           onClick={() => setActiveTab('riskMap')}
         >
           위험지도
-        </TabItem>
+        </TabItem> */}
         <TabItem
           $isActive={activeTab === 'regionalInfo'}
           onClick={() => setActiveTab('regionalInfo')}
@@ -203,8 +203,10 @@ function AddressSearch() {
       </TabsContainer>
       <Content>
         {activeTab === 'landInfo' && <LandDetailTab />}
-        {activeTab === 'riskMap' && <RiskMapTab />}
-        {activeTab === 'regionalInfo' && <OrdinanceInfoTab />}
+        {activeTab === 'regionalInfo' && (
+          <OrdinanceInfoTab setActiveTab={setActiveTab} />
+        )}
+        {/* {activeTab === 'riskMap' && <RiskMapTab />} */}
       </Content>
     </>
   );
