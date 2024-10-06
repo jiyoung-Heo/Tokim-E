@@ -4,19 +4,24 @@ import styled from 'styled-components';
 import LandInformationTab from '../components/Tabs/LandInformationTab';
 import ChecklistTab from '../components/Tabs/ChecklistTab';
 import StoryAdviceTab from '../components/Tabs/StoryAdviceTab';
+import LandDetailTab from '../components/Tabs/LandDetailTab';
 
-const Tabs = styled.div`
+// 탭 스타일
+const TabsContainer = styled.div`
   display: flex;
   justify-content: space-around;
-  margin-bottom: 20px;
+  background-color: #f3f7fb;
+  border-bottom: 1px solid #ddd;
 `;
 
-const TabButton = styled.button<{ $active: boolean }>`
-  background-color: ${(props) => (props.$active ? '#007bff' : '#f3f7fb')};
-  color: ${(props) => (props.$active ? '#fff' : '#000')};
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
+const TabItem = styled.div<{ $isActive: boolean }>`
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  font-size: 16px;
+  color: ${(props) => (props.$isActive ? '#27C384' : '#000')};
+  font-weight: ${(props) => (props.$isActive ? 'bold' : 'normal')};
+  border-bottom: ${(props) => (props.$isActive ? '2px solid #27C384' : 'none')};
   cursor: pointer;
 `;
 
@@ -25,29 +30,28 @@ function InvestmentDetailPage() {
 
   return (
     <div>
-      <h2>투자 예정지 상세 정보</h2>
-      <Tabs>
-        <TabButton
-          $active={activeTab === 'landInfo'}
+      <TabsContainer>
+        <TabItem
+          $isActive={activeTab === 'landInfo'}
           onClick={() => setActiveTab('landInfo')}
         >
           토지 정보
-        </TabButton>
-        <TabButton
-          $active={activeTab === 'checklist'}
+        </TabItem>
+        <TabItem
+          $isActive={activeTab === 'checklist'}
           onClick={() => setActiveTab('checklist')}
         >
           체크리스트
-        </TabButton>
-        <TabButton
-          $active={activeTab === 'storyAdvice'}
+        </TabItem>
+        <TabItem
+          $isActive={activeTab === 'storyAdvice'}
           onClick={() => setActiveTab('storyAdvice')}
         >
           사연과 조언
-        </TabButton>
-      </Tabs>
+        </TabItem>
+      </TabsContainer>
 
-      {activeTab === 'landInfo' && <LandInformationTab />}
+      {activeTab === 'landInfo' && <LandDetailTab />}
       {activeTab === 'checklist' && <ChecklistTab />}
       {activeTab === 'storyAdvice' && <StoryAdviceTab />}
     </div>

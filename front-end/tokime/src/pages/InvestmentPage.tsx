@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import backIcon from '../assets/images/icon/left-actionable.png';
 import searchIcon from '../assets/images/icon/search.svg';
 import multiply from '../assets/images/icon/Multiply.png'; // x아이콘
@@ -8,6 +9,8 @@ import {
   getAllInvestLand,
   getAllInvestLandFilter,
 } from '../api/landInvestAxios';
+import { setLandDetail } from '../redux/slices/landInfoSlice';
+import { setLawInfo } from '../redux/slices/lawInfoSlice';
 
 // 필요한 스타일 정의
 const Container = styled.div`
@@ -170,7 +173,7 @@ const InvestWrapper = styled.div`
   width: 100%;
 `;
 // 투자예정지 왼쪽 글 정보
-const Invest = styled(Link)`
+const Invest = styled.div`
   width: 60vw;
   display: block;
   font-weight: 700;
@@ -265,6 +268,7 @@ const options = [
   },
 ];
 function InvestmentPage() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchAlias, setSearchAlias] = useState('');
   const [allInvest, setAllInvest] = useState<any[]>([]);
@@ -395,6 +399,13 @@ function InvestmentPage() {
     }
   }, [allInvest, searchAlias]);
 
+  const clickDetail = (detail: any) => {
+    console.log(detail);
+    dispatch(setLandDetail(detail));
+    // 라우터 이동
+    navigate(`/investment-detail/${detail.investmentPlannedLandId}`);
+  };
+
   return (
     <Container>
       <Title>
@@ -449,9 +460,7 @@ function InvestmentPage() {
             <>
               <InvestWrapper key={invest.investmentPlannedLandId}>
                 <Map />
-                <Invest
-                  to={`/investment-detail/${invest.investmentPlannedLandId}`}
-                >
+                <Invest onClick={() => clickDetail(invest)}>
                   <NickName>[ {invest.landNickname} ]</NickName>
                   <Address>{invest.landAddress}</Address>
                   <WarningScore>
