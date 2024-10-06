@@ -1,10 +1,13 @@
 import styled, { css } from 'styled-components';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useSwipeable } from 'react-swipeable';
-import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store'; // RootState 경로에 맞게 수정 필요
 import LoadingSpinner from '../layouts/LoadingSpinner';
 import nodataimg from '../../assets/images/Tokimlogo.png';
+import { setLandDetail } from '../../redux/slices/landInfoSlice';
+import { setLawInfo } from '../../redux/slices/lawInfoSlice';
+
 // 스타일 정의
 const LawInfoContainer = styled.div`
   height: 20vh;
@@ -107,12 +110,32 @@ const RightButton = styled(SlideButton)`
   color: #00c99c;
 `;
 
-function OrdinanceInfoTab() {
+function OrdinanceInfoTab({
+  setActiveTab,
+}: {
+  setActiveTab: React.Dispatch<React.SetStateAction<string>>;
+}) {
+  const dispatch = useDispatch();
   const ordinances = useSelector((state: RootState) => state.lawInfo.lawInfos); // 법령 정보 가져오기
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // error 상태 변수 이름 변경
   const totalItems = ordinances.length;
+  const landDetails = useSelector(
+    (state: RootState) => state.landinfo.landDetails,
+  );
+  const prevLandDetailsRef = useRef(landDetails);
+  useEffect(() => {
+    // landDetails가 변경되었을 때만 상태를 리셋
+    if (landDetails !== prevLandDetailsRef.current) {
+      if (landDetails.length > 0) {
+        dispatch(setLandDetail(null));
+        dispatch(setLawInfo([]));
+        setActiveTab('landInfo');
+      }
+      prevLandDetailsRef.current = landDetails; // 이전 값 업데이트
+    }
+  }, [landDetails, dispatch, setActiveTab]);
 
   useEffect(() => {
     if (ordinances.length === 0) {
