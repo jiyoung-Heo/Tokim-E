@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { View, TextInput, Button, StyleSheet } from 'react-native';
 import { useNavigate } from 'react-router-dom'; // useNavigate 추가
 import LandInformationRegistrationTab from '../components/Tabs/LandInformationRegistrationTab';
 import ChecklistRegistrationTab from '../components/Tabs/ChecklistRegistrationTab';
@@ -43,9 +44,21 @@ const RegisterButton = styled.button`
     background-color: #219a6d;
   }
 `;
+const StyledTextInput = styled.textarea`
+  height: 300px; /* Adjust height as needed */
+  width: 100%;
+  border: 1px solid #ccc; /* Add border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px; /* Padding inside the input */
+  margin-bottom: 20px; /* Space below the input */
+  font-size: 16px; /* Text size */
+  background-color: #00000; /* Background color */
+  resize: none; /* Disable resizing */
+`;
 
 function InvestmentRegistrationPage() {
   const [activeTab, setActiveTab] = useState('landInfo');
+  const [storyContent, setStoryContent] = useState(''); // State to hold story content
   const navigate = useNavigate(); // useNavigate 훅 사용
 
   const handleNextFromLandInfo = () => {
@@ -116,10 +129,19 @@ function InvestmentRegistrationPage() {
         />
       )}
       {activeTab === 'storyWriting' && (
-        <StoryWritingRegistrationTab
-          onPrevious={handlePreviousFromStoryWriting} // 이전 버튼 기능 추가
-          onRegister={handleRegister} // 등록 버튼 기능 추가
-        />
+        <div>
+          <StyledTextInput
+            placeholder="사연을 입력하세요."
+            value={storyContent}
+            onChange={(e) => setStoryContent(e.target.value)} // Update state on change
+          />
+          <div style={{ display: 'flex', justifyContent: 'end', gap: '10px' }}>
+            <RegisterButton onClick={handlePreviousFromStoryWriting}>
+              이전
+            </RegisterButton>
+            <RegisterButton onClick={handleRegister}>등록</RegisterButton>
+          </div>
+        </div>
       )}
     </div>
   );
