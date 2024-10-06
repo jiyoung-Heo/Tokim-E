@@ -40,6 +40,7 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   background: #f3f7fb;
+  align-items: center;
 `;
 
 const Title = styled.h2`
@@ -58,6 +59,7 @@ const Divider = styled.hr`
   width: 90%;
   border: none;
   border-top: 2px solid rgba(121, 121, 130, 0.1);
+  margin: 1vh 0; // 상하 여백 추가
 `;
 
 const QuestionText = styled.p`
@@ -67,7 +69,7 @@ const QuestionText = styled.p`
   font-size: 1.5rem; // 텍스트 크기 증가
   font-weight: bold; // 글씨 두껍게
   background-color: #f9f9f9; // 배경색 추가
-  padding: 20px; // 내부 여백 추가
+  padding: 2vh; // 내부 여백 추가
   border-radius: 30px; // 모서리 둥글게
   border: 1px solid #ccc; // 테두리 추가
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); // 부드러운 그림자 추가
@@ -76,19 +78,20 @@ const QuestionText = styled.p`
 const QuizContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1px;
-  padding: 1px;
+  gap: 1vh;
+  width: 100%;
 `;
 
 const OptionContainer = styled.div`
   display: flex;
   flex-direction: column;
+  margin: 1vh 0;
 `;
 
 const Option = styled.button<{ isCorrect: boolean; isWrong: boolean }>`
   display: flex;
   align-items: center;
-  padding: 8px;
+  padding: 2px;
   margin-bottom: 5vh;
   border: none;
   font-family: 'KoddiUD OnGothic';
@@ -121,26 +124,24 @@ const QuizImage = styled.img<{ size: number }>`
   height: ${(props) => props.size}px;
   max-width: ${(props) => props.size}px;
   max-height: ${(props) => props.size}px;
-  // display: flex;
-  // justify-content: space-between;
-  // align-items: center;
 `;
 
 const TextBox = styled.div`
   display: flex;
-  align-items: center; // 세로 가운데 정렬
-  justify-content: center; // 가로 가운데 정렬
-  height: 150px; // 이미지와 동일한 높이
-  width: 200px; // 원하는 너비 (조정 가능)
-  background-color: #ffffff; // 배경색
-  border: 1px solid #ccc; // 테두리
-  border-radius: 10px; // 모서리 둥글게
-  padding: 15px; // 내부 여백
-  font-family: 'Pretendard', sans-serif; // 폰트 설정
-  color: #333; // 텍스트 색상
-  font-size: 1.2rem; // 텍스트 크기
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); // 부드러운 그림자 추가
-  transition: box-shadow 0.2s ease; // 변환 효과 추가
+  align-items: center;
+  justify-content: center;
+  height: auto; // 자동 높이 조정
+  width: 80%; // 반응형 너비
+  max-width: 200px; // 최대 너비 설정
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 15px;
+  font-family: 'Pretendard', sans-serif;
+  color: #333;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s ease;
 `;
 
 const SpinnerPlace = styled.div`
@@ -221,7 +222,7 @@ function LandPurchaseQuiz() {
         setCorrectAnswersCount(correctAnswersCount + 1); // 맞은 개수 증가
         setFeedbackMessage('정답입니다! 당신은 땅천재!');
       } else {
-        setFeedbackMessage('그 지능으로 "땅"을 산다구요?');
+        setFeedbackMessage('진짜 "땅"을 사시려는거죠?');
       }
 
       // 다음 문제로 넘어가기
@@ -253,7 +254,7 @@ function LandPurchaseQuiz() {
           ); // 모달 열기
         }
         setSelectedAnswer(null); // 선택된 답변 초기화
-      }, 1000); // 1초 후 다음 문제로
+      }, 1300); // 1초 후 다음 문제로
     }
   };
 
