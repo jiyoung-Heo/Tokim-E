@@ -443,7 +443,18 @@ const LandDetailTab: React.FC = () => {
         <div>
           {landDetails.length > 0 ? (
             landDetails.map((detail) => (
-              <div key={detail.landId} style={{ marginBottom: '16px' }}>
+              <div
+                key={detail.landId}
+                style={{
+                  marginBottom: '1vh',
+                  border: '1px solid #ddd',
+                  borderRadius: '1vh',
+                  padding: 'calc(1vw + 1vh)',
+                  backgroundColor: '#fff',
+                  transition: 'transform 0.2s',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                }}
+              >
                 <button
                   type="button"
                   onClick={() => handleDetailClick(detail)}
@@ -452,9 +463,13 @@ const LandDetailTab: React.FC = () => {
                     border: 'none',
                     cursor: 'pointer',
                     fontWeight: 'bold',
+                    color: '#333',
+                    fontSize: 'calc(1vw + 1vh)',
+                    textAlign: 'left',
+                    width: '100%', // 버튼이 카드 전체를 차지하도록
                   }}
                 >
-                  주소: {detail.landDistrict} {detail.landAddress}
+                  {detail.landDistrict} {detail.landAddress}
                 </button>
               </div>
             ))
