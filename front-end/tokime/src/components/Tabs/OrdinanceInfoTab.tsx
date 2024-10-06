@@ -7,6 +7,7 @@ import LoadingSpinner from '../layouts/LoadingSpinner';
 import nodataimg from '../../assets/images/Tokimlogo.png';
 import { setLandDetail } from '../../redux/slices/landInfoSlice';
 import { setLawInfo } from '../../redux/slices/lawInfoSlice';
+import { setLandAddress } from '../../redux/slices/landAddressSlice';
 
 // 스타일 정의
 const LawInfoContainer = styled.div`
@@ -130,21 +131,18 @@ function OrdinanceInfoTab({
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // error 상태 변수 이름 변경
   const totalItems = ordinances.length;
-  const landDetails = useSelector(
-    (state: RootState) => state.landinfo.landDetails,
-  );
-  const prevLandDetailsRef = useRef(landDetails);
+  const landAddress = useSelector((state: RootState) => state.landaddress);
+
+  const prevLandAddressRef = useRef(landAddress);
   useEffect(() => {
-    // landDetails가 변경되었을 때만 상태를 리셋
-    if (landDetails !== prevLandDetailsRef.current) {
-      if (landDetails.length > 0) {
-        dispatch(setLandDetail(null));
-        dispatch(setLawInfo([]));
-        setActiveTab('landInfo');
-      }
-      prevLandDetailsRef.current = landDetails; // 이전 값 업데이트
+    // landAddress 변경되었을 때만 상태를 리셋
+    if (landAddress !== prevLandAddressRef.current) {
+      dispatch(setLandDetail(null));
+      dispatch(setLawInfo([]));
+      setActiveTab('landInfo');
+      prevLandAddressRef.current = landAddress; // 이전 값 업데이트
     }
-  }, [landDetails, dispatch, setActiveTab]);
+  }, [landAddress, dispatch, setActiveTab]);
 
   useEffect(() => {
     if (ordinances.length === 0) {
