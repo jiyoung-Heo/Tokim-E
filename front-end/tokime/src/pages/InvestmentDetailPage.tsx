@@ -7,7 +7,10 @@ import LandInformationTab from '../components/Tabs/LandInformationTab';
 import ChecklistTab from '../components/Tabs/ChecklistTab';
 import StoryAdviceTab from '../components/Tabs/StoryAdviceTab';
 import LandDetailTab from '../components/Tabs/LandDetailTab';
-import { getInvestDetail } from '../api/landInvestAxios';
+import {
+  getInvestChecklistDetail,
+  getInvestDetail,
+} from '../api/landInvestAxios';
 
 // 탭 스타일
 const TabsContainer = styled.div`
@@ -27,13 +30,36 @@ const TabItem = styled.div<{ $isActive: boolean }>`
   border-bottom: ${(props) => (props.$isActive ? '2px solid #27C384' : 'none')};
   cursor: pointer;
 `;
-
+interface ChecklistItem {
+  checklistId: number;
+  content: string;
+}
+interface InvestmentInfo {
+  investmentPlannedLandId: number;
+  landAddress: string;
+  landCreatedAt: string;
+  landDanger: number;
+  landGradient: string;
+  landNickname: string | null;
+  landOwner: string;
+  landPrice: number;
+  landRoad: string;
+  landStory: string;
+  landUpdatedAt: string;
+  landUseStatus: string;
+  plannedLandPrice: number;
+  plannedLandPyeong: number;
+  userId: number;
+  checkedCount: number;
+  checklistIds: number[] | null;
+}
 function InvestmentDetailPage() {
   const { invest = '' } = useParams<{ invest: string }>();
 
   const [activeTab, setActiveTab] = useState('landInfo');
-  const [investmentInfo, setInvestmentInfo] = useState<any[]>([]);
-
+  const [investmentInfo, setInvestmentInfo] = useState<InvestmentInfo>();
+  // 체크리스트 체크한것저장
+  const [check, setCheck] = useState<number[]>([]);
   useEffect(() => {
     const fetchInvestmentData = async () => {
       const data = await getInvestDetail(invest);
@@ -42,6 +68,17 @@ function InvestmentDetailPage() {
       }
     };
     fetchInvestmentData();
+    const fetchInvestmentChecklistData = async () => {
+      const data = await getInvestChecklistDetail(invest);
+      if (data) {
+        const checklistIds: number[] = data.map(
+          (item: ChecklistItem) => item.checklistId,
+        );
+
+        setCheck(checklistIds);
+      }
+    };
+    fetchInvestmentChecklistData();
   }, []);
 
   return (
@@ -68,8 +105,12 @@ function InvestmentDetailPage() {
       </TabsContainer>
 
       {activeTab === 'landInfo' && <LandDetailTab />}
-      {activeTab === 'checklist' && <ChecklistTab />}
-      {activeTab === 'storyAdvice' && <StoryAdviceTab />}
+      {activeTab === 'checklist' && <ChecklistTab check={check} />}
+      {activeTab === 'storyAdvice' && (
+        <StoryAdviceTab
+        // story={investmentInfo.landStory}
+        />
+      )}
     </div>
   );
 }
