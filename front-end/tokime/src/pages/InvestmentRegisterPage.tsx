@@ -95,13 +95,14 @@ function InvestmentRegistrationPage() {
       landGradient: landInfo.landGradient, // 지형
       landPrice: landInfo.landPrice, // 가격
       landRoad: landInfo.landRoad, // 도로
-      landOwner: '', // 임시로 소유자 입력
       landUseStatus: landInfo.landUseStatus, // 용도 상태
       landStory: story, // 사연
       plannedLandPyeong: expectedArea, // 투자 예정 평수
       plannedLandPrice: expectedPrice, // 투자 예정 가격
       checkedCount: check.length, // 체크된 항목 개수
       checklistIds: check, // 체크된 체크리스트 ID 배열
+      landNickname: '임시별칭',
+      landDanger: landInfo.landDanger,
     };
 
     try {
