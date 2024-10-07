@@ -1,33 +1,26 @@
 import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
 import { getSearchLandInfo } from '../../api/landAxios';
 
 const MapContainer = styled.div`
   width: 100%;
   height: 100%;
   z-index: 3000;
+  background-color: #e5e5e5;
 `;
 
-const NaverMap: React.FC = () => {
+interface NaverMapPropsProps {
+  landAddress: string;
+}
+
+const NaverMapProps: React.FC<NaverMapPropsProps> = ({ landAddress }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const markerRef = useRef<any>(null); // 마커를 저장하기 위한 ref
 
-  const selectedDetail = useSelector(
-    (state: RootState) => state.landinfo.landDetail, // Redux에서 선택된 상세 정보 가져오기
-  );
-  let district = selectedDetail?.landDistrict;
-  let address = selectedDetail?.landAddress;
+  const addressParts = landAddress.split(' ');
 
-  // district가 null일 경우, address에서 값을 가져와 설정
-  if (district === null || district === undefined) {
-    if (address) {
-      const addressParts = address?.split(' ');
-      district = `${addressParts[1]} ${addressParts[2]}`;
-      address = addressParts.slice(3).join(' ');
-    }
-  }
+  const district = `${addressParts[1]} ${addressParts[2]}`;
+  const address = addressParts.slice(3).join(' ');
 
   useEffect(() => {
     const loadNaverMapApi = () => {
@@ -137,4 +130,4 @@ const NaverMap: React.FC = () => {
   return <MapContainer ref={mapContainer} />;
 };
 
-export default NaverMap;
+export default NaverMapProps;

@@ -12,7 +12,7 @@ import {
 } from '../api/landInvestAxios';
 import { setLandDetail } from '../redux/slices/landInfoSlice';
 import { setLawInfo } from '../redux/slices/lawInfoSlice';
-import NaverMap from '../components/Tabs/NaverMap';
+import NaverMapProps from '../components/Tabs/NaverMapProps';
 
 // 필요한 스타일 정의
 const Container = styled.div`
@@ -503,7 +503,7 @@ function InvestmentPage() {
           filterInvest.map((invest) => (
             <InvestList key={invest.investmentPlannedLandId}>
               <InvestWrapper>
-                <NaverMap />
+                <NaverMapProps landAddress={invest.landAddress} />
                 <Invest onClick={() => handleDetailClick(invest)}>
                   <NickName>[ {invest.landNickname} ]</NickName>
                   <Address>{invest.landAddress}</Address>
