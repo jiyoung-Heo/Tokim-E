@@ -7,6 +7,7 @@ import { getSearchLandInfo } from '../../api/landAxios';
 const MapContainer = styled.div`
   width: 100%;
   height: 100%;
+  z-index: 3000;
 `;
 
 const NaverMap: React.FC = () => {
@@ -27,6 +28,8 @@ const NaverMap: React.FC = () => {
       address = addressParts.slice(3).join(' ');
     }
   }
+  console.log('district ', district);
+  console.log('address ', address);
 
   useEffect(() => {
     const loadNaverMapApi = () => {
