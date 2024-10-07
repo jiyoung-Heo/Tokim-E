@@ -1,6 +1,7 @@
 package com.ssafy.tokime.dto;
 
 import com.ssafy.tokime.model.InvestmentPlannedLand;
+import com.ssafy.tokime.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,17 +33,18 @@ public class InvestmentPlannedLandDTO {
     private String landNickname;
     private Integer landDanger;
 
-    public InvestmentPlannedLand toEntity() {
+    public InvestmentPlannedLand toEntity(User user) {
         return InvestmentPlannedLand.builder()
                 .investmentPlannedLandId(investmentPlannedLandId)
+                .user(user) // User를 인자로 받아서 설정
                 .landAddress(landAddress)
                 .landGradient(landGradient)
                 .landPrice(landPrice)
                 .landRoad(landRoad)
                 .landOwner(landOwner)
                 .landUseStatus(landUseStatus)
-                .landCreatedAt(landCreatedAt)
-                .landUpdatedAt(landUpdatedAt)
+                .landCreatedAt(new Date()) // 현재 시간으로 설정
+                .landUpdatedAt(new Date()) // 현재 시간으로 설정
                 .landStory(landStory)
                 .plannedLandPyeong(plannedLandPyeong)
                 .plannedLandPrice(plannedLandPrice)
@@ -51,4 +53,5 @@ public class InvestmentPlannedLandDTO {
                 .landDanger(landDanger)
                 .build();
     }
+
 }
