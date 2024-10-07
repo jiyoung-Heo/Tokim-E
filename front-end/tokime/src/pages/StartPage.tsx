@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { RootState } from '../redux/store';
 import KakaoIcon from '../assets/images/icon/kakao.svg'; // 이미지 import
 import GoogleIcon from '../assets/images/icon/Google.png'; // 이미지 import
 import TokimeIcon from '../assets/images/icon/Tokime.png'; // 이미지 import
@@ -68,6 +71,9 @@ const Icon = styled.img`
 `;
 
 function StartPage() {
+  const userInfo = useSelector((state: RootState) => state.user);
+  const navigate = useNavigate();
+
   const kakaoLoginUrl = `${process.env.REACT_APP_API_URL}/oauth2/authorization/kakao`;
   const googleLoginUrl = `${process.env.REACT_APP_API_URL}/oauth2/authorization/google`;
   console.log(process.env.REACT_APP_API_URL);
@@ -83,6 +89,12 @@ function StartPage() {
   const handleGuestLogin = () => {
     window.location.href = '/main';
   };
+  useEffect(() => {
+    if (userInfo.email !== '') {
+      // 로그인이 되어있는경우이므로 메인페이지로넘기기
+      navigate('/main'); // state를 통해 데이터 전달
+    }
+  }, []);
 
   return (
     <StartPageContainer>
