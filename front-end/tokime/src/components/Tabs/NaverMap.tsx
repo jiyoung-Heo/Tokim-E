@@ -16,8 +16,17 @@ const NaverMap: React.FC = () => {
   const selectedDetail = useSelector(
     (state: RootState) => state.landinfo.landDetail, // Redux에서 선택된 상세 정보 가져오기
   );
-  const district = selectedDetail?.landDistrict;
-  const address = selectedDetail?.landAddress;
+  let district = selectedDetail?.landDistrict;
+  let address = selectedDetail?.landAddress;
+
+  // district가 null일 경우, address에서 값을 가져와 설정
+  if (district === null || district === undefined) {
+    if (address) {
+      const addressParts = address?.split(' ');
+      district = `${addressParts[1]} ${addressParts[2]}`;
+      address = addressParts.slice(3).join(' ');
+    }
+  }
 
   useEffect(() => {
     const loadNaverMapApi = () => {
