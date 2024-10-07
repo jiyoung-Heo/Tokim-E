@@ -74,8 +74,8 @@ const Icon = styled.img`
 `;
 
 function LoginRequiredPage() {
-  const kakaoLoginUrl = `${process.env.REACT_APP_CUSTOM_KEY}/oauth2/authorization/kakao`;
-  const googleLoginUrl = `${process.env.REACT_APP_CUSTOM_KEY}/oauth2/authorization/google`;
+  const kakaoLoginUrl = `${process.env.REACT_APP_API_URL}/oauth2/authorization/kakao`;
+  const googleLoginUrl = `${process.env.REACT_APP_API_URL}/oauth2/authorization/google`;
 
   const handleKakaoLogin = () => {
     window.location.href = kakaoLoginUrl;
