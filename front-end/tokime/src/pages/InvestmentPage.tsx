@@ -8,9 +8,11 @@ import multiply from '../assets/images/icon/Multiply.png'; // x아이콘
 import {
   getAllInvestLand,
   getAllInvestLandFilter,
+  deleteInvestDetail,
 } from '../api/landInvestAxios';
 import { setLandDetail } from '../redux/slices/landInfoSlice';
 import { setLawInfo } from '../redux/slices/lawInfoSlice';
+import NaverMap from '../components/Tabs/NaverMap';
 
 // 필요한 스타일 정의
 const Container = styled.div`
@@ -235,6 +237,19 @@ const RegisterButton = styled.button`
   margin-top: 3vh;
   font-size: 15px;
 `;
+
+const SmallButton = styled.button`
+  padding: 1vh 2vw;
+  background-color: ${({ color }) => color || '#27c384'}; // 기본 색상은 초록색
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 800;
+  margin-top: 3vh;
+  font-size: calc(1vw + 1vh);
+`;
 const options = [
   {
     options: [{ value: '전국', label: '전국' }],
@@ -358,6 +373,30 @@ function InvestmentPage() {
     navigate(-1); // 이전 페이지로 이동
   };
 
+  // 삭제 버튼 클릭 핸들러
+  const handleDeleteClick = async (investmentPlannedLandId: String) => {
+    const result = await deleteInvestDetail(investmentPlannedLandId);
+    if (result) {
+      // 삭제 성공 시 filterInvest에서 해당 아이템 제거
+      setFilterInvest((prev) =>
+        prev.filter(
+          (invest) =>
+            invest.investmentPlannedLandId !== investmentPlannedLandId,
+        ),
+      );
+    } else {
+      console.log('삭제 실패');
+    }
+  };
+
+  // 수정 버튼 클릭 핸들러
+  const handleUpdateClick = (detail: any) => {
+    console.log(detail);
+    dispatch(setLandDetail(detail));
+    // 라우터 이동
+    navigate(`/investment-detail/${detail.investmentPlannedLandId}`);
+  };
+
   useEffect(() => {
     const fetchInvestmentData = async () => {
       const data = await getAllInvestLand();
@@ -404,7 +443,7 @@ function InvestmentPage() {
     }
   }, [allInvest, searchAlias]);
 
-  const clickDetail = (detail: any) => {
+  const handleDetailClick = (detail: any) => {
     console.log(detail);
     dispatch(setLandDetail(detail));
     // 라우터 이동
@@ -464,12 +503,12 @@ function InvestmentPage() {
           filterInvest.map((invest) => (
             <InvestList key={invest.investmentPlannedLandId}>
               <InvestWrapper>
-                <Map />
-                <Invest onClick={() => clickDetail(invest)}>
+                <NaverMap />
+                <Invest onClick={() => handleDetailClick(invest)}>
                   <NickName>[ {invest.landNickname} ]</NickName>
                   <Address>{invest.landAddress}</Address>
                   <WarningScore>
-                    위험정도 :{' '}
+                    투자위험도 :{' '}
                     {invest.landDanger === 1
                       ? '중간'
                       : invest.landDanger === 2
@@ -477,6 +516,19 @@ function InvestmentPage() {
                         : '높음'}
                   </WarningScore>
                 </Invest>
+                <div style={{ flexDirection: 'column' }}>
+                  <SmallButton onClick={() => handleUpdateClick(invest)}>
+                    수정
+                  </SmallButton>
+                  <SmallButton
+                    color="#ff4d4d"
+                    onClick={() =>
+                      handleDeleteClick(invest.investmentPlannedLandId)
+                    }
+                  >
+                    삭제
+                  </SmallButton>
+                </div>
               </InvestWrapper>
               <Divider />
             </InvestList>
