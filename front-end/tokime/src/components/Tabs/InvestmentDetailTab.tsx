@@ -12,7 +12,7 @@ import purposeIcon from '../../assets/images/landInfo/purpose.png';
 import roadIcon from '../../assets/images/landInfo/road.png';
 import scaleIcon from '../../assets/images/landInfo/scale.png';
 import useIcon from '../../assets/images/landInfo/use.png';
-import NaverMap from './NaverMap';
+import NaverMapProps from './NaverMapProps';
 
 const BackIcon = styled.img`
   cursor: pointer;
@@ -64,7 +64,6 @@ const InvestmentDetailTab: React.FC<{
 }> = ({ investmentInfoProp }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  console.log(investmentInfoProp);
 
   const [showInfo, setShowInfo] = useState<{ [key: string]: boolean }>({});
 
@@ -257,7 +256,9 @@ const InvestmentDetailTab: React.FC<{
       </h3>
       <div>
         <MapBox>
-          <NaverMap />
+          {investmentInfoProp && (
+            <NaverMapProps landAddress={investmentInfoProp.landAddress} />
+          )}
         </MapBox>
         {/* 공통 정보 항목을 위한 컴포넌트 생성 */}
         <InfoBox>
