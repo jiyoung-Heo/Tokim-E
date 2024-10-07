@@ -32,12 +32,16 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
         String email = customUserDetails.getData();
         String role = ROLE.USER.name();
+        String accessToken = customUserDetails.getToken();
 
-        GeneratedToken token = jwtUtil.generateToken(email, role);
+        GeneratedToken token = jwtUtil.generateToken(email, role, accessToken);
         logger.info("jwtAccessToken = " + token.getAccessToken());
-        response.addCookie(createCookie("Authorization", token.getAccessToken()));
+        logger.info("oauthaccesstoken = " + token.getOauthToken());
 
-        response.sendRedirect(config.getFront()+"/main");
+        response.addCookie(createCookie("Authorization", token.getAccessToken()));
+        response.addCookie(createCookie("access-token", token.getOauthToken()));
+
+        response.sendRedirect(config.getFront() + "/main");
 //        response.sendRedirect("http://localhost:3000/parent");
 //        response.sendRedirect("https://i11b302.p.ssafy.io/parent");
     }
