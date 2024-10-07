@@ -65,7 +65,7 @@ public class InvestmentPlannedLand {
     @Column
     private String landNickname;
 
-    @Column
+    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
     private Integer landDanger=0;
 
     @Builder .Default
