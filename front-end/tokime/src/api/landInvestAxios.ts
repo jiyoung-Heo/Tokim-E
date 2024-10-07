@@ -47,13 +47,14 @@ export const registInvestLand = async (investmentData: {
   landGradient: string;
   landPrice: number;
   landRoad: string;
-  landOwner: string;
   landUseStatus: string;
   landStory: string;
   plannedLandPyeong: number;
   plannedLandPrice: number;
   checkedCount: number;
   checklistIds: number[];
+  landNickname: string;
+  landDanger: number;
 }) => {
   try {
     const response = await API.post('/land/invest', investmentData);
