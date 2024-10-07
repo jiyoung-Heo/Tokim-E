@@ -146,6 +146,9 @@ const SearchInput = styled.input`
     color: #27c384;
   }
 `;
+const Test = styled.div`
+  visible: true;
+`;
 // 투자예정지내역나올 컨테이너
 const InvestContainer = styled.div`
   display: flex;
@@ -179,6 +182,7 @@ const InvestWrapper = styled.div`
   justify-content: space-between;
   align-items: center;
 `;
+
 // 투자예정지 왼쪽 글 정보
 const Invest = styled.div`
   width: 60vw;
@@ -238,6 +242,13 @@ const RegisterButton = styled.button`
   font-size: 15px;
 `;
 
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1vh;
+  margin-right: 2vw;
+`;
+
 const SmallButton = styled.button`
   padding: 1vh 2vw;
   background-color: ${({ color }) => color || '#27c384'}; // 기본 색상은 초록색
@@ -247,9 +258,9 @@ const SmallButton = styled.button`
   font-weight: bold;
   cursor: pointer;
   z-index: 800;
-  margin-top: 3vh;
   font-size: calc(1vw + 1vh);
 `;
+
 const options = [
   {
     options: [{ value: '전국', label: '전국' }],
@@ -516,20 +527,24 @@ function InvestmentPage() {
                         : '높음'}
                   </WarningScore>
                 </Invest>
-                <div style={{ flexDirection: 'column' }}>
-                  <SmallButton onClick={() => handleUpdateClick(invest)}>
-                    수정
-                  </SmallButton>
-                  <SmallButton
-                    color="#ff4d4d"
-                    onClick={() =>
-                      handleDeleteClick(invest.investmentPlannedLandId)
-                    }
-                  >
-                    삭제
-                  </SmallButton>
-                </div>
               </InvestWrapper>
+              {/* <div
+                style={{ flexDirection: 'column', justifyContent: 'flex-end' }}
+              > */}
+              {/* <SmallButton onClick={() => handleUpdateClick(invest)}>
+                    수정
+                  </SmallButton> */}
+              <ButtonContainer>
+                <SmallButton
+                  color="#ff4d4d"
+                  onClick={() =>
+                    handleDeleteClick(invest.investmentPlannedLandId)
+                  }
+                >
+                  삭제
+                </SmallButton>
+                {/* </div> */}
+              </ButtonContainer>
               <Divider />
             </InvestList>
           ))
