@@ -168,6 +168,7 @@ function RiskMapReportPage() {
         <TitleText
           type="text"
           placeholder="신고 제목을 입력하세요"
+          maxLength={255}
           value={dangerTitle}
           onChange={(e) => setDangerTitle(e.target.value)} // 제목 상태 업데이트
         />
@@ -182,6 +183,7 @@ function RiskMapReportPage() {
         <DangerP>내용</DangerP>
         <Content
           placeholder="내용을 입력하세요"
+          maxLength={1500}
           value={dangerContent}
           onChange={(e) => setDangerContent(e.target.value)} // 내용 상태 업데이트
         />
