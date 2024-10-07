@@ -19,11 +19,9 @@ export const getDangerInfo = async (lat: number, lng: number) => {
 export const getDangerInfoDetail = async (dangerId: number) => {
   return API.get(`/danger/${dangerId}`)
     .then((res) => {
-      console.log(res.data);
       return res.data;
     })
     .catch((e) => {
-      console.log('get danger detail error: ', e);
       return null;
     });
 };
