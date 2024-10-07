@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { getDangerInfo } from '../api/dangerAxios';
@@ -23,6 +23,18 @@ const Title = styled.h2`
 
 const BackIcon = styled.img`
   margin-right: 10px;
+`;
+
+const SearchContainer = styled.div`
+  margin: 0 0 20px 0;
+`;
+
+const SearchInput = styled.input`
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
 `;
 
 const RegistContainer = styled.div`
@@ -53,9 +65,31 @@ const MapContainer = styled.div`
   height: 70vh;
 `;
 
+const MarkerList = styled.ul`
+  list-style: none;
+  padding: 0;
+`;
+
+const MarkerItem = styled.li`
+  padding: 10px;
+  margin: 5px 0;
+  background-color: #fff;
+  border: 1px solid #27c384;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+`;
+
 const RiskMapPage: React.FC = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [markers, setMarkers] = useState<any[]>([]);
+  const [filteredMarkers, setFilteredMarkers] = useState<any[]>([]); // 초기값을 빈 배열로 설정
+  const mapRef = useRef<any>(null);
 
   useEffect(() => {
     const loadNaverMapApi = () => {
@@ -75,21 +109,38 @@ const RiskMapPage: React.FC = () => {
 
     const initMap = () => {
       if (mapContainer.current) {
-        return new window.naver.maps.Map(mapContainer.current, {
-          center: new window.naver.maps.LatLng(37.4189122, 127.0430025),
-          zoom: 14,
-          draggable: true,
-          zoomControl: true,
-          scaleControl: true,
-          minZoom: 6,
-          maxZoom: 25,
-        });
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            const map = new window.naver.maps.Map(mapContainer.current, {
+              center: new window.naver.maps.LatLng(latitude, longitude),
+              zoom: 14,
+              draggable: true,
+              zoomControl: true,
+              scaleControl: true,
+              minZoom: 6,
+              maxZoom: 25,
+            });
+            mapRef.current = map;
+          },
+          (error) => {
+            console.error('위치 정보 가져오기 실패:', error);
+            const map = new window.naver.maps.Map(mapContainer.current, {
+              center: new window.naver.maps.LatLng(37.5665, 126.978),
+              zoom: 14,
+              draggable: true,
+              zoomControl: true,
+              scaleControl: true,
+              minZoom: 6,
+              maxZoom: 25,
+            });
+            mapRef.current = map;
+          },
+        );
       }
-      return null;
     };
 
     const createMarker = async (
-      map: any,
       lat: number,
       lng: number,
       dangerTitle: string,
@@ -97,38 +148,34 @@ const RiskMapPage: React.FC = () => {
     ) => {
       const marker = new window.naver.maps.Marker({
         position: new window.naver.maps.LatLng(lat, lng),
-        map,
+        map: mapRef.current,
         icon: {
-          url: 'markers/default.png',
-          scaledSize: new window.naver.maps.Size(30, 30), // 마커 크기
+          url: 'markers/report.png',
+          scaledSize: new window.naver.maps.Size(30, 30),
         },
       });
 
-      // 인포윈도우 생성
       const infoWindow = new window.naver.maps.InfoWindow({
         content: `<div style="padding:10px; max-width:200px; border-radius:10px; border: 1px solid #27C384; background-color: #fff;">
                 <h4 style="color: #333;">신고 제목: ${dangerTitle}</h4>
                 <p style="color: #555;">신고 내용: ${dangerContent}</p>
                 <p style="color: #777;">주소: 불러오는 중...</p>
               </div>`,
-        backgroundColor: 'transparent', // 배경색을 투명으로 설정
+        backgroundColor: 'transparent',
         borderColor: '#27C384',
         borderWidth: '1px',
-        anchorSize: new window.naver.maps.Size(0, 0), // 인포윈도우의 뾰족한 부분을 위해
-        pixelOffset: new window.naver.maps.Point(-100, -200), // 인포윈도우를 마커 위로 이동
+        anchorSize: new window.naver.maps.Size(0, 0),
+        pixelOffset: new window.naver.maps.Point(-100, -200),
       });
 
-      // 마커 클릭 이벤트 추가
       window.naver.maps.Event.addListener(marker, 'click', () => {
-        infoWindow.open(map, marker);
+        infoWindow.open(mapRef.current, marker);
       });
 
-      // 지도 클릭 시 인포윈도우 닫기
-      window.naver.maps.Event.addListener(map, 'click', () => {
+      window.naver.maps.Event.addListener(mapRef.current, 'click', () => {
         infoWindow.close();
       });
 
-      // 역지오코딩으로 좌표에 해당하는 주소 불러오기
       if (
         window.naver.maps.Service &&
         window.naver.maps.Service.reverseGeocode
@@ -145,7 +192,8 @@ const RiskMapPage: React.FC = () => {
                               <p style="color: #555;">신고 내용: ${dangerContent}</p>
                               <p style="color: #777;">주소: ${address}</p>
                             </div>`;
-              infoWindow.setContent(newContent); // 인포윈도우에 주소 업데이트
+              infoWindow.setContent(newContent);
+              marker.address = address;
             } else {
               console.error('역지오코딩 실패:', status);
             }
@@ -154,24 +202,21 @@ const RiskMapPage: React.FC = () => {
       } else {
         console.error('Naver Maps Service가 정의되지 않았습니다.');
       }
-
-      // 인포윈도우 외부 클릭 시 닫기
-      window.naver.maps.Event.addListener(infoWindow, 'closeclick', () => {
-        infoWindow.close();
-      });
     };
 
     const fetchData = async () => {
-      const map = initMap();
-      if (!map) return;
+      initMap();
 
       try {
         const dangerData = await getDangerInfo();
         if (dangerData && dangerData.length > 0) {
+          setMarkers(dangerData);
           dangerData.forEach((danger: any) => {
             const { lat, lng, dangerTitle, dangerContent } = danger;
-            createMarker(map, lat, lng, dangerTitle, dangerContent);
+            createMarker(lat, lng, dangerTitle, dangerContent);
           });
+          // 초기 필터링 목록을 빈 배열로 설정
+          setFilteredMarkers([]);
         } else {
           console.error('위험 신고 데이터를 가져오지 못했습니다.');
         }
@@ -187,6 +232,26 @@ const RiskMapPage: React.FC = () => {
       .catch((error) => console.error(error));
   }, []);
 
+  // 검색어에 따라 마커 필터링
+  useEffect(() => {
+    if (searchTerm === '') {
+      setFilteredMarkers([]); // 검색어가 없으면 마커 목록을 빈 배열로 설정
+    } else {
+      const lowercasedTerm = searchTerm.toLowerCase();
+      const filtered = markers.filter((marker) =>
+        marker.dangerTitle.toLowerCase().includes(lowercasedTerm),
+      );
+      setFilteredMarkers(filtered);
+    }
+  }, [searchTerm, markers]);
+
+  const handleMarkerClick = (lat: number, lng: number) => {
+    if (mapRef.current) {
+      mapRef.current.setCenter(new window.naver.maps.LatLng(lat, lng));
+      mapRef.current.setZoom(16);
+    }
+  };
+
   const handleReportClick = () => {
     navigate('report');
   };
@@ -201,10 +266,32 @@ const RiskMapPage: React.FC = () => {
         />
         위험 지도
       </Title>
+      <SearchContainer>
+        <SearchInput
+          type="text"
+          placeholder="검색어 입력..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </SearchContainer>
       <MapContainer ref={mapContainer} />
       <RegistContainer>
         <RegisterButton onClick={handleReportClick}>신고하기</RegisterButton>
       </RegistContainer>
+      <MarkerList>
+        {filteredMarkers.length > 0 ? ( // 마커가 있을 때만 목록 표시
+          filteredMarkers.map((marker) => (
+            <MarkerItem
+              key={marker.id}
+              onClick={() => handleMarkerClick(marker.lat, marker.lng)}
+            >
+              {marker.dangerTitle}
+            </MarkerItem>
+          ))
+        ) : (
+          <div>목록이 비어 있습니다.</div> // 마커가 없을 때 보여줄 메시지
+        )}
+      </MarkerList>
     </Container>
   );
 };
