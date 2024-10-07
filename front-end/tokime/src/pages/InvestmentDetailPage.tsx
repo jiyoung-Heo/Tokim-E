@@ -107,9 +107,7 @@ function InvestmentDetailPage() {
       {activeTab === 'landInfo' && <LandDetailTab />}
       {activeTab === 'checklist' && <ChecklistTab check={check} />}
       {activeTab === 'storyAdvice' && (
-        <StoryAdviceTab
-        // story={investmentInfo.landStory}
-        />
+        <StoryAdviceTab story={investmentInfo?.landStory || null} />
       )}
     </div>
   );
