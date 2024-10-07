@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -11,6 +12,7 @@ import starIcon from '../assets/images/icon/star.svg';
 import starFilled from '../assets/images/icon/star_filled.svg';
 import backIcon from '../assets/images/icon/left-actionable.png';
 import LoadingSpinner from '../components/layouts/LoadingSpinner';
+import { RootState } from '../redux/store';
 
 // 스타일 정의
 const Container = styled.div`
@@ -166,6 +168,8 @@ function LandTermDetail() {
   const [isLiked, setIsLiked] = useState(false); // 즐겨찾기 상태
   const [modalOpen, setModalOpen] = useState(false); // 모달 상태
 
+  const user = useSelector((state: RootState) => state.user);
+
   // 용어 데이터를 가져오는 useEffect
   useEffect(() => {
     const fetchTermData = async () => {
@@ -243,12 +247,14 @@ function LandTermDetail() {
         <BackIcon src={backIcon} alt="back Icon" onClick={goBack} />
         {termData.termName}
         {/* 즐겨찾기 아이콘 */}
-        <FavoriteIcon
-          src={isLiked ? starFilled : starIcon}
-          alt="즐겨찾기"
-          isLiked={isLiked}
-          onClick={() => toggleLike(termData.termId)} // 클릭 시 함수 호출
-        />
+        {user.name && (
+          <FavoriteIcon
+            src={isLiked ? starFilled : starIcon}
+            alt="즐겨찾기"
+            isLiked={isLiked}
+            onClick={() => toggleLike(termData.termId)} // 클릭 시 함수 호출
+          />
+        )}
       </Title>
 
       {/* 용어 정보 */}
