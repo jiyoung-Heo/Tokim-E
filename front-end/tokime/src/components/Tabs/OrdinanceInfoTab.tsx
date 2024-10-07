@@ -133,23 +133,25 @@ function OrdinanceInfoTab({
   const totalItems = ordinances?.length ?? 0;
   const landAddress = useSelector((state: RootState) => state.landaddress);
 
-  const prevLandAddressRef = useRef(landAddress);
+  const prevlawInfosRef = useRef(ordinances);
   useEffect(() => {
-    // landAddress 변경되었을 때만 상태를 리셋
-    if (landAddress !== prevLandAddressRef.current) {
+    // ordinances 변경되었을 때만 상태를 리셋
+    if (ordinances !== prevlawInfosRef.current) {
       dispatch(setLandDetail(null));
       dispatch(setLawInfo([]));
       setActiveTab('landInfo');
-      prevLandAddressRef.current = landAddress; // 이전 값 업데이트
+      prevlawInfosRef.current = ordinances; // 이전 값 업데이트
     }
   }, [landAddress, dispatch, setActiveTab]);
 
   useEffect(() => {
     if (totalItems === 0) {
-      setErrorMessage('법령 정보가 없습니다.'); // 에러 메시지 상태 업데이트
+      setErrorMessage('법령 정보가 없습니다.'); // 에러 메시지 설정
       setLoading(false);
     } else {
+      setErrorMessage(null); // 에러 메시지 초기화
       setLoading(false);
+      setCurrentIndex(0); // ordinances가 변경되면 인덱스 초기화
     }
   }, [ordinances]);
 
