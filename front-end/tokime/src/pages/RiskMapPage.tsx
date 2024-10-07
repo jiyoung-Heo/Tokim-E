@@ -88,7 +88,7 @@ const RiskMapPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [markers, setMarkers] = useState<any[]>([]);
-  const [filteredMarkers, setFilteredMarkers] = useState<any[]>([]); // 초기값을 빈 배열로 설정
+  const [filteredMarkers, setFilteredMarkers] = useState<any[]>([]);
   const mapRef = useRef<any>(null);
 
   useEffect(() => {
@@ -108,36 +108,40 @@ const RiskMapPage: React.FC = () => {
     };
 
     const initMap = () => {
-      if (mapContainer.current) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            const map = new window.naver.maps.Map(mapContainer.current, {
-              center: new window.naver.maps.LatLng(latitude, longitude),
-              zoom: 14,
-              draggable: true,
-              zoomControl: true,
-              scaleControl: true,
-              minZoom: 6,
-              maxZoom: 25,
-            });
-            mapRef.current = map;
-          },
-          (error) => {
-            console.error('위치 정보 가져오기 실패:', error);
-            const map = new window.naver.maps.Map(mapContainer.current, {
-              center: new window.naver.maps.LatLng(37.5665, 126.978),
-              zoom: 14,
-              draggable: true,
-              zoomControl: true,
-              scaleControl: true,
-              minZoom: 6,
-              maxZoom: 25,
-            });
-            mapRef.current = map;
-          },
-        );
-      }
+      return new Promise((resolve) => {
+        if (mapContainer.current) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const { latitude, longitude } = position.coords;
+              const map = new window.naver.maps.Map(mapContainer.current, {
+                center: new window.naver.maps.LatLng(latitude, longitude),
+                zoom: 14,
+                draggable: true,
+                zoomControl: true,
+                scaleControl: true,
+                minZoom: 6,
+                maxZoom: 25,
+              });
+              mapRef.current = map;
+              resolve(true); // Resolve the promise after map is initialized
+            },
+            (error) => {
+              console.error('위치 정보 가져오기 실패:', error);
+              const map = new window.naver.maps.Map(mapContainer.current, {
+                center: new window.naver.maps.LatLng(37.5665, 126.978),
+                zoom: 14,
+                draggable: true,
+                zoomControl: true,
+                scaleControl: true,
+                minZoom: 6,
+                maxZoom: 25,
+              });
+              mapRef.current = map;
+              resolve(true); // Resolve the promise after map is initialized
+            },
+          );
+        }
+      });
     };
 
     const createMarker = async (
@@ -146,6 +150,8 @@ const RiskMapPage: React.FC = () => {
       dangerTitle: string,
       dangerContent: string,
     ) => {
+      if (!mapRef.current) return; // Check if mapRef is null
+
       const marker = new window.naver.maps.Marker({
         position: new window.naver.maps.LatLng(lat, lng),
         map: mapRef.current,
@@ -205,8 +211,6 @@ const RiskMapPage: React.FC = () => {
     };
 
     const fetchData = async () => {
-      initMap();
-
       try {
         const dangerData = await getDangerInfo();
         if (dangerData && dangerData.length > 0) {
@@ -215,8 +219,7 @@ const RiskMapPage: React.FC = () => {
             const { lat, lng, dangerTitle, dangerContent } = danger;
             createMarker(lat, lng, dangerTitle, dangerContent);
           });
-          // 초기 필터링 목록을 빈 배열로 설정
-          setFilteredMarkers([]);
+          setFilteredMarkers([]); // 초기 필터링 목록을 빈 배열로 설정
         } else {
           console.error('위험 신고 데이터를 가져오지 못했습니다.');
         }
@@ -226,72 +229,70 @@ const RiskMapPage: React.FC = () => {
     };
 
     loadNaverMapApi()
-      .then(() => {
-        fetchData();
-      })
-      .catch((error) => console.error(error));
+      .then(initMap)
+      .then(fetchData)
+      .catch((error) => {
+        console.error('지도 로드 중 오류 발생:', error);
+      });
   }, []);
 
-  // 검색어에 따라 마커 필터링
-  useEffect(() => {
-    if (searchTerm === '') {
-      setFilteredMarkers([]); // 검색어가 없으면 마커 목록을 빈 배열로 설정
-    } else {
-      const lowercasedTerm = searchTerm.toLowerCase();
-      const filtered = markers.filter((marker) =>
-        marker.dangerTitle.toLowerCase().includes(lowercasedTerm),
-      );
-      setFilteredMarkers(filtered);
-    }
-  }, [searchTerm, markers]);
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+    // 마커 제목이나 내용에 검색어가 포함된 경우 필터링
+    const filtered = markers.filter(
+      (marker) =>
+        marker.dangerTitle.toLowerCase().includes(term.toLowerCase()) ||
+        marker.dangerContent.toLowerCase().includes(term.toLowerCase()),
+    );
+    setFilteredMarkers(filtered);
+  };
 
-  const handleMarkerClick = (lat: number, lng: number) => {
+  const handleMarkerClick = (marker: any) => {
     if (mapRef.current) {
-      mapRef.current.setCenter(new window.naver.maps.LatLng(lat, lng));
-      mapRef.current.setZoom(16);
+      mapRef.current.setCenter(
+        new window.naver.maps.LatLng(marker.lat, marker.lng),
+      );
+      // 추가 동작을 원하시면 여기에 작성하세요
     }
   };
 
-  const handleReportClick = () => {
-    navigate('report');
+  const handleBack = () => {
+    navigate(-1);
   };
 
   return (
     <Container>
       <Title>
-        <BackIcon
-          src={backIcon}
-          alt="뒤로가기 아이콘"
-          onClick={() => navigate(-1)}
-        />
-        위험 지도
+        <BackIcon src={backIcon} alt="Back" onClick={handleBack} />
+        위험 지역 지도
       </Title>
       <SearchContainer>
         <SearchInput
           type="text"
-          placeholder="검색어 입력..."
+          placeholder="검색"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={handleSearch}
         />
       </SearchContainer>
       <MapContainer ref={mapContainer} />
-      <RegistContainer>
-        <RegisterButton onClick={handleReportClick}>신고하기</RegisterButton>
-      </RegistContainer>
-      <MarkerList>
-        {filteredMarkers.length > 0 ? ( // 마커가 있을 때만 목록 표시
-          filteredMarkers.map((marker) => (
+      {filteredMarkers.length > 0 && (
+        <MarkerList>
+          {filteredMarkers.map((marker) => (
             <MarkerItem
               key={marker.id}
-              onClick={() => handleMarkerClick(marker.lat, marker.lng)}
+              onClick={() => handleMarkerClick(marker)}
             >
               {marker.dangerTitle}
             </MarkerItem>
-          ))
-        ) : (
-          <div>목록이 비어 있습니다.</div> // 마커가 없을 때 보여줄 메시지
-        )}
-      </MarkerList>
+          ))}
+        </MarkerList>
+      )}
+      <RegistContainer>
+        <RegisterButton onClick={() => navigate('/report')}>
+          작성
+        </RegisterButton>
+      </RegistContainer>
     </Container>
   );
 };
