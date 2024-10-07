@@ -1,6 +1,7 @@
 import styled from 'styled-components';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { RootState } from '../../redux/store';
 import { setLandDetail } from '../../redux/slices/landInfoSlice';
 import { setLawInfo } from '../../redux/slices/lawInfoSlice'; // 액션 임포트
@@ -43,13 +44,29 @@ const InfoBox = styled.div`
 
 const LandDetailTab: React.FC = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const landDetails = useSelector(
     (state: RootState) => state.landinfo.landDetails,
   );
   const selectedDetail = useSelector(
     (state: RootState) => state.landinfo.landDetail, // Redux에서 선택된 상세 정보 가져오기
   );
+  const handleInvestClick = () => {
+    navigate('/investment-register', { state: { selectedDetail } }); // state를 통해 데이터 전달
+    console.log(selectedDetail);
+  };
   const [showInfo, setShowInfo] = useState<{ [key: string]: boolean }>({});
+  const prevLandDetailsRef = useRef(landDetails);
+
+  useEffect(() => {
+    // landDetails가 변경되었을 때만 상태를 리셋
+    if (landDetails !== prevLandDetailsRef.current) {
+      if (landDetails.length > 0) {
+        dispatch(setLandDetail(null));
+      }
+      prevLandDetailsRef.current = landDetails; // 이전 값 업데이트
+    }
+  }, [landDetails, dispatch]);
 
   const handleDetailClick = async (detail: any) => {
     dispatch(setLandDetail(detail));
@@ -425,6 +442,24 @@ const LandDetailTab: React.FC = () => {
                 </p>
               </div>
             ))}
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                style={{
+                  display: 'flex',
+                  fontWeight: 'bold',
+                  backgroundColor: '#00C99C',
+                  color: '#fff',
+                  border: '#00C99C',
+                  padding: 'calc(0.5vw + 0.5vh)',
+                  margin: 'calc(1vw + 1vh)',
+                  borderRadius: 'calc(1vw + 1vh)',
+                }}
+                onClick={handleInvestClick}
+              >
+                투자 예정지 등록
+              </button>
+            </div>
           </InfoBox>
         </div>
       ) : (
@@ -432,7 +467,18 @@ const LandDetailTab: React.FC = () => {
         <div>
           {landDetails.length > 0 ? (
             landDetails.map((detail) => (
-              <div key={detail.landId} style={{ marginBottom: '16px' }}>
+              <div
+                key={detail.landId}
+                style={{
+                  marginBottom: '1vh',
+                  border: '1px solid #ddd',
+                  borderRadius: '1vh',
+                  padding: 'calc(1vw + 1vh)',
+                  backgroundColor: '#fff',
+                  transition: 'transform 0.2s',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                }}
+              >
                 <button
                   type="button"
                   onClick={() => handleDetailClick(detail)}
@@ -441,9 +487,13 @@ const LandDetailTab: React.FC = () => {
                     border: 'none',
                     cursor: 'pointer',
                     fontWeight: 'bold',
+                    color: '#333',
+                    fontSize: 'calc(1vw + 1vh)',
+                    textAlign: 'left',
+                    width: '100%', // 버튼이 카드 전체를 차지하도록
                   }}
                 >
-                  주소: {detail.landDistrict} {detail.landAddress}
+                  {detail.landDistrict} {detail.landAddress}
                 </button>
               </div>
             ))

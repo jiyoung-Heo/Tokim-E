@@ -1,10 +1,14 @@
 import styled, { css } from 'styled-components';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useSwipeable } from 'react-swipeable';
-import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store'; // RootState 경로에 맞게 수정 필요
 import LoadingSpinner from '../layouts/LoadingSpinner';
 import nodataimg from '../../assets/images/Tokimlogo.png';
+import { setLandDetail } from '../../redux/slices/landInfoSlice';
+import { setLawInfo } from '../../redux/slices/lawInfoSlice';
+import { setLandAddress } from '../../redux/slices/landAddressSlice';
+
 // 스타일 정의
 const LawInfoContainer = styled.div`
   height: 20vh;
@@ -97,6 +101,15 @@ const Dot = styled.div<{ active: boolean }>`
     `}
 `;
 
+// Ellipsis 스타일 컴포넌트
+const Ellipsis = styled.span`
+  display: inline-block;
+  margin: 0 5px; // 도트 간격
+  font-size: 30px; // 원하는 폰트 크기로 조정
+  color: #00c99c; // 원하는 색상으로 조정
+  cursor: default; // 기본 커서
+`;
+
 const LeftButton = styled(SlideButton)`
   left: 3vw;
   color: #00c99c;
@@ -107,15 +120,32 @@ const RightButton = styled(SlideButton)`
   color: #00c99c;
 `;
 
-function OrdinanceInfoTab() {
+function OrdinanceInfoTab({
+  setActiveTab,
+}: {
+  setActiveTab: React.Dispatch<React.SetStateAction<string>>;
+}) {
+  const dispatch = useDispatch();
   const ordinances = useSelector((state: RootState) => state.lawInfo.lawInfos); // 법령 정보 가져오기
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // error 상태 변수 이름 변경
-  const totalItems = ordinances.length;
+  const totalItems = ordinances?.length ?? 0;
+  const landAddress = useSelector((state: RootState) => state.landaddress);
+
+  const prevLandAddressRef = useRef(landAddress);
+  useEffect(() => {
+    // landAddress 변경되었을 때만 상태를 리셋
+    if (landAddress !== prevLandAddressRef.current) {
+      dispatch(setLandDetail(null));
+      dispatch(setLawInfo([]));
+      setActiveTab('landInfo');
+      prevLandAddressRef.current = landAddress; // 이전 값 업데이트
+    }
+  }, [landAddress, dispatch, setActiveTab]);
 
   useEffect(() => {
-    if (ordinances.length === 0) {
+    if (totalItems === 0) {
       setErrorMessage('법령 정보가 없습니다.'); // 에러 메시지 상태 업데이트
       setLoading(false);
     } else {
@@ -124,7 +154,7 @@ function OrdinanceInfoTab() {
   }, [ordinances]);
 
   const handleNext = () => {
-    if (currentIndex < ordinances.length - 1) {
+    if (currentIndex < totalItems - 1) {
       setCurrentIndex(currentIndex + 1);
     }
   };
@@ -149,6 +179,88 @@ function OrdinanceInfoTab() {
     return <LoadingSpinner />;
   }
 
+  // Ellipsis 클릭 핸들러 추가
+  const handleEllipsisClick = (direction: 'left' | 'right') => {
+    if (direction === 'left') {
+      setCurrentIndex((prevIndex) => Math.max(0, prevIndex - 5));
+    } else {
+      setCurrentIndex((prevIndex) => Math.min(totalItems - 1, prevIndex + 5));
+    }
+  };
+
+  // renderDots 함수 수정
+  const renderDots = () => {
+    const dots = [];
+    const MAX_DOTS = 9; // 최대 도트 수 (홀수로 설정)
+    const half = Math.floor(MAX_DOTS / 2);
+
+    if (totalItems > MAX_DOTS) {
+      // 페이지 범위 설정
+      let start = Math.max(0, currentIndex - half);
+      let end = Math.min(totalItems, currentIndex + half + 1);
+
+      if (start === 0) {
+        end = Math.min(MAX_DOTS, totalItems);
+      } else if (end === totalItems) {
+        start = Math.max(0, totalItems - MAX_DOTS);
+      }
+
+      for (let i = start; i < end; i += 1) {
+        dots.push(
+          <Dot
+            key={i}
+            active={i === currentIndex}
+            onClick={() => handleIndexChange(i)}
+          />,
+        );
+      }
+
+      // 왼쪽 Ellipsis
+      if (start > 0) {
+        dots.unshift(
+          <Ellipsis
+            key="left-ellipsis"
+            onClick={() => handleEllipsisClick('left')}
+            style={{
+              opacity: currentIndex > 0 ? 1 : 0.5,
+              cursor: currentIndex > 0 ? 'pointer' : 'default',
+            }}
+          >
+            <span>{'<'}</span>
+          </Ellipsis>,
+        );
+      }
+
+      // 오른쪽 Ellipsis
+      if (end < totalItems) {
+        dots.push(
+          <Ellipsis
+            key="right-ellipsis"
+            onClick={() => handleEllipsisClick('right')}
+            style={{
+              opacity: currentIndex < totalItems - 1 ? 1 : 0.5,
+              cursor: currentIndex < totalItems - 1 ? 'pointer' : 'default',
+            }}
+          >
+            <span>{'>'}</span>
+          </Ellipsis>,
+        );
+      }
+    } else {
+      for (let i = 0; i < totalItems; i += 1) {
+        dots.push(
+          <Dot
+            key={i}
+            active={i === currentIndex}
+            onClick={() => handleIndexChange(i)}
+          />,
+        );
+      }
+    }
+
+    return dots;
+  };
+
   if (errorMessage) {
     return (
       <div style={{ textAlign: 'center', marginTop: '20px' }}>
@@ -164,7 +276,7 @@ function OrdinanceInfoTab() {
 
   return (
     <div>
-      {ordinances.length > 0 ? (
+      {totalItems > 0 ? (
         <div {...handlers}>
           <h3>{ordinances[currentIndex].lawName}</h3>
           <LawInfoContainer>
@@ -197,15 +309,7 @@ function OrdinanceInfoTab() {
               {'>'}
             </RightButton>
           </div>
-          <PaginationContainer>
-            {Array.from({ length: totalItems }, (_, i) => (
-              <Dot
-                key={i}
-                active={i === currentIndex}
-                onClick={() => handleIndexChange(i)}
-              />
-            ))}
-          </PaginationContainer>
+          <PaginationContainer>{renderDots()}</PaginationContainer>
         </div>
       ) : (
         <p>조례 정보를 불러오는 중입니다...</p>
