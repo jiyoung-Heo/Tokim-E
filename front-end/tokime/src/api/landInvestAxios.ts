@@ -4,7 +4,7 @@ import API from '../utils/API';
 export const getAllInvestLand = async () => {
   return API.get('/land/invest')
     .then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       return res.data;
     })
     .catch((e) => {
@@ -40,6 +40,20 @@ export const getInvestDetail = async (investmentPlannedLandId: String) => {
       return null;
     });
 };
+// 선택한 하나의 토지의 checklist 정보를 가져오기.
+export const getInvestChecklistDetail = async (
+  investmentPlannedLandId: String,
+) => {
+  return API.get(`/land/invest/checked/${investmentPlannedLandId}`)
+    .then((res) => {
+      console.log(res.data);
+      return res.data;
+    })
+    .catch((e) => {
+      console.log('land Search Error : ', e);
+      return null;
+    });
+};
 
 // 투자 예정지 등록하기.
 export const registInvestLand = async (investmentData: {
@@ -47,13 +61,14 @@ export const registInvestLand = async (investmentData: {
   landGradient: string;
   landPrice: number;
   landRoad: string;
-  landOwner: string;
   landUseStatus: string;
   landStory: string;
   plannedLandPyeong: number;
   plannedLandPrice: number;
   checkedCount: number;
   checklistIds: number[];
+  landNickname: string;
+  landDanger: number;
 }) => {
   try {
     const response = await API.post('/land/invest', investmentData);
