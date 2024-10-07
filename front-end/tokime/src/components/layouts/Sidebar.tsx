@@ -16,7 +16,18 @@ import userQuizPercentAxios from '../../api/userQuizPercentAxios';
 import logoutAxios from '../../api/logoutAxios';
 import { persistor } from '../../redux/reduxStore';
 import withdrawAxios from '../../api/withdrawAxios';
-
+// 오버레이 스타일 정의
+const Overlay = styled.div<{ isOpen: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw; /* 전체 화면 너비 */
+  height: 100vh; /* 전체 화면 높이 */
+  background-color: rgba(0, 0, 0, 0.1); /* 반투명 배경 */
+  display: ${(props) =>
+    props.isOpen ? 'block' : 'none'}; /* 사이드바가 열리면 보이게 */
+  z-index: 900; /* 사이드바보다 아래에 위치 */
+`;
 // 사이드바 전체 스타일 정의
 const SidebarContainer = styled.div<{ $isOpen: boolean }>`
   position: fixed;
@@ -290,6 +301,8 @@ function Sidebar() {
         onClick={toggleSidebar}
         $isOpen={isSidebarOpen}
       />
+      {/* 오버레이 추가 */}
+      <Overlay isOpen={isSidebarOpen} onClick={() => setIsSidebarOpen(false)} />
 
       {userInfo.name !== '' ? (
         <SidebarContainer ref={sidebarRef} $isOpen={isSidebarOpen}>
