@@ -1,10 +1,13 @@
 // src/pages/InvestmentDetailPage.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useParams } from 'react-router-dom';
+
 import LandInformationTab from '../components/Tabs/LandInformationTab';
 import ChecklistTab from '../components/Tabs/ChecklistTab';
 import StoryAdviceTab from '../components/Tabs/StoryAdviceTab';
 import LandDetailTab from '../components/Tabs/LandDetailTab';
+import { getInvestDetail } from '../api/landInvestAxios';
 
 // 탭 스타일
 const TabsContainer = styled.div`
@@ -26,7 +29,20 @@ const TabItem = styled.div<{ $isActive: boolean }>`
 `;
 
 function InvestmentDetailPage() {
+  const { invest = '' } = useParams<{ invest: string }>();
+
   const [activeTab, setActiveTab] = useState('landInfo');
+  const [investmentInfo, setInvestmentInfo] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchInvestmentData = async () => {
+      const data = await getInvestDetail(invest);
+      if (data) {
+        setInvestmentInfo(data);
+      }
+    };
+    fetchInvestmentData();
+  }, []);
 
   return (
     <div>
