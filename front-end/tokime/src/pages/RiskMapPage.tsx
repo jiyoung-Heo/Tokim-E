@@ -289,7 +289,7 @@ const RiskMapPage: React.FC = () => {
         </MarkerList>
       )}
       <RegistContainer>
-        <RegisterButton onClick={() => navigate('/report')}>
+        <RegisterButton onClick={() => navigate('/risk-map/report')}>
           작성
         </RegisterButton>
       </RegistContainer>
