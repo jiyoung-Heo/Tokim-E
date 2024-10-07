@@ -130,7 +130,7 @@ function OrdinanceInfoTab({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // error 상태 변수 이름 변경
-  const totalItems = ordinances.length;
+  const totalItems = ordinances?.length ?? 0;
   const landAddress = useSelector((state: RootState) => state.landaddress);
 
   const prevLandAddressRef = useRef(landAddress);
@@ -145,7 +145,7 @@ function OrdinanceInfoTab({
   }, [landAddress, dispatch, setActiveTab]);
 
   useEffect(() => {
-    if (ordinances.length === 0) {
+    if (totalItems === 0) {
       setErrorMessage('법령 정보가 없습니다.'); // 에러 메시지 상태 업데이트
       setLoading(false);
     } else {
@@ -154,7 +154,7 @@ function OrdinanceInfoTab({
   }, [ordinances]);
 
   const handleNext = () => {
-    if (currentIndex < ordinances.length - 1) {
+    if (currentIndex < totalItems - 1) {
       setCurrentIndex(currentIndex + 1);
     }
   };
@@ -276,7 +276,7 @@ function OrdinanceInfoTab({
 
   return (
     <div>
-      {ordinances.length > 0 ? (
+      {totalItems > 0 ? (
         <div {...handlers}>
           <h3>{ordinances[currentIndex].lawName}</h3>
           <LawInfoContainer>
