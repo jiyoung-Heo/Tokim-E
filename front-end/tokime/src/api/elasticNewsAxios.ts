@@ -1,6 +1,6 @@
 import ESAPI from '../utils/ESAPI';
 
-export default async function elasticAxios(story: string | null) {
+export default async function elasticNewsAxios(story: string | null) {
   const queryStory = story || ''; // story가 null이면 빈 문자열로 처리하여 새로운 변수에 할당
 
   const data = {
@@ -14,8 +14,8 @@ export default async function elasticAxios(story: string | null) {
   };
   return ESAPI.post('/news/_search', data) // post 요청으로 data 요청
     .then((res) => {
-      console.log(res);
-      return res;
+      //   console.log(res.data.hits.hits);
+      return res.data.hits.hits;
     })
     .catch((e) => {
       console.log(e);
