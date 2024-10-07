@@ -10,7 +10,7 @@ import MyPage from '../pages/MyPage';
 import InvestmentPage from '../pages/InvestmentPage';
 import InvestmentRegisterPage from '../pages/InvestmentRegisterPage';
 import InvestmentDetailPage from '../pages/InvestmentDetailPage'; // 투자 예정지 상세 페이지 추가
-import LandPurchaseQuiz from '../pages/LandPurchaseQuiz';
+import LandPurchaseQuiz from "../pages/LandPurchaseQuiz.1";
 import LoginRequiredPage from '../pages/LoginRequiredPage';
 import RiskMapPage from '../pages/RiskMapPage'; // 새로 추가
 import Layout from '../components/layouts/layout'; // Layout 추가

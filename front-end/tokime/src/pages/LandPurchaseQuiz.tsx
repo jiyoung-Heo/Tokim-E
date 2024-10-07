@@ -194,8 +194,15 @@ function LandPurchaseQuiz() {
         setQuizzes(data); // 백엔드에서 20개의 퀴즈를 받음
       }
     };
+    const preloadImages = (imageArray: string[]) => {
+      imageArray.forEach((src) => {
+        const img = new Image();
+        img.src = src;
+      });
+    };
 
     fetchQuizzes();
+    preloadImages(tokimImages);
   }, []);
 
   const goBack = () => {
