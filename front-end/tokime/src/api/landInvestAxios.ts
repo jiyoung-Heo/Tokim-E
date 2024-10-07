@@ -40,6 +40,20 @@ export const getInvestDetail = async (investmentPlannedLandId: String) => {
       return null;
     });
 };
+// 선택한 하나의 토지의 checklist 정보를 가져오기.
+export const getInvestChecklistDetail = async (
+  investmentPlannedLandId: String,
+) => {
+  return API.get(`/land/invest/checked/${investmentPlannedLandId}`)
+    .then((res) => {
+      console.log(res.data);
+      return res.data;
+    })
+    .catch((e) => {
+      console.log('land Search Error : ', e);
+      return null;
+    });
+};
 
 // 투자 예정지 등록하기.
 export const registInvestLand = async (investmentData: {
