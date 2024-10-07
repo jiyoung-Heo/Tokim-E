@@ -311,8 +311,9 @@ function Sidebar() {
                 : `${userInfo.quizScore}점`}
             </Score>
             <Percentile>
-              상위
-              {userInfo.quizScore === -1 ? ' ?? ' : ` ${percent} `}%
+              {userInfo.quizScore === -1
+                ? ' 측정 전 입니다 '
+                : ` 상위 ${percent} %`}
             </Percentile>
           </GaugeWrapper>
 
