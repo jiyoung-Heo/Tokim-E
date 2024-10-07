@@ -49,9 +49,10 @@ const SearchIcon = styled.img`
 `;
 
 const RegistContainer = styled.div`
-  position: fixed;
-  bottom: 13vh;
-  right: 5vw;
+  position: relative; // relative로 변경
+  margin-top: 3vh; // 리스트와의 간격
+  z-index: 800; // 다른 요소들과 겹치지 않도록 z-index 설정
+  margin-left: 15vw;
 `;
 
 const RegisterButton = styled.button`
@@ -62,8 +63,6 @@ const RegisterButton = styled.button`
   border-radius: 5px;
   font-weight: bold;
   cursor: pointer;
-  z-index: 800;
-  margin-top: 3vh;
   font-size: 15px;
 
   &:hover {
@@ -260,48 +259,44 @@ const RiskMapPage: React.FC = () => {
   };
 
   const handleMarkerClick = (marker: any) => {
-    if (!mapRef.current) return;
-
-    const position = new window.naver.maps.LatLng(marker.lat, marker.lng);
-    mapRef.current.setCenter(position);
+    const { lat, lng } = marker;
+    mapRef.current.setCenter(new window.naver.maps.LatLng(lat, lng));
     mapRef.current.setZoom(15);
+  };
+
+  const handleRegister = () => {
+    // 작성 버튼 클릭 시 등록 로직 추가
+    navigate('./report'); // 등록 페이지로 이동
   };
 
   return (
     <Container>
       <Title>
-        <BackIcon
-          src={backIcon}
-          alt="뒤로가기"
-          onClick={() => navigate('/main')}
-        />
-        위험 신고 목록
+        <BackIcon src={backIcon} alt="뒤로가기" onClick={() => navigate(-1)} />
+        위험 신고 지도
       </Title>
       <SearchContainer>
         <SearchInput
           type="text"
-          placeholder="검색어를 입력하세요"
+          placeholder="신고 제목 또는 내용을 검색하세요"
           value={searchTerm}
           onChange={handleSearch}
         />
         <SearchIcon src={searchIcon} alt="검색 아이콘" />
       </SearchContainer>
       <MapContainer ref={mapContainer} />
-      {searchTerm && filteredMarkers.length > 0 && (
-        <MarkerList>
-          {filteredMarkers.map((marker) => (
-            <MarkerItem
-              key={marker.id}
-              onClick={() => handleMarkerClick(marker)}
-            >
-              {marker.dangerTitle}
+      <MarkerList>
+        {filteredMarkers.length > 0 &&
+          filteredMarkers.map((marker, index) => (
+            <MarkerItem key={index} onClick={() => handleMarkerClick(marker)}>
+              <strong>{marker.dangerTitle}</strong>
+              <p>{marker.dangerContent}</p>
             </MarkerItem>
           ))}
-        </MarkerList>
-      )}
+      </MarkerList>
       <RegistContainer>
-        <RegisterButton onClick={() => navigate('/map/report')}>
-          신고 작성
+        <RegisterButton onClick={handleRegister}>
+          기획부동산 의심 토지 신고하기
         </RegisterButton>
       </RegistContainer>
     </Container>
