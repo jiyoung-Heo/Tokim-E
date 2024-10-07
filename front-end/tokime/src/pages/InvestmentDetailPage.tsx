@@ -1,8 +1,8 @@
 // src/pages/InvestmentDetailPage.tsx
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
-
+import { useNavigate, useParams } from 'react-router-dom';
+import backIcon from '../assets/images/icon/left-actionable.png';
 import LandInformationTab from '../components/Tabs/LandInformationTab';
 import ChecklistTab from '../components/Tabs/ChecklistTab';
 import StoryAdviceTab from '../components/Tabs/StoryAdviceTab';
@@ -11,6 +11,17 @@ import {
   getInvestChecklistDetail,
   getInvestDetail,
 } from '../api/landInvestAxios';
+
+const Title = styled.h2`
+  margin: 0 0 3vh 0;
+  font-size: 25px;
+  font-weight: bold;
+  font-family: 'KoddiUD OnGothic';
+  color: #333333;
+  display: flex;
+  justify-content: left;
+`;
+const BackIcon = styled.img``;
 
 // 탭 스타일
 const TabsContainer = styled.div`
@@ -54,6 +65,8 @@ interface InvestmentInfo {
   checklistIds: number[] | null;
 }
 function InvestmentDetailPage() {
+  const navigate = useNavigate();
+
   const { invest = '' } = useParams<{ invest: string }>();
 
   const [activeTab, setActiveTab] = useState('landInfo');
@@ -80,9 +93,16 @@ function InvestmentDetailPage() {
     };
     fetchInvestmentChecklistData();
   }, []);
+  const goBack = () => {
+    navigate(-1); // 이전 페이지로 이동
+  };
 
   return (
     <div>
+      <Title>
+        <BackIcon src={backIcon} alt="back Icon" onClick={goBack} />
+        {investmentInfo?.landNickname || '별칭 없음'}
+      </Title>
       <TabsContainer>
         <TabItem
           $isActive={activeTab === 'landInfo'}
