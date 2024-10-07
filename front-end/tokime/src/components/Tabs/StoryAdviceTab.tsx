@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import elasticAxios from '../../api/elasticAxios';
 
 interface StoryAdviceTabProps {
   story: string | null; // story는 null일 수 있기 때문에 null을 허용
@@ -38,6 +39,17 @@ const TermDescription = styled.div`
 `;
 
 const StoryAdviceTab: React.FC<StoryAdviceTabProps> = ({ story }) => {
+  useEffect(() => {
+    // stoty가지고 판례랑 기사 검색해올게용
+    const fetchEsNewsData = async () => {
+      const data = await elasticAxios(story);
+      if (data) {
+        console.log(data);
+        // setInvestmentInfo(data);
+      }
+    };
+    fetchEsNewsData();
+  }, []);
   return (
     <Container>
       <RelatedLawsTitle>사연</RelatedLawsTitle>
