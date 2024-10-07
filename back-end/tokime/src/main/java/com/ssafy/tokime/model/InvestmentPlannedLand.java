@@ -64,8 +64,8 @@ public class InvestmentPlannedLand {
 
     @Column
     private String landNickname;
-
-    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
+    @Builder.Default
+    @Column
     private Integer landDanger=0;
 
     @Builder .Default
@@ -92,6 +92,22 @@ public class InvestmentPlannedLand {
                 .landDanger(this.landDanger)
                 .landNickname(this.landNickname)
                 .build();
+    }
+
+    public InvestmentPlannedLand updateFromDto(InvestmentPlannedLandDTO dto) {
+        this.landAddress = dto.getLandAddress();
+        this.landGradient = dto.getLandGradient();
+        this.landPrice = dto.getLandPrice();
+        this.landRoad = dto.getLandRoad();
+        this.landOwner = dto.getLandOwner();
+        this.landUseStatus = dto.getLandUseStatus();
+        this.landStory = dto.getLandStory();
+        this.plannedLandPyeong = dto.getPlannedLandPyeong();
+        this.plannedLandPrice = dto.getPlannedLandPrice();
+        this.checkedCount = dto.getCheckedCount();
+        this.landNickname = dto.getLandNickname();
+        this.landDanger = dto.getLandDanger();
+        return this;
     }
 
 }
