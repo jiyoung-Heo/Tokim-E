@@ -1,5 +1,6 @@
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import StartPage from '../pages/StartPage';
 import MainPage from '../pages/MainPage';
 import AddressSearch from '../pages/AddressSearch';
@@ -16,8 +17,11 @@ import RiskMapPage from '../pages/RiskMapPage'; // 새로 추가
 import Layout from '../components/layouts/layout'; // Layout 추가
 import RiskMapReportPage from '../pages/RiskMapReportPage';
 import LandScorePage from '../pages/LandScorePage';
+import { RootState } from '../redux/store';
 
 function AppRouter() {
+  const user = useSelector((state: RootState) => state.user);
+  console.log(user);
   return (
     <Routes>
       <Route path="/" element={<StartPage />} /> {/* 하단탭과 사이드바 없음 */}
@@ -66,41 +70,61 @@ function AppRouter() {
       <Route
         path="/my-page"
         element={
-          <Layout>
-            <MyPage />
-          </Layout>
+          user.name ? ( // 인증 여부 확인
+            <Layout>
+              <MyPage />
+            </Layout>
+          ) : (
+            <Navigate to="/login-required" replace /> // 비회원일 경우 로그인 페이지로 이동
+          )
         }
       />
       <Route
         path="/investment"
         element={
-          <Layout>
-            <InvestmentPage />
-          </Layout>
+          user.name ? ( // 인증 여부 확인
+            <Layout>
+              <InvestmentPage />
+            </Layout>
+          ) : (
+            <Navigate to="/login-required" replace /> // 비회원일 경우 로그인 페이지로 이동
+          )
         }
       />
       <Route
         path="/investment-register"
         element={
-          <Layout>
-            <InvestmentRegisterPage />
-          </Layout>
+          user.name ? ( // 인증 여부 확인
+            <Layout>
+              <InvestmentRegisterPage />
+            </Layout>
+          ) : (
+            <Navigate to="/login-required" replace /> // 비회원일 경우 로그인 페이지로 이동
+          )
         }
       />
       <Route
         path="/investment-detail/:invest"
         element={
-          <Layout>
-            <InvestmentDetailPage />
-          </Layout>
+          user.name ? ( // 인증 여부 확인
+            <Layout>
+              <InvestmentDetailPage />
+            </Layout>
+          ) : (
+            <Navigate to="/login-required" replace /> // 비회원일 경우 로그인 페이지로 이동
+          )
         }
       />
       <Route
         path="/land-purchase-quiz"
         element={
-          <Layout>
-            <LandPurchaseQuiz />
-          </Layout>
+          user.name ? (
+            <Layout>
+              <LandPurchaseQuiz />
+            </Layout>
+          ) : (
+            <Navigate to="/login-required" replace /> // 비회원일 경우 로그인 페이지로 이동
+          )
         }
       />
       <Route
