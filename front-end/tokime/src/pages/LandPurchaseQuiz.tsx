@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { setQuizScore } from '../redux/slices/userSlice'; // 리덕스 액션 가져오기
 import userQuizListAxios from '../api/quizListAxios'; // 퀴즈 API 호출
 import modifyUserQuizAxios from '../api/modifyUserQuizAxios'; // 퀴즈 점수 수정 API 호출
-import Modal from './Modal'; // 모달 컴포넌트 가져오기
+import Modal from './Modal'; // 모달 컴포넌트 가져오기잉
 import backIcon from '../assets/images/icon/left-actionable.png';
 
 // 이미지 미리 import
@@ -39,7 +39,6 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   background: #f3f7fb;
-  align-items: center;
 `;
 
 const Title = styled.h2`
@@ -56,7 +55,6 @@ const Divider = styled.hr`
   width: 90%;
   border: none;
   border-top: 2px solid rgba(121, 121, 130, 0.1);
-  margin: 1vh 0; // 상하 여백 추가
 `;
 
 const QuestionText = styled.p`
@@ -78,7 +76,6 @@ const QuizContent = styled.div`
 const OptionContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 1vh 0;
 `;
 
 const Option = styled.button<{ isCorrect: boolean; isWrong: boolean }>`
@@ -167,12 +164,6 @@ function LandPurchaseQuiz() {
         setQuizzes(data); // 백엔드에서 20개의 퀴즈를 받음
       }
     };
-    const preloadImages = (imageArray: string[]) => {
-      imageArray.forEach((src) => {
-        const img = new Image();
-        img.src = src;
-      });
-    };
 
     fetchQuizzes();
     preloadImages(tokimImages);
@@ -231,7 +222,7 @@ function LandPurchaseQuiz() {
           openModal(computedFinalScore); // 모달 열기
         }
         setSelectedAnswer(null); // 선택된 답변 초기화
-      }, 1300); // 1초 후 다음 문제로
+      }, 1000); // 1초 후 다음 문제로
     }
   };
 
