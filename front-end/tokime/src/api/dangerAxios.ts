@@ -1,10 +1,8 @@
 import API from '../utils/API';
 
 // 모든 신고 정보 가져오기 (위도, 경도 기반)
-export const getDangerInfo = async (lat: number, lng: number) => {
-  return API.get('/danger', {
-    params: { lat, lng },
-  })
+export const getDangerInfo = async () => {
+  return API.get('/danger')
     .then((res) => {
       console.log(res.data);
       return res.data;
