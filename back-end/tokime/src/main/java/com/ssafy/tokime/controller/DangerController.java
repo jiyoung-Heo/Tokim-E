@@ -24,9 +24,9 @@ public class DangerController {
 
     // 줌인 해서 특정 토지의 신고글 목록 조회 - 제목과 신고글 id만 제공
     @GetMapping("")
-    public ResponseEntity<?> getDanger(@RequestParam(name="lat") Double lat, @RequestParam(name="lng") Double lng) {
+    public ResponseEntity<?> getDanger() {
         try {
-            List<Danger> dangers = dangerService.dangerList(lat, lng);
+            List<Danger> dangers = dangerService.dangerList();
             logger.info("가져온 값들은? " + dangers.size());
             List<DangerListDTO> list = new ArrayList<>();
             for (Danger danger : dangers) {
