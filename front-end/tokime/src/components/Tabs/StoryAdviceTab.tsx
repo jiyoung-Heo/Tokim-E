@@ -1,6 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 
+interface StoryAdviceTabProps {
+  story: string | null; // story는 null일 수 있기 때문에 null을 허용
+}
 // 스타일 정의
 const Container = styled.div`
   width: 100%;
@@ -33,12 +36,13 @@ const TermDescription = styled.div`
   line-height: 5vw;
   color: #000000;
 `;
-function StoryAdviceTab() {
+
+const StoryAdviceTab: React.FC<StoryAdviceTabProps> = ({ story }) => {
   return (
     <Container>
       <RelatedLawsTitle>사연</RelatedLawsTitle>
       <RelatedLawsContainer>
-        <TermDescription>내용</TermDescription>
+        <TermDescription>{story}</TermDescription>
       </RelatedLawsContainer>
       <RelatedLawsTitle>위험사례</RelatedLawsTitle>
       <RelatedLawsContainer>
@@ -46,6 +50,6 @@ function StoryAdviceTab() {
       </RelatedLawsContainer>
     </Container>
   );
-}
+};
 
 export default StoryAdviceTab;
