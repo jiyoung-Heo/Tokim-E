@@ -131,7 +131,6 @@ function RiskMapReportPage() {
     }
   }, []);
 
-  // 신고글 등록 함수
   const handleSubmit = async () => {
     if (lat && lng && dangerTitle && dangerContent) {
       const dangerData = {
@@ -144,7 +143,7 @@ function RiskMapReportPage() {
       try {
         const res = await registDanger(dangerData); // axios로 데이터 전송
         if (res) {
-          alert('신고글이 성공적으로 등록되었습니다.');
+          navigate('/risk-map'); // 등록 성공 후 /risk-map 경로로 이동
         }
       } catch (e) {
         alert('신고글 등록에 실패했습니다.');
