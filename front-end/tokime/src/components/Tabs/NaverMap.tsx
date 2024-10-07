@@ -7,7 +7,6 @@ import { getSearchLandInfo } from '../../api/landAxios';
 const MapContainer = styled.div`
   width: 100%;
   height: 100%;
-  z-index: 3000;
 `;
 
 const NaverMap: React.FC = () => {
