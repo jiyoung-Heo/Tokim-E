@@ -109,7 +109,7 @@ const RiskMapPage: React.FC = () => {
       if (!map) return; // 지도 초기화 실패 시 종료
 
       // ID 5013에서 5214까지의 데이터를 가져오기
-      const fetchPromises = Array.from({ length: 230 }, (_, index) => {
+      const fetchPromises = Array.from({ length: 300 }, (_, index) => {
         const id = 5013 + index; // ID 계산
         return getDangerInfoDetail(id)
           .then((data) => {
