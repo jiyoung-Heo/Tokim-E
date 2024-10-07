@@ -20,27 +20,33 @@ public class RefreshTokenService {
 
     /**
      * 토큰 저장하기
-     * @author 허지영
+     *
      * @param data
      * @param refreshToken
      * @param accessToken
+     * @param oauthToken
+     * @author 허지영
      */
-    public void saveTokenInfo(String data, String refreshToken, String accessToken) {
+    public void saveTokenInfo(String data, String refreshToken, String accessToken, String oauthToken) {
         logger.info("Saving token info");
-        logger.info("refreshToken: "+refreshToken);
-        logger.info("accessToken:"+accessToken);
-        logger.info("data: "+data);
-        RefreshToken save = repository.save(new RefreshToken(data, accessToken, refreshToken));
-        // find
-        System.out.println(save.getId()+"아이디입니다");
+        logger.info("refreshToken: " + refreshToken);
+        logger.info("accessToken: " + accessToken);
+        logger.info("oauthToken: " + oauthToken);
+        logger.info("data: " + data);
+
+        // RefreshToken 객체에 kakaoAccessToken도 함께 저장
+        RefreshToken save = repository.save(new RefreshToken(data, accessToken, refreshToken, oauthToken));
+
+        // 저장된 토큰 정보 확인
+        System.out.println(save.getId() + " 아이디입니다");
         Optional<RefreshToken> result = repository.findById(save.getId());
 
-        // Handling
-        // 해당 data 존재시 return.
-        if(result.isPresent()) {
-            logger.info("save result: "+result.get().toString());
-        }else {throw new RuntimeException("Database has no Data");}
-
+        // 저장된 데이터가 존재하는지 확인
+        if (result.isPresent()) {
+            logger.info("save result: " + result.get().toString());
+        } else {
+            throw new RuntimeException("Database has no Data");
+        }
     }
 
     /**

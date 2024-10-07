@@ -139,6 +139,8 @@ public class InvestmentPlannedLandService {
             throw new RuntimeException("접근 권한이 없습니다");
         }
 
+
+
         return investmentPlannedLand.toDTO(); //dto변환
 
     }

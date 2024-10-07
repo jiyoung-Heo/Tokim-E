@@ -27,6 +27,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        String accessToken = userRequest.getAccessToken().getTokenValue();
+        logger.info("oauth accessToken: "+accessToken);
+
         OAuth2User oAuth2User = super.loadUser(userRequest);
         logger.info("oAuth2User"+oAuth2User);
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
@@ -58,6 +61,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
             UserDTO userDTO = new UserDTO();
             userDTO.setData(oAuth2Response.getEmail());
+            userDTO.setAccessToken(accessToken);
             //새로운 유저 생성
             return new CustomOAuth2User(userDTO);
         }else{
@@ -77,6 +81,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userDTO.setData(oAuth2Response.getEmail());
 //            userDTO.setData(oAuth2Response.getName());
             userDTO.setRoles(ROLE.USER.name());
+            userDTO.setAccessToken(accessToken);
 
             return new CustomOAuth2User(userDTO);
 

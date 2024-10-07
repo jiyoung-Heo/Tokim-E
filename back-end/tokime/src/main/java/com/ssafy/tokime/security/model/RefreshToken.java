@@ -26,6 +26,9 @@ public class RefreshToken implements Serializable {
 
     private String refreshToken;
 
+    private String oauthToken;  // 카카오 accessToken 필드 추가
+
+
     public void updateAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }

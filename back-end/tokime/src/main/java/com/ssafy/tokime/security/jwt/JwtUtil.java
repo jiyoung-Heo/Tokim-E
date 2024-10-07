@@ -38,13 +38,15 @@ public class JwtUtil {
         this.tokenService = tokenService;
     }
 
-    public GeneratedToken generateToken(String data, String role) {
+    public GeneratedToken generateToken(String data, String role, String oauthToken) {
         // refreshToken과 accessToken을 생성한다.
         String refreshToken = generateRefreshToken(data, role);
         String accessToken = generateAccessToken(data, role);
-        // 토큰을 Redis에 저장한다.
-        tokenService.saveTokenInfo(data, refreshToken, accessToken);
-        return new GeneratedToken(accessToken, refreshToken);
+
+        // Redis에 JWT 토큰과 함께 카카오 accessToken 저장
+        tokenService.saveTokenInfo(data, refreshToken, accessToken, oauthToken);
+
+        return new GeneratedToken(accessToken, refreshToken, oauthToken);
     }
 
     public String generateRefreshToken(String data, String role) {
