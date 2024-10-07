@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import searchIcon from '../assets/images/icon/search.svg';
@@ -8,6 +9,7 @@ import starFilled from '../assets/images/icon/star_filled.svg'; // 즐겨찾기 
 import backIcon from '../assets/images/icon/left-actionable.png';
 import { getAllTerms, registTermLike, deleteTermLike } from '../api/termAxios'; // API 서비스 호출
 import LoadingSpinner from '../components/layouts/LoadingSpinner';
+import { RootState } from '../redux/store';
 
 const Container = styled.div`
   width: 100%;
@@ -225,6 +227,7 @@ const LandTerms = () => {
   const [likedTerms, setLikedTerms] = useState<number[]>([]); // 즐겨찾기된 용어 ID 목록
   const [showFavorites, setShowFavorites] = useState(false); // 즐겨찾기 모드 여부
   const termContainerRef = useRef<HTMLDivElement>(null);
+  const user = useSelector((state: RootState) => state.user);
 
   const fetchTerms = async () => {
     try {
@@ -392,14 +395,18 @@ const LandTerms = () => {
             filteredTerms.map((term) => (
               <TermWrapper key={term.termId}>
                 <Term to={`/land-terms/${term.termId}`}>{term.termName}</Term>
-                <StarIcon
-                  src={likedTerms.includes(term.termId) ? starFilled : starIcon} // isLiked에 따라 이미지 변경
-                  alt="즐겨찾기"
-                  isLiked={likedTerms.includes(term.termId)}
-                  onClick={() =>
-                    toggleLike(term.termId, likedTerms.includes(term.termId))
-                  }
-                />
+                {user.name && (
+                  <StarIcon
+                    src={
+                      likedTerms.includes(term.termId) ? starFilled : starIcon
+                    } // isLiked에 따라 이미지 변경
+                    alt="즐겨찾기"
+                    isLiked={likedTerms.includes(term.termId)}
+                    onClick={() =>
+                      toggleLike(term.termId, likedTerms.includes(term.termId))
+                    }
+                  />
+                )}
               </TermWrapper>
             ))
           ) : (
