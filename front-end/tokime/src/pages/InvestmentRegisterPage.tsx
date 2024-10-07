@@ -91,11 +91,6 @@ function InvestmentRegistrationPage() {
       return;
     }
 
-    if (story.length >= 4000) {
-      alert('4천자 이내요 작성해주세요.');
-      return;
-    }
-
     const investmentData = {
       landAddress: address, // 주소
       landGradient: landInfo.landGradient, // 지형

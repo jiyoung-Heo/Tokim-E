@@ -61,6 +61,7 @@ function StoryWritingRegistrationTab({
       </p>
       <StyledTextInput
         placeholder="사연을 입력하세요."
+        maxLength={4000}
         value={story}
         onChange={(e) => setStory(e.target.value)} // Update state on change
       />
