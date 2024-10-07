@@ -152,7 +152,9 @@ function LandInformationRegistrationTab({
 
   useEffect(() => {
     if (selectedDetail) {
-      setAddress(selectedDetail.landDistrict + selectedDetail.landAddress);
+      setAddress(
+        `${selectedDetail.landDistrict} ${selectedDetail.landAddress}`,
+      );
       setLandInfo(selectedDetail); // selectedDetail이 있을 경우 setLandInfo로 설정
     }
     // 새로 고침이 일어났을 때 selectedDetail을 날림
