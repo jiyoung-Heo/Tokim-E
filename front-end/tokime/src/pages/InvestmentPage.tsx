@@ -184,6 +184,14 @@ const InvestWrapper = styled.div`
 `;
 
 // 투자예정지 왼쪽 글 정보
+const NaverMap = styled.div`
+  width: 40vw;
+  height: 40vw;
+  display: block;
+  color: #333333;
+`;
+
+// 투자예정지 왼쪽 글 정보
 const Invest = styled.div`
   width: 60vw;
   display: block;
@@ -514,7 +522,9 @@ function InvestmentPage() {
           filterInvest.map((invest) => (
             <InvestList key={invest.investmentPlannedLandId}>
               <InvestWrapper>
-                <NaverMapProps landAddress={invest.landAddress} />
+                <NaverMap>
+                  <NaverMapProps landAddress={invest.landAddress} />
+                </NaverMap>
                 <Invest onClick={() => handleDetailClick(invest)}>
                   <NickName>[ {invest.landNickname} ]</NickName>
                   <Address>{invest.landAddress}</Address>
