@@ -34,24 +34,7 @@ public class InvestmentPlannedLandService {
                 .orElseThrow(() -> new RuntimeException("email로 조회 했으나 존재 하지 않는 유저"));
 
             // 투자예정지 등록정보 entity로 변환
-            InvestmentPlannedLand investmentPlannedLand = InvestmentPlannedLand.builder()
-                    .user(user)
-                    .landAddress(dto.getLandAddress())
-                    .landGradient(dto.getLandGradient())
-                    .landPrice(dto.getLandPrice())
-                    .landRoad(dto.getLandRoad())
-                    .landOwner(dto.getLandOwner())
-                    .landUseStatus(dto.getLandUseStatus())
-                    .landCreatedAt(new Date()) // 현재 시간으로 설정
-                    .landUpdatedAt(new Date()) // 현재 시간으로 설정
-                    .landStory(dto.getLandStory())
-                    .plannedLandPyeong(dto.getPlannedLandPyeong())
-                    .plannedLandPrice(dto.getPlannedLandPrice())
-                    .checkedCount(dto.getCheckedCount()) // 초기값 설정
-                    .landNickname(dto.getLandNickname())
-                    .landDanger(dto.getLandDanger())
-                    .build();
-
+        InvestmentPlannedLand investmentPlannedLand = dto.toEntity(user);
             // 투자 예정지 저장
             investmentPlannedLand = investmentPlannedLandRepository.save(investmentPlannedLand);
 
@@ -123,18 +106,7 @@ public class InvestmentPlannedLandService {
         }
 
         // DTO의 내용을 엔티티에 업데이트
-        investmentPlannedLand.setLandAddress(dto.getLandAddress());
-        investmentPlannedLand.setLandGradient(dto.getLandGradient());
-        investmentPlannedLand.setLandPrice(dto.getLandPrice());
-        investmentPlannedLand.setLandRoad(dto.getLandRoad());
-        investmentPlannedLand.setLandOwner(dto.getLandOwner());
-        investmentPlannedLand.setLandUseStatus(dto.getLandUseStatus());
-        investmentPlannedLand.setLandStory(dto.getLandStory());
-        investmentPlannedLand.setPlannedLandPyeong(dto.getPlannedLandPyeong());
-        investmentPlannedLand.setPlannedLandPrice(dto.getPlannedLandPrice());
-        investmentPlannedLand.setCheckedCount(dto.getCheckedCount());
-        investmentPlannedLand.setLandNickname(dto.getLandNickname());
-        investmentPlannedLand.setLandDanger(dto.getLandDanger());
+        investmentPlannedLand.updateFromDto(dto);
         // 수정된 투자 예정지 저장
         investmentPlannedLandRepository.save(investmentPlannedLand);
 
