@@ -84,9 +84,15 @@ function InvestmentRegistrationPage() {
 
   const handleRegister = async () => {
     // 서버로 POST 요청 보내는 로직 구현
+    console.log(story.length);
     console.log({ address, landInfo, check, story });
     if (!landInfo || expectedArea === '' || expectedPrice === '') {
       alert('모든 필드를 입력해주세요.');
+      return;
+    }
+
+    if (story.length >= 4000) {
+      alert('4천자 이내요 작성해주세요.');
       return;
     }
 
