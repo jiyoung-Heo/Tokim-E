@@ -304,14 +304,6 @@ const LandDetailTab: React.FC = () => {
 
   return (
     <div style={{ backgroundColor: '#f3f7fb' }}>
-      <h3 style={{ display: 'flex', alignItems: 'center' }}>
-        {selectedDetail && ( // 선택된 상세 정보가 있을 때만 BackIcon 표시
-          <BackIcon src={backIcon} alt="back Icon" onClick={handleBackClick} />
-        )}
-        {selectedDetail
-          ? `${selectedDetail.landDistrict} ${selectedDetail.landAddress}`
-          : null}
-      </h3>
       {selectedDetail ? ( // 선택된 상세 정보가 있으면
         <div>
           <MapBox>
@@ -464,60 +456,22 @@ const LandDetailTab: React.FC = () => {
         </div>
       ) : (
         // 선택된 상세 정보가 없으면
-        <div>
-          {landDetails.length > 0 ? (
-            landDetails.map((detail) => (
-              <div
-                key={detail.landId}
-                style={{
-                  marginBottom: '1vh',
-                  border: '1px solid #ddd',
-                  borderRadius: '1vh',
-                  padding: 'calc(1vw + 1vh)',
-                  backgroundColor: '#fff',
-                  transition: 'transform 0.2s',
-                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={() => handleDetailClick(detail)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontWeight: 'bold',
-                    color: '#333',
-                    fontSize: 'calc(1vw + 1vh)',
-                    textAlign: 'left',
-                    width: '100%', // 버튼이 카드 전체를 차지하도록
-                  }}
-                >
-                  {detail.landDistrict} {detail.landAddress}
-                </button>
-              </div>
-            ))
-          ) : (
-            <div
-              style={{ textAlign: 'center', marginTop: '20px', opacity: 0.85 }}
-            >
-              <img
-                src={nodataimg}
-                alt="No data available"
-                style={{ width: '300px', height: 'auto' }} // 이미지 크기 조정
-              />
-              <div
-                style={{
-                  color: '#27C384',
-                  fontWeight: 'bold',
-                  marginTop: '10px',
-                  fontSize: '1.5em',
-                }}
-              >
-                <p>원하는 토지를 검색해보세요!</p>
-              </div>
-            </div>
-          )}
+        <div style={{ textAlign: 'center', marginTop: '20px', opacity: 0.85 }}>
+          <img
+            src={nodataimg}
+            alt="No data available"
+            style={{ width: '300px', height: 'auto' }} // 이미지 크기 조정
+          />
+          <div
+            style={{
+              color: '#27C384',
+              fontWeight: 'bold',
+              marginTop: '10px',
+              fontSize: '1.5em',
+            }}
+          >
+            <p>원하는 토지를 검색해보세요!</p>
+          </div>
         </div>
       )}
     </div>
