@@ -57,6 +57,9 @@ const LandDetailTab: React.FC = () => {
   };
   const [showInfo, setShowInfo] = useState<{ [key: string]: boolean }>({});
   const prevLandDetailsRef = useRef(landDetails);
+  const infoButtonRefs = useRef<{ [key: string]: HTMLButtonElement | null }>(
+    {},
+  ); // 토글 버튼 참조
 
   useEffect(() => {
     // landDetails가 변경되었을 때만 상태를 리셋
@@ -68,16 +71,26 @@ const LandDetailTab: React.FC = () => {
     }
   }, [landDetails, dispatch]);
 
-  const handleDetailClick = async (detail: any) => {
-    dispatch(setLandDetail(detail));
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // 클릭한 요소가 infoButtonRefs의 버튼이 아닐 때
+      if (
+        !Object.values(infoButtonRefs.current).some(
+          (ref) => ref && ref.contains(event.target as Node),
+        )
+      ) {
+        setShowInfo({}); // 모든 툴팁 닫기
+      }
+    };
 
-    const lawData = await getLandLawInfo(detail.landDistrictCode); // detail에서 필요한 값을 사용해야 합니다.
-    dispatch(setLawInfo(lawData));
-  };
+    // 클릭 이벤트 리스너 등록
+    document.addEventListener('mousedown', handleClickOutside);
 
-  const handleBackClick = () => {
-    dispatch(setLandDetail(null));
-  };
+    // 컴포넌트 언마운트 시 리스너 제거
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const toggleInfo = (key: string) => {
     setShowInfo((prev) => {
@@ -399,6 +412,9 @@ const LandDetailTab: React.FC = () => {
                     }}
                     onClick={() => toggleInfo(item.key)}
                     aria-label={`${item.label} 정보`}
+                    ref={(el) => {
+                      infoButtonRefs.current[item.key] = el;
+                    }}
                   >
                     <img
                       src="/icons/info.png"
