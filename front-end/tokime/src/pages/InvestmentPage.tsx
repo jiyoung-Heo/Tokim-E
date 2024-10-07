@@ -473,8 +473,8 @@ function InvestmentPage() {
                     {invest.landDanger === 1
                       ? '중간'
                       : invest.landDanger === 2
-                        ? '높음'
-                        : '낮음'}
+                        ? '낮음'
+                        : '높음'}
                   </WarningScore>
                 </Invest>
               </InvestWrapper>
