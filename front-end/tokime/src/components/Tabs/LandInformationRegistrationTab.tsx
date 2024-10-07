@@ -178,7 +178,7 @@ function LandInformationRegistrationTab({
         // Extract district and detailed address
         const addressParts = fullAddress.split(' ');
         const district = `${data.sigungu} ${data.bname}`;
-        const addressDetail = addressParts.slice(3).join(' ');
+        const addressDetail = addressParts.slice(-1)[0];
 
         // API call
         getSearchLandInfo(district, addressDetail)
