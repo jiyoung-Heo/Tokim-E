@@ -270,7 +270,7 @@ const RiskMapPage: React.FC = () => {
       <SearchContainer>
         <SearchInput
           type="text"
-          placeholder="검색..."
+          placeholder="검색"
           value={searchTerm}
           onChange={handleSearch}
         />
