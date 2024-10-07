@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
+
 import sidebarIcon from '../../assets/images/icon/sidebar-icon.svg';
 import TokimLogo from '../../assets/images/TokimEnglogo.png';
 import sidebarUser from '../../assets/images/icon/sidebaruser.png';
@@ -176,6 +178,18 @@ const WithdrawBtn = styled.p`
   opacity: 0.6;
 `;
 
+function getCookieValue(name: string): string | null {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    const cookieValue = parts.pop();
+    if (cookieValue) {
+      return cookieValue.split(';').shift() || null; // split이나 shift가 undefined일 경우 null 반환
+    }
+  }
+  return null;
+}
+
 function Sidebar() {
   const dispatch = useDispatch();
   const userInfo = useSelector((state: RootState) => state.user);
@@ -258,6 +272,7 @@ function Sidebar() {
     const fetchLogout = async () => {
       const data = await withdrawAxios();
       if (data) {
+        console.log(data);
         persistor.purge();
         dispatch({ type: 'RESET_ALL' });
       }
