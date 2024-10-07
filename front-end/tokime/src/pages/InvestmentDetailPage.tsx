@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import LandInformationTab from '../components/Tabs/LandInformationTab';
 import ChecklistTab from '../components/Tabs/ChecklistTab';
 import StoryAdviceTab from '../components/Tabs/StoryAdviceTab';
-import LandDetailTab from '../components/Tabs/LandDetailTab';
+import InvestmentDetailTab from '../components/Tabs/InvestmentDetailTab';
 import {
   getInvestChecklistDetail,
   getInvestDetail,
@@ -104,7 +104,9 @@ function InvestmentDetailPage() {
         </TabItem>
       </TabsContainer>
 
-      {activeTab === 'landInfo' && <LandDetailTab />}
+      {activeTab === 'landInfo' && (
+        <InvestmentDetailTab investmentInfoProp={investmentInfo} />
+      )}
       {activeTab === 'checklist' && <ChecklistTab check={check} />}
       {activeTab === 'storyAdvice' && (
         <StoryAdviceTab story={investmentInfo?.landStory || null} />
