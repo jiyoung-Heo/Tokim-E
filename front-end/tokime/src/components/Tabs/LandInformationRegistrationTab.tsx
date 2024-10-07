@@ -104,6 +104,18 @@ const UserSearchInput = styled.input`
   }
 `;
 
+const UserSearchDiv = styled.div`
+  box-sizing: border-box;
+  background: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 10px;
+  padding: 1vh;
+  width: 50%;
+  @media (max-width: 768px) {
+    width: 100%; /* 전체 너비로 설정 */
+  }
+`;
+
 // 가로선
 const Divider = styled.hr`
   width: 100%;
@@ -220,6 +232,7 @@ function LandInformationRegistrationTab({
 
     onNext();
   };
+  const maxLandScale = landInfo ? Math.floor(landInfo.landScale / 3.3) : 0;
 
   return (
     <Container>
@@ -304,15 +317,20 @@ function LandInformationRegistrationTab({
           onChange={(e) => {
             const value = e.target.value === '' ? '' : Number(e.target.value);
             setExpectedArea(
-              typeof value === 'number' && value >= 0 ? value : '',
-            ); // 빈 문자열 또는 0 이상인 값만 허용
+              typeof value === 'number' &&
+                value > 0 &&
+                value <= maxLandScale &&
+                Number.isInteger(value) // 정수인지 확인
+                ? value
+                : '',
+            );
           }}
-          placeholder="예: 100"
+          placeholder={`최대 입력 가능 값: ${maxLandScale} 평`}
         />
       </LandInfoFieldContainer>
 
       <LandInfoFieldContainer>
-        <LandInfoFieldLabel>가격</LandInfoFieldLabel>
+        <LandInfoFieldLabel>총가격</LandInfoFieldLabel>
         <UserSearchInput
           type="number"
           min="0"
@@ -320,11 +338,28 @@ function LandInformationRegistrationTab({
           onChange={(e) => {
             const value = e.target.value === '' ? '' : Number(e.target.value);
             setExpectedPrice(
-              typeof value === 'number' && value >= 0 ? value : '',
-            ); // 빈 문자열 또는 0 이상인 값만 허용
+              typeof value === 'number' &&
+                value > 0 &&
+                Number.isInteger(value) && // 정수인지 확인
+                value <= Number.MAX_SAFE_INTEGER // 최대 안전 정수 범위 확인
+                ? value
+                : '',
+            ); // 빈 문자열 또는 0 이상인 정수만 허용, 최대값은 안전한 정수 범위 내
           }}
           placeholder="예: 50000000"
         />
+      </LandInfoFieldContainer>
+      <LandInfoFieldContainer>
+        <LandInfoFieldLabel>평당가</LandInfoFieldLabel>
+        <UserSearchDiv>
+          {
+            Number(expectedArea) > 0 && Number(expectedPrice) > 0
+              ? `${Math.floor(
+                  Number(expectedPrice) / Number(expectedArea),
+                ).toLocaleString()} 원` // 평당가 계산 및 포맷
+              : '값이 없습니다.' // 계산할 수 없을 때 메시지
+          }
+        </UserSearchDiv>
       </LandInfoFieldContainer>
       <RegistContainer>
         <RegisterButton onClick={handleCancel}>취소</RegisterButton>
