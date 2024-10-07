@@ -403,7 +403,16 @@ const LandTerms = () => {
               </TermWrapper>
             ))
           ) : (
-            <div>검색 결과가 없습니다.</div>
+            <div
+              style={{
+                color: '#27C384',
+                fontWeight: 'bold',
+                marginTop: '10px',
+                fontSize: '1.5em',
+              }}
+            >
+              검색 결과가 없습니다. T^T
+            </div>
           )}
         </TermList>
         <AlphabetNavContainer>
