@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { PulseLoader } from 'react-spinners';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setQuizScore } from '../redux/slices/userSlice'; // 리덕스 액션 가져오기
 import userQuizListAxios from '../api/quizListAxios'; // 퀴즈 API 호출
 import modifyUserQuizAxios from '../api/modifyUserQuizAxios'; // 퀴즈 점수 수정 API 호출
-import Modal from './Modal'; // 모달 컴포넌트 가져오기
+import Modal from './Modal'; // 모달 컴포넌트 가져오기잉
 import backIcon from '../assets/images/icon/left-actionable.png';
 
 // 이미지 미리 import
@@ -51,9 +50,7 @@ const Title = styled.h2`
   display: flex;
   justify-content: left;
 `;
-
 const BackIcon = styled.img``;
-
 const Divider = styled.hr`
   width: 90%;
   border: none;
@@ -61,23 +58,19 @@ const Divider = styled.hr`
 `;
 
 const QuestionText = styled.p`
-  margin: 1vh 0; // 상하 여백 통일
-  font-family: 'KoddiUD OnGothic'; // 폰트 설정
-  color: #504644; // 텍스트 색상
-  font-size: 1.5rem; // 텍스트 크기 증가
-  font-weight: bold; // 글씨 두껍게
-  background-color: #f9f9f9; // 배경색 추가
-  padding: 20px; // 내부 여백 추가
-  border-radius: 30px; // 모서리 둥글게
-  border: 1px solid #ccc; // 테두리 추가
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); // 부드러운 그림자 추가
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+  font-family: 'Pretendard';
+  color: #27c384;
+  white-space: normal;
+  //word-break: keep-all;
+  //overflow-wrap: break-word;
 `;
 
 const QuizContent = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 1px;
-  padding: 1px;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const OptionContainer = styled.div`
@@ -88,11 +81,12 @@ const OptionContainer = styled.div`
 const Option = styled.button<{ isCorrect: boolean; isWrong: boolean }>`
   display: flex;
   align-items: center;
-  padding: 8px;
-  margin-bottom: 5vh;
+  padding: 5px;
+  margin-bottom: 2vh;
   border: none;
-  font-family: 'KoddiUD OnGothic';
-  font-size: 5.5vw;
+  cursor: pointer;
+  font-family: 'Pretendard';
+  font-size: 5vw;
   font-weight: bold;
   text-align: left;
   border-radius: 20px;
@@ -103,9 +97,7 @@ const Option = styled.button<{ isCorrect: boolean; isWrong: boolean }>`
   }};
   color: ${({ isCorrect, isWrong }) =>
     isCorrect || isWrong ? '#fff' : '#797982'};
-  transition:
-    background-color 0.6s ease,
-    transform 0.2s ease;
+  transition: background-color 0.3s ease;
 `;
 
 const OptionIcon = styled.img`
@@ -121,31 +113,6 @@ const QuizImage = styled.img<{ size: number }>`
   height: ${(props) => props.size}px;
   max-width: ${(props) => props.size}px;
   max-height: ${(props) => props.size}px;
-  // display: flex;
-  // justify-content: space-between;
-  // align-items: center;
-`;
-
-const TextBox = styled.div`
-  display: flex;
-  align-items: center; // 세로 가운데 정렬
-  justify-content: center; // 가로 가운데 정렬
-  height: 150px; // 이미지와 동일한 높이
-  width: 200px; // 원하는 너비 (조정 가능)
-  background-color: #ffffff; // 배경색
-  border: 1px solid #ccc; // 테두리
-  border-radius: 10px; // 모서리 둥글게
-  padding: 15px; // 내부 여백
-  font-family: 'Pretendard', sans-serif; // 폰트 설정
-  color: #333; // 텍스트 색상
-  font-size: 1.2rem; // 텍스트 크기
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); // 부드러운 그림자 추가
-  transition: box-shadow 0.2s ease; // 변환 효과 추가
-`;
-
-const SpinnerPlace = styled.div`
-  display: flex;
-  justify-content: center; // 가로 가운데 정렬
 `;
 
 const optionIcons = [Option1Icon, Option2Icon, Option3Icon, Option4Icon];
@@ -172,7 +139,12 @@ const tokimImages = [
   Tokim19,
   Tokim20,
 ];
-
+const preloadImages = (imageArray: string[]) => {
+  imageArray.forEach((src) => {
+    const img = new Image();
+    img.src = src;
+  });
+};
 // 퀴즈 컴포넌트
 function LandPurchaseQuiz() {
   const navigate = useNavigate();
@@ -184,8 +156,7 @@ function LandPurchaseQuiz() {
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림 여부
   const [finalScore, setFinalScore] = useState(0); // 최종 점수 저장
   const dispatch = useDispatch();
-  const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null); // 피드백 메시지 상태
-  const [correctAnswers, setCorrectAnswers] = useState(0);
+
   useEffect(() => {
     const fetchQuizzes = async () => {
       const data = await userQuizListAxios();
@@ -195,19 +166,24 @@ function LandPurchaseQuiz() {
     };
 
     fetchQuizzes();
+    preloadImages(tokimImages);
   }, []);
-
   const goBack = () => {
     navigate(-1); // 이전 페이지로 이동
   };
 
-  const openModal = (score: number, correctCount: number) => {
+  const openModal = (score: number) => {
     setFinalScore(score);
-    setCorrectAnswers(correctAnswersCount);
     setIsModalOpen(true); // 모달 열기
   };
 
   const closeModal = () => {
+    setIsModalOpen(false); // 모달 닫기
+  };
+  const handleRetry = () => {
+    setCurrentQuizIndex(0); // 퀴즈 첫 번째로 리셋
+    setCorrectAnswersCount(0); // 정답 개수 초기화
+    setFinalScore(0); // 점수 초기화
     setIsModalOpen(false); // 모달 닫기
   };
 
@@ -219,15 +195,11 @@ function LandPurchaseQuiz() {
 
       if (id === correctAnswer) {
         setCorrectAnswersCount(correctAnswersCount + 1); // 맞은 개수 증가
-        setFeedbackMessage('정답입니다! 당신은 땅천재!');
-      } else {
-        setFeedbackMessage('그 지능으로 "땅"을 산다구요?');
       }
 
       // 다음 문제로 넘어가기
       setTimeout(() => {
         setShowCorrectAnswer(false);
-        setFeedbackMessage(null);
         if (currentQuizIndex < quizzes.length - 1) {
           setCurrentQuizIndex(currentQuizIndex + 1);
         } else {
@@ -247,10 +219,7 @@ function LandPurchaseQuiz() {
               console.error('점수 업데이트 실패:', e);
             });
 
-          openModal(
-            computedFinalScore,
-            correctAnswersCount + (id === correctAnswer ? 1 : 0),
-          ); // 모달 열기
+          openModal(computedFinalScore); // 모달 열기
         }
         setSelectedAnswer(null); // 선택된 답변 초기화
       }, 1000); // 1초 후 다음 문제로
@@ -258,23 +227,7 @@ function LandPurchaseQuiz() {
   };
 
   if (quizzes.length === 0) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh', // 화면 전체 높이
-        }}
-      >
-        <div>
-          <h2>퀴즈 로딩 중...</h2>
-          <SpinnerPlace>
-            <PulseLoader color="#00c99c" size={25} />
-          </SpinnerPlace>
-        </div>
-      </div>
-    );
+    return <div>퀴즈 로딩 중...</div>;
   }
 
   const currentQuiz = quizzes[currentQuizIndex];
@@ -314,41 +267,25 @@ function LandPurchaseQuiz() {
             </Option>
           ))}
         </OptionContainer>
-        {/* QuizImage와 TextBox를 나란히 배치 */}
-        <div
-          style={{
-            position: 'relative',
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          <QuizImage
-            src={tokimImages[questionNumber - 1]} // 미리 불러온 이미지 배열 사용
-            size={150}
-            alt="Quiz image"
-          />
-          <TextBox>{feedbackMessage}</TextBox>
-        </div>
+
+        <QuizImage
+          src={tokimImages[questionNumber - 1]} // 미리 불러온 이미지 배열 사용
+          size={150}
+          alt="Quiz image"
+        />
       </QuizContent>
 
       {/* 모달 렌더링 */}
       {isModalOpen && (
         <Modal
-          message={`축하합니다 ! ${finalScore}점입니다 !`}
-          score={finalScore}
-          correctAnswers={correctAnswers}
-          totalQuestions={quizzes.length}
-          feedbackMessage={feedbackMessage || ''}
+          message={`축하합니다! ${finalScore}점입니다!`}
+          score={finalScore} // 추가
+          correctAnswers={correctAnswersCount} // 추가
+          totalQuestions={quizzes.length} // 추가
+          feedbackMessage="수고하셨습니다!" // 추가
           onClose={closeModal}
-          onRetry={() => {
-            // 퀴즈를 처음부터 다시 시작하는 로직
-            setCurrentQuizIndex(0);
-            setCorrectAnswersCount(0);
-            setIsModalOpen(false);
-            setQuizzes([]); // 퀴즈 데이터 초기화 필요시
-            // fetchQuizzes()를 호출하여 퀴즈를 다시 가져올 수 있음
-          }}
-          onGoToResults={() => navigate('/LandScorePage')} // 결과 페이지로 이동
+          onRetry={handleRetry} // 새로 정의 필요
+          onGoToResults={() => navigate('/results')} // 결과 페이지로 이동
         />
       )}
     </Container>
