@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getSearchLandInfo } from '../../api/landAxios'; // Adjust this path as necessary.
@@ -148,38 +148,34 @@ function LandInformationRegistrationTab({
 
   const selectedDetail = location.state?.selectedDetail;
 
-  console.log(selectedDetail); // selectedDetail을 콘솔에 출력
+  console.log(selectedDetail);
+
+  useEffect(() => {
+    if (selectedDetail) {
+      setAddress(selectedDetail.landDistrict + selectedDetail.landAddress);
+      setLandInfo(selectedDetail); // selectedDetail이 있을 경우 setLandInfo로 설정
+    }
+    // 새로 고침이 일어났을 때 selectedDetail을 날림
+    const handleBeforeUnload = () => {
+      window.history.replaceState({}, document.title); // state에서 selectedDetail을 날림
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [selectedDetail, setLandInfo, setAddress]);
 
   const handleAddressSearch = () => {
-    console.log('Address search initiated');
     // @ts-ignore
     new window.daum.Postcode({
       oncomplete: (data: any) => {
-        console.log('Address search completed:', data);
-
-        // Construct full address
-        let fullAddress = data.address;
-        let extraAddress = '';
-
-        if (data.addressType === 'R') {
-          if (data.bname !== '') {
-            extraAddress += data.bname;
-            console.log('Added bname to extraAddress:', extraAddress);
-          }
-          if (data.buildingName !== '') {
-            extraAddress +=
-              (extraAddress !== '' ? ', ' : '') + data.buildingName;
-            console.log('Added buildingName to extraAddress:', extraAddress);
-          }
-          fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
-        }
-
-        console.log('Full address constructed:', fullAddress);
+        const fullAddress = data.jibunAddress;
         setAddress(fullAddress); // Set selected address
-
         // Extract district and detailed address
         const addressParts = fullAddress.split(' ');
-        const district = addressParts[2];
+        const district = `${data.sigungu} ${data.bname}`;
         const addressDetail = addressParts.slice(3).join(' ');
 
         // API call
@@ -191,7 +187,6 @@ function LandInformationRegistrationTab({
             } else {
               setLandInfo(response[0] || null);
             }
-            console.log('Land information:', response[0]);
           })
           .catch((error: Error) => {
             console.error('Error fetching land information:', error);
@@ -227,7 +222,6 @@ function LandInformationRegistrationTab({
   return (
     <Container>
       <h3>투자예정지 검색</h3>
-
       <InputContainer>
         <InputLabel htmlFor="address">주소</InputLabel>
         {address === '' ? (
