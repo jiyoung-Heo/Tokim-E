@@ -281,7 +281,16 @@ function Sidebar() {
           <Logo src={TokimLogo} alt="Tokim Logo" />
           <GaugeWrapper>
             <Graph score={userInfo.quizScore} />
-            <Score>
+            <Score
+              onClick={() => {
+                if (userInfo.quizScore === -1) {
+                  navigate('/land-purchase-quiz');
+                }
+              }}
+              style={{
+                cursor: userInfo.quizScore === -1 ? 'pointer' : 'default',
+              }}
+            >
               {userInfo.quizScore === -1
                 ? '점수 측정하기'
                 : `${userInfo.quizScore}점`}
