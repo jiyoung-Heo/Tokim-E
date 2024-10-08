@@ -5,6 +5,7 @@ import LoadingSpinner from '../layouts/LoadingSpinner';
 import checkIcon from '../../assets/images/icon/체크x.png'; // 체크 아이콘 경로
 import checkedIcon from '../../assets/images/icon/체크.png'; // 선택된 아이콘 경로 (새로운 체크 아이콘)
 import symbol from '../../assets/images/checklist/free-icon-warning-4931430.png';
+import uncheck from '../../assets/images/checklist/uncheck.png';
 
 // 체크리스트 이미지 불러오기
 import checklist1 from '../../assets/images/checklist/체크리스트1.png';
@@ -111,8 +112,9 @@ const RegisterButton = styled.button`
 
 const ModalButton = styled.button<{ primary?: boolean }>`
   padding: 2vh 7vw;
-  background-color: ${(props) => (props.primary ? '#27C384' : '#E0E0E0')};
-  color: ${(props) => (props.primary ? '#fff' : '#666')};
+  font-family: 'KoddiUD OnGothic';
+  background-color: ${(props) => (props.primary ? '#F3D1D3' : '#E0E0E0')};
+  color: ${(props) => (props.primary ? '#000' : '#666')};
   border: none;
   border-radius: 1vw;
   font-weight: bold;
@@ -179,6 +181,12 @@ const UncheckedImage = styled.img`
   margin-right: 3vw;
 `;
 
+const UncheckedImage2 = styled.img`
+  width: 20px;
+  height: 20px;
+  margin-right: 1vw;
+`;
+
 const UncheckedTitle = styled.span`
   font-size: 3.5vw;
   font-weight: bold;
@@ -199,6 +207,23 @@ const ModalButtonContainer = styled.div`
   justify-content: space-between;
   width: 100%;
   margin-top: 2vh;
+`;
+
+const CautionText = styled.h5`
+  align-items: center;
+  color: #842222;
+`;
+
+const CautionTextContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 2vh; /* 필요한 경우 간격 조정 */
+`;
+
+const UncheckImage = styled.img`
+  width: 4vw; /* 이미지 크기 조정 */
+  height: 4vw; /* 이미지 크기 조정 */
+  margin-right: 1vw; /* 텍스트와 이미지 사이 간격 */
 `;
 
 interface ChecklistItem {
@@ -360,6 +385,10 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
               발생할 수 있으니 반드시 체크리스트의 모든 항목을 확인하고
               투자하시길 바랍니다.
             </ModalDescription>
+            <CautionTextContainer>
+              <UncheckedImage2 src={uncheck} alt="Unchecked Icon" />
+              <CautionText>아직 체크되지 않은 항목들입니다.</CautionText>
+            </CautionTextContainer>
             {uncheckedItems.map((item, index) => (
               <UncheckedItem key={index}>
                 <UncheckedImage
