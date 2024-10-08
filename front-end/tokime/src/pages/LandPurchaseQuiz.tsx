@@ -218,8 +218,8 @@ function LandPurchaseQuiz() {
       // 다음 문제로 넘어가기
       setTimeout(() => {
         setShowCorrectAnswer(false);
-        // if (currentQuizIndex < quizzes.length - 1) {
-        if (currentQuizIndex === 2) {
+        if (currentQuizIndex < quizzes.length - 1) {
+          // if (currentQuizIndex === 2) {
           setCurrentQuizIndex(currentQuizIndex + 1);
         } else {
           // 퀴즈가 종료되었을 때
