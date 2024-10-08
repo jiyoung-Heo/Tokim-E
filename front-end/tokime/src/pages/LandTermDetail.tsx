@@ -28,6 +28,10 @@ const Title = styled.h2`
   display: flex;
   justify-content: space-between; /* 양쪽 끝으로 배치 */
   align-items: center;
+  word-break: keep-all; // 단어가 중간에 잘리지 않도록 설정
+  white-space: normal; // 일반적인 줄바꿈 허용
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 // 뒤로가기 아이콘 정의
@@ -68,6 +72,10 @@ const TermDescription = styled.div`
   font-size: 4vw;
   line-height: 5vw;
   color: #000000;
+  word-break: keep-all; // 단어가 중간에 잘리지 않도록 설정
+  white-space: normal; // 일반적인 줄바꿈 허용
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const RelatedLawsContainer = styled.div`
@@ -257,13 +265,15 @@ function LandTermDetail() {
         <BackIcon src={backIcon} alt="back Icon" onClick={goBack} />
         {termData.termName}
         {/* 즐겨찾기 아이콘 */}
-        {authCookie && (
+        {authCookie ? (
           <FavoriteIcon
             src={isLiked ? starFilled : starIcon}
             alt="즐겨찾기"
             isLiked={isLiked}
-            onClick={() => toggleLike(termData.termId)} // 클릭 시 함수 호출
+            onClick={() => toggleLike(termData.termId)}
           />
+        ) : (
+          <div style={{ width: '24px' }} /> // FavoriteIcon이 없는 경우, 같은 크기의 빈 div 추가
         )}
       </Title>
 
