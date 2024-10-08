@@ -79,17 +79,9 @@ function BottomTab() {
         </TabItem>
         <TabItem
           to="/investment"
-          $isActive={
-            location.pathname === '/investment' ||
-            location.pathname === '/investment-register'
-          }
+          $isActive={location.pathname.includes('/investment')}
         >
-          <IconWrapper
-            $isActive={
-              location.pathname === '/investment' ||
-              location.pathname === '/investment-register'
-            }
-          >
+          <IconWrapper $isActive={location.pathname.includes('/investment')}>
             <InvestmentIcon />
           </IconWrapper>
           투자 예정지
