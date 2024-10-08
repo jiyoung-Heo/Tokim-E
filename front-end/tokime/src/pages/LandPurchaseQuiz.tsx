@@ -218,7 +218,8 @@ function LandPurchaseQuiz() {
       // 다음 문제로 넘어가기
       setTimeout(() => {
         setShowCorrectAnswer(false);
-        if (currentQuizIndex < quizzes.length - 1) {
+        // if (currentQuizIndex < quizzes.length - 1) {
+        if (currentQuizIndex === 2) {
           setCurrentQuizIndex(currentQuizIndex + 1);
         } else {
           // 퀴즈가 종료되었을 때
@@ -297,11 +298,11 @@ function LandPurchaseQuiz() {
       {/* 모달 렌더링 */}
       {isModalOpen && (
         <Modal
-          message={`축하합니다! ${finalScore}점입니다!`}
+          message="와우! 대단해요!"
           score={finalScore} // 추가
           correctAnswers={correctAnswersCount} // 추가
           totalQuestions={quizzes.length} // 추가
-          feedbackMessage="수고하셨습니다!" // 추가
+          feedbackMessage="" // 추가
           onClose={closeModal}
           onRetry={handleRetry} // 새로 정의 필요
           onGoToResults={() => navigate('/land-score')} // 결과 페이지로 이동
