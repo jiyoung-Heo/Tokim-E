@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -12,7 +11,6 @@ import starIcon from '../assets/images/icon/star.svg';
 import starFilled from '../assets/images/icon/star_filled.svg';
 import backIcon from '../assets/images/icon/left-actionable.png';
 import LoadingSpinner from '../components/layouts/LoadingSpinner';
-import { RootState } from '../redux/store';
 
 // 스타일 정의
 const Container = styled.div`
@@ -157,6 +155,19 @@ const ModalBody = styled.div`
   margin-bottom: 20px; /* 다른 요소와의 간격 조정 */
 `;
 
+function getCookieValue(name: string): string | null {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    const cookieValue = parts.pop();
+    console.log(cookieValue);
+    if (cookieValue) {
+      return cookieValue.split(';').shift() || null; // split이나 shift가 undefined일 경우 null 반환
+    }
+  }
+  return null;
+}
+
 // 용어 상세 컴포넌트
 function LandTermDetail() {
   const navigate = useNavigate();
@@ -168,7 +179,7 @@ function LandTermDetail() {
   const [isLiked, setIsLiked] = useState(false); // 즐겨찾기 상태
   const [modalOpen, setModalOpen] = useState(false); // 모달 상태
 
-  const user = useSelector((state: RootState) => state.user);
+  const authCookie = getCookieValue('Authorization');
 
   // 용어 데이터를 가져오는 useEffect
   useEffect(() => {
@@ -247,7 +258,7 @@ function LandTermDetail() {
         <BackIcon src={backIcon} alt="back Icon" onClick={goBack} />
         {termData.termName}
         {/* 즐겨찾기 아이콘 */}
-        {user.email && (
+        {authCookie && (
           <FavoriteIcon
             src={isLiked ? starFilled : starIcon}
             alt="즐겨찾기"

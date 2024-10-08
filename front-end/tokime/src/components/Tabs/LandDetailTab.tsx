@@ -42,25 +42,35 @@ const InfoBox = styled.div`
   background-color: #fff;
 `;
 
+function getCookieValue(name: string): string | null {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    const cookieValue = parts.pop();
+    console.log(cookieValue);
+    if (cookieValue) {
+      return cookieValue.split(';').shift() || null; // split이나 shift가 undefined일 경우 null 반환
+    }
+  }
+  return null;
+}
+
 const LandDetailTab: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((state: RootState) => state.user);
   const landDetails = useSelector(
     (state: RootState) => state.landinfo.landDetails,
   );
   const selectedDetail = useSelector(
     (state: RootState) => state.landinfo.landDetail, // Redux에서 선택된 상세 정보 가져오기
   );
-  const handleInvestClick = () => {
-    navigate('/investment-register', { state: { selectedDetail } }); // state를 통해 데이터 전달
-    console.log(selectedDetail);
-  };
+
   const [showInfo, setShowInfo] = useState<{ [key: string]: boolean }>({});
   const prevLandDetailsRef = useRef(landDetails);
   const infoButtonRefs = useRef<{ [key: string]: HTMLButtonElement | null }>(
     {},
   ); // 토글 버튼 참조
+  const authCookie = getCookieValue('Authorization');
 
   useEffect(() => {
     // landDetails가 변경되었을 때만 상태를 리셋
@@ -106,6 +116,10 @@ const LandDetailTab: React.FC = () => {
 
       return newShowInfo; // 새로운 상태를 반환
     });
+  };
+
+  const handleInvestClick = () => {
+    navigate('/investment-register', { state: { selectedDetail } }); // state를 통해 데이터 전달
   };
 
   const getLandUseDescription = (landUse: string) => {
@@ -451,7 +465,7 @@ const LandDetailTab: React.FC = () => {
                 </p>
               </div>
             ))}
-            {user.email && (
+            {authCookie && (
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <button
                   type="button"
