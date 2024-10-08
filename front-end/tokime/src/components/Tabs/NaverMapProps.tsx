@@ -54,16 +54,17 @@ const NaverMapProps: React.FC<NaverMapPropsProps> = ({ landAddress }) => {
         });
 
         // 마커 이미지 결정
-        let markerImageUrl = 'markers/default.png';
+        let markerImageUrl = `${process.env.PUBLIC_URL}/markers/default.png`;
         if (landDanger === 0) {
-          markerImageUrl = 'markers/danger.png';
+          markerImageUrl = `${process.env.PUBLIC_URL}/markers/danger.png`;
         } else if (landDanger === 1) {
-          markerImageUrl = 'markers/caution.png';
+          markerImageUrl = `${process.env.PUBLIC_URL}/markers/caution.png`;
         }
 
         const timestamp = new Date().getTime();
         markerImageUrl += `?t=${timestamp}`;
 
+        console.log(markerImageUrl);
         // 마커가 이미 존재하는지 확인
         if (markerRef.current) {
           // 기존 마커가 존재하면 업데이트
@@ -79,6 +80,7 @@ const NaverMapProps: React.FC<NaverMapPropsProps> = ({ landAddress }) => {
             scaledSize: new window.naver.maps.Size(30, 30),
           },
         });
+        console.log(markerRef.current);
       }
     };
 
