@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -8,12 +8,14 @@ import DictionaryIcon from '../assets/images/icon/dictionary.png';
 import KnowledgeIcon from '../assets/images/icon/commonsenseicon.png';
 import InvestmentIcon from '../assets/images/icon/investicon.png';
 import CarouselImage1 from '../assets/images/icon/scoreicon.png'; // 캐러셀 이미지 (추후 경로 수정)
+import CarouselImage2 from '../assets/images/icon/map.png'; // 캐러셀 이미지 (추후 경로 수정)
 import { changeUser } from '../redux/slices/userSlice';
 import userInfoAxios from '../api/userInfoAxios';
 import TokimLogo from '../assets/images/TokimEnglogo.png'; // 로고 이미지
 import fetchKnowledgeByCategory from '../api/LandPurchaseKnowledge';
 import { changeLandpurchaseProcedure } from '../redux/slices/landpurchaseProcedureSlice';
 import { changeLandEssentialKnowledge } from '../redux/slices/landEssentialKnowledgeSlice';
+import Carousel from '../components/Carousel'; // 단일 캐러셀 컴포넌트
 
 // 컨테이너 스타일 정의 (스크롤 방지 및 높이 조정)
 const Container = styled.div`
@@ -122,46 +124,31 @@ const SmallIconSubtitle = styled.span`
   margin-top: 1.5vh;
 `;
 
-// 캐러셀 섹션 스타일 (text-decoration: none 추가)
-const CarouselContainer = styled(Link)`
-  width: 89vw;
-  height: 21.56vh;
-  background: linear-gradient(
-    180deg,
-    #00c99c 0%,
-    #00a580 35%,
-    #009977 47%,
-    #008f6f 56%,
-    #008869 64%,
-    #00735a 84%,
-    #00634d 100%
-  );
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 4.17vw;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 2vw;
-  margin-top: 5vh;
-  text-decoration: none; // 밑줄 제거
-`;
-
-// 캐러셀 내용 및 이미지 스타일
-const CarouselContent = styled.div`
-  color: white;
-  font-size: 4.16vw;
-  font-weight: 700;
-  margin-left: 5.55vw;
-`;
-
-const CarouselImage = styled.img`
-  width: 21.11vw;
-  height: 21.11vw;
-  margin-right: 5vw;
-`;
+// 캐러셀 데이터 타입
+interface CarouselData {
+  to: string;
+  bgColor: string;
+  content: string;
+  imageSrc: string;
+}
 
 function MainPage() {
   const dispatch = useDispatch();
+  const [currentCarousel, setCurrentCarousel] = useState(0); // 현재 캐러셀 인덱스
+  const carouselData: CarouselData[] = [
+    {
+      to: '/land-purchase-knowledge',
+      bgColor: 'linear-gradient(180deg, #00c99c 0%, #00a580 35%, #009977 47%)',
+      content: '토지 상식 퀴즈 통해\n 나의 토지 상식 점수를\n알아보세요!',
+      imageSrc: CarouselImage1,
+    },
+    {
+      to: '/risk-map/report',
+      bgColor: 'linear-gradient(180deg, #ff9966 0%, #ff6600 50%, #cc3300 100%)',
+      content: '토지사기가 의심된다면\n위험 신고를 해주세요!',
+      imageSrc: CarouselImage2,
+    },
+  ];
 
   useEffect(() => {
     const fetchParentInfo = async () => {
@@ -185,7 +172,16 @@ function MainPage() {
     };
 
     fetchData();
-  }, []);
+
+    // 캐러셀 자동 전환
+    const interval = setInterval(() => {
+      setCurrentCarousel((prev) =>
+        prev === carouselData.length - 1 ? 0 : prev + 1,
+      );
+    }, 3000); // 3초마다 캐러셀 변경
+
+    return () => clearInterval(interval); // 컴포넌트 언마운트 시 인터벌 해제
+  }, [dispatch, carouselData.length]);
 
   return (
     <Container>
@@ -203,6 +199,7 @@ function MainPage() {
           <LargeIcon src={RiskIcon} alt="위험지도" />
         </LargeIconBox>
       </LargeIconGrid>
+
       <SmallIconGrid>
         <SmallIconBox to="/land-terms">
           <SmallIconTitle>토지 용어 사전</SmallIconTitle>
@@ -229,15 +226,14 @@ function MainPage() {
           <SmallIcon src={InvestmentIcon} alt="투자 예정지" />
         </SmallIconBox>
       </SmallIconGrid>
-      <CarouselContainer to="/land-purchase-knowledge">
-        <CarouselContent>
-          토지 상식 퀴즈 통해
-          <br />
-          나의 토지 상식 점수를 <br />
-          알아보세요!
-        </CarouselContent>
-        <CarouselImage src={CarouselImage1} alt="캐러셀 이미지" />
-      </CarouselContainer>
+
+      {/* 현재 캐러셀 아이템 */}
+      <Carousel
+        to={carouselData[currentCarousel].to}
+        bgColor={carouselData[currentCarousel].bgColor}
+        content={carouselData[currentCarousel].content}
+        imageSrc={carouselData[currentCarousel].imageSrc}
+      />
     </Container>
   );
 }
