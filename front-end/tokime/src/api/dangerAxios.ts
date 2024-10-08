@@ -33,12 +33,9 @@ export const registDanger = async (danger: {
   dangerTitle: string;
   dangerContent: string;
 }) => {
-  console.log(danger.lat);
-  console.log(danger.lng);
   return API.post('/danger', danger)
     .then((res) => {
-      console.log('신고글 등록 성공:', res.data);
-      return res.data;
+      return res.status;
     })
     .catch((e) => {
       console.log('신고글 등록 실패:', e);
