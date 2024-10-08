@@ -29,8 +29,8 @@ interface LandInformationRegistrationTabProps {
   setExpectedArea: React.Dispatch<React.SetStateAction<number | ''>>;
   expectedPrice: number | '';
   setExpectedPrice: React.Dispatch<React.SetStateAction<number | ''>>;
-  landNickname: string | '';
-  setLandNickname: React.Dispatch<React.SetStateAction<string | ''>>;
+  expectedLandNickname: string | '';
+  setExpectedLandNickname: React.Dispatch<React.SetStateAction<string | ''>>;
   onNext: () => void;
 }
 
@@ -135,8 +135,8 @@ function LandInformationRegistrationTab({
   setExpectedArea,
   expectedPrice,
   setExpectedPrice,
-  landNickname,
-  setLandNickname,
+  expectedLandNickname,
+  setExpectedLandNickname,
   setLandInfo,
   onNext,
 }: LandInformationRegistrationTabProps) {
@@ -258,7 +258,7 @@ function LandInformationRegistrationTab({
               alt="multiply"
               onClick={() => {
                 setLandInfo(null);
-                setLandNickname('');
+                setExpectedLandNickname('');
                 setAddress('');
                 setExpectedPrice('');
                 setExpectedArea('');
@@ -272,10 +272,10 @@ function LandInformationRegistrationTab({
         <UserSearchInput
           type="string"
           min=""
-          value={landNickname === '' ? '' : landNickname} // 빈 문자열 처리
+          value={expectedLandNickname === '' ? '' : expectedLandNickname} // 빈 문자열 처리
           onChange={(e) => {
             const value = e.target.value === '' ? '' : e.target.value;
-            setLandNickname(typeof value === 'string' ? value : ''); // 빈 문자열 또는 0 이상인 정수만 허용, 최대값은 안전한 정수 범위 내
+            setExpectedLandNickname(typeof value === 'string' ? value : ''); // 빈 문자열 또는 0 이상인 정수만 허용, 최대값은 안전한 정수 범위 내
           }}
           placeholder="예: 대전시청"
         />
