@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import searchIcon from '../assets/images/icon/search.svg';
@@ -9,7 +8,6 @@ import starFilled from '../assets/images/icon/star_filled.svg'; // 즐겨찾기 
 import backIcon from '../assets/images/icon/left-actionable.png';
 import { getAllTerms, registTermLike, deleteTermLike } from '../api/termAxios'; // API 서비스 호출
 import LoadingSpinner from '../components/layouts/LoadingSpinner';
-import { RootState } from '../redux/store';
 
 const Container = styled.div`
   width: 100%;
@@ -217,6 +215,19 @@ const alphabets = [
   'ㅎ',
 ];
 
+function getCookieValue(name: string): string | null {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    const cookieValue = parts.pop();
+    console.log(cookieValue);
+    if (cookieValue) {
+      return cookieValue.split(';').shift() || null; // split이나 shift가 undefined일 경우 null 반환
+    }
+  }
+  return null;
+}
+
 const LandTerms = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
@@ -227,7 +238,8 @@ const LandTerms = () => {
   const [likedTerms, setLikedTerms] = useState<number[]>([]); // 즐겨찾기된 용어 ID 목록
   const [showFavorites, setShowFavorites] = useState(false); // 즐겨찾기 모드 여부
   const termContainerRef = useRef<HTMLDivElement>(null);
-  const user = useSelector((state: RootState) => state.user);
+
+  const authCookie = getCookieValue('Authorization');
 
   const fetchTerms = async () => {
     try {
@@ -395,7 +407,7 @@ const LandTerms = () => {
             filteredTerms.map((term) => (
               <TermWrapper key={term.termId}>
                 <Term to={`/land-terms/${term.termId}`}>{term.termName}</Term>
-                {user.email && (
+                {authCookie && (
                   <StarIcon
                     src={
                       likedTerms.includes(term.termId) ? starFilled : starIcon
