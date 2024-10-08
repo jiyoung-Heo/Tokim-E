@@ -53,9 +53,9 @@ const TabItem = styled.div<{ $isActive: boolean }>`
   flex: 1;
   text-align: center;
   padding: 10px;
-  font-size: 14px;
-  color: ${(props) => (props.$isActive ? '#27C384' : '#000')};
-  font-weight: ${(props) => (props.$isActive ? 'bold' : 'normal')};
+  font-size: 16px;
+  font-weight: bold;
+  color: ${(props) => (props.$isActive ? '#27C384' : '#333333')};
   border-bottom: ${(props) => (props.$isActive ? '2px solid #27C384' : 'none')};
   cursor: pointer;
 `;
