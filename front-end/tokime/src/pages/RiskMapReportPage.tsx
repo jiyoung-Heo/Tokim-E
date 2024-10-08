@@ -63,6 +63,18 @@ const DangerButton = styled.button`
   border: none;
 `;
 
+const CancelButton = styled.button`
+  width: 30vw;
+  background-color: #ff4757;
+  color: white;
+  padding: 2vw;
+  font-size: 15px;
+  font-weight: bold;
+  border-radius: 10px;
+  cursor: pointer;
+  border: none;
+`;
+
 const TitleContainer = styled.div`
   margin-bottom: 2vh;
 `;
@@ -105,6 +117,7 @@ const MapP = styled.div`
 
 const ButtonDiv = styled.p`
   margin: 0;
+  padding-top: 2vh;
   display: flex;
   justify-content: center;
   gap: 7vw;
@@ -129,6 +142,26 @@ function RiskMapReportPage() {
         zoom: 10,
       };
       map.current = new window.naver.maps.Map(mapContainer.current, mapOptions);
+
+      // 사용자 위치 가져오기
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const userLat = position.coords.latitude;
+          const userLng = position.coords.longitude;
+          setLat(userLat); // 사용자의 위도 저장
+          setLng(userLng); // 사용자의 경도 저장
+
+          // 사용자의 위치로 지도 중심 이동
+          map.current.setCenter(new window.naver.maps.LatLng(userLat, userLng));
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+          // 사용자 위치를 가져오는 데 실패하면 기본 위치로 설정
+          alert(
+            '사용자의 위치를 가져오는 데 실패했습니다. 기본 위치로 설정합니다.',
+          );
+        },
+      );
 
       // 지도 클릭 이벤트 추가
       window.naver.maps.Event.addListener(map.current, 'click', (e: any) => {
@@ -234,6 +267,10 @@ function RiskMapReportPage() {
     navigate(-1); // 이전 페이지로 이동
   };
 
+  const handleCancel = () => {
+    navigate('/risk-map'); // '취소' 버튼 클릭 시 '/risk-map' 경로로 이동
+  };
+
   return (
     <Container>
       <Title>
@@ -245,38 +282,32 @@ function RiskMapReportPage() {
         <TitleText
           type="text"
           placeholder="신고 제목을 입력하세요"
-          maxLength={255}
+          maxLength={50}
           value={dangerTitle}
           onChange={(e) => setDangerTitle(e.target.value)}
         />
-      </TitleContainer>
-      <TitleContainer>
-        <DangerP>신고위치</DangerP>
-        <SearchContainer>
-          <SearchInput
-            type="text"
-            placeholder="주소를 입력하세요"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyPress={handleKeyPress} // Enter 키 이벤트 추가
-          />
-          <SearchButton onClick={handleSearch}>검색</SearchButton>
-        </SearchContainer>
-        <MapP ref={mapContainer} />
-      </TitleContainer>
-
-      <div>
         <DangerP>내용</DangerP>
         <Content
-          placeholder="내용을 입력하세요"
-          maxLength={1500}
+          placeholder="신고 내용을 입력하세요"
+          maxLength={200}
           value={dangerContent}
           onChange={(e) => setDangerContent(e.target.value)}
         />
-      </div>
+      </TitleContainer>
+      <SearchContainer>
+        <SearchInput
+          type="text"
+          placeholder="주소를 입력하세요"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyPress={handleKeyPress}
+        />
+        <SearchButton onClick={handleSearch}>검색</SearchButton>
+      </SearchContainer>
+      <MapP ref={mapContainer} />
       <ButtonDiv>
+        <CancelButton onClick={handleCancel}>취소</CancelButton>
         <DangerButton onClick={handleSubmit}>작성</DangerButton>
-        <DangerButton onClick={goBack}>취소</DangerButton>
       </ButtonDiv>
     </Container>
   );
