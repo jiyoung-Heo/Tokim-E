@@ -28,7 +28,6 @@ const TabsContainer = styled.div`
   display: flex;
   justify-content: space-around;
   background-color: #f3f7fb;
-  border-bottom: 1px solid #ddd;
 `;
 
 const TabItem = styled.div<{ $isActive: boolean }>`
@@ -38,7 +37,8 @@ const TabItem = styled.div<{ $isActive: boolean }>`
   font-size: 16px;
   color: ${(props) => (props.$isActive ? '#27C384' : '#000')};
   font-weight: ${(props) => (props.$isActive ? 'bold' : 'normal')};
-  border-bottom: ${(props) => (props.$isActive ? '2px solid #27C384' : 'none')};
+  border-bottom: ${(props) =>
+    props.$isActive ? '2px solid #27C384' : '2px solid #ddd'};
   cursor: pointer;
 `;
 interface ChecklistItem {
