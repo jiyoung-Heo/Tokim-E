@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { RootState } from '../redux/store';
 import KakaoIcon from '../assets/images/icon/kakao.svg'; // 이미지 import
 import GoogleIcon from '../assets/images/icon/Google.png'; // 이미지 import
 import TokimeIcon from '../assets/images/icon/Tokime.png'; // 이미지 import
 import LogoImage from '../assets/images/Tokimlogo.png'; // 로고 이미지 import
+import { persistor } from '../redux/reduxStore';
 
 // 이미지와 버튼 스타일 정의
 const StartPageContainer = styled.div`
@@ -68,9 +72,12 @@ const Icon = styled.img`
 `;
 
 function StartPage() {
+  const userInfo = useSelector((state: RootState) => state.user);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const kakaoLoginUrl = `${process.env.REACT_APP_API_URL}/oauth2/authorization/kakao`;
   const googleLoginUrl = `${process.env.REACT_APP_API_URL}/oauth2/authorization/google`;
-  console.log(process.env.REACT_APP_API_URL);
 
   const handleKakaoLogin = () => {
     window.location.href = kakaoLoginUrl;
@@ -81,8 +88,22 @@ function StartPage() {
   };
 
   const handleGuestLogin = () => {
+    persistor.purge();
+    dispatch({ type: 'RESET_ALL' });
     window.location.href = '/main';
   };
+
+  useEffect(() => {
+    // 이메일이 존재하면 메인페이지로 이동
+    if (userInfo.email) {
+      const timeoutId = setTimeout(() => {
+        navigate('/main');
+      }, 0); // 즉시 이동하도록 설정
+
+      return () => clearTimeout(timeoutId); // 클린업 함수
+    }
+    return undefined;
+  }, [userInfo.email, navigate]);
 
   return (
     <StartPageContainer>
