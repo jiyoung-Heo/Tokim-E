@@ -13,7 +13,7 @@ import LawDetailModal from '../modals/LawDetailModal'; // 법령 상세 정보�
 // 스타일 정의
 const LawInfoContainer = styled.div`
   width: 80vw; // 반응형 크기 설정
-  height: 20vh;
+  height: 15vh;
   background-color: #ffffff;
   border-radius: 10px;
   padding: 10px;
@@ -44,9 +44,9 @@ const LawTitle = styled.div`
 `;
 const LawUse = styled.div`
   font-size: 3.5vw; // 반응형 폰트 크기 설정
-  font-weight: 400;
+  font-weight: 800;
   color: rgba(51, 51, 51, 0.8);
-  margin-top: 1vw;
+  margin-top: 3vw;
 `;
 
 const LawNumber = styled.div`
