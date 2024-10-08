@@ -45,6 +45,7 @@ const InfoBox = styled.div`
 const LandDetailTab: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.user);
   const landDetails = useSelector(
     (state: RootState) => state.landinfo.landDetails,
   );
@@ -450,24 +451,26 @@ const LandDetailTab: React.FC = () => {
                 </p>
               </div>
             ))}
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <button
-                type="button"
-                style={{
-                  display: 'flex',
-                  fontWeight: 'bold',
-                  backgroundColor: '#00C99C',
-                  color: '#fff',
-                  border: '#00C99C',
-                  padding: 'calc(0.5vw + 0.5vh)',
-                  margin: 'calc(1vw + 1vh)',
-                  borderRadius: 'calc(1vw + 1vh)',
-                }}
-                onClick={handleInvestClick}
-              >
-                투자 예정지 등록
-              </button>
-            </div>
+            {user.email && (
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <button
+                  type="button"
+                  style={{
+                    display: 'flex',
+                    fontWeight: 'bold',
+                    backgroundColor: '#00C99C',
+                    color: '#fff',
+                    border: '#00C99C',
+                    padding: 'calc(0.5vw + 0.5vh)',
+                    margin: 'calc(1vw + 1vh)',
+                    borderRadius: 'calc(1vw + 1vh)',
+                  }}
+                  onClick={handleInvestClick}
+                >
+                  투자 예정지 등록
+                </button>
+              </div>
+            )}
           </InfoBox>
         </div>
       ) : (
