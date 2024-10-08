@@ -72,7 +72,7 @@ const RegisterButton = styled.button`
 
 const MapContainer = styled.div`
   width: 100%;
-  height: 70vh;
+  height: 55vh;
 `;
 
 const MarkerList = styled.ul`
