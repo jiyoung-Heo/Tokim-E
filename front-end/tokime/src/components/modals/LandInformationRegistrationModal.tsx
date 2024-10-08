@@ -1,5 +1,23 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const slideIn = keyframes`
+  from {
+    transform: translateY(-20px);
+  }
+  to {
+    transform: translateY(0);
+  }
+`;
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -12,6 +30,7 @@ const ModalBackground = styled.div`
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  animation: ${fadeIn} 0.3s ease; /* 오버레이 애니메이션 */
 `;
 
 const ModalContainer = styled.div`
@@ -20,6 +39,7 @@ const ModalContainer = styled.div`
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   text-align: center;
+  animation: ${slideIn} 0.3s ease; /* 모달 슬라이드 인 애니메이션 */
 `;
 
 const CloseButton = styled.button`
