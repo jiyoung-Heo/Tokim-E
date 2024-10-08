@@ -4,6 +4,7 @@ import { getCheckList } from '../../api/landInvestAxios'; // API 경로에 맞�
 import LoadingSpinner from '../layouts/LoadingSpinner';
 import checkIcon from '../../assets/images/icon/체크x.png'; // 체크 아이콘 경로
 import checkedIcon from '../../assets/images/icon/체크.png'; // 선택된 아이콘 경로 (새로운 체크 아이콘)
+import symbol from '../../assets/images/checklist/free-icon-warning-4931430.png';
 
 // 체크리스트 이미지 불러오기
 import checklist1 from '../../assets/images/checklist/체크리스트1.png';
@@ -49,6 +50,7 @@ const ChecklistItemContainer = styled.div`
   position: relative;
   transition: background-color 0.3s;
   cursor: pointer; /* 클릭 가능하게 변경 */
+  overflow-y: auto;
 `;
 
 const TopRow = styled.div`
@@ -107,6 +109,98 @@ const RegisterButton = styled.button`
   margin: 3vh 2vw 0 2vw; /* 버튼 간격 */
 `;
 
+const ModalButton = styled.button<{ primary?: boolean }>`
+  padding: 2vh 7vw;
+  background-color: ${(props) => (props.primary ? '#27C384' : '#E0E0E0')};
+  color: ${(props) => (props.primary ? '#fff' : '#666')};
+  border: none;
+  border-radius: 1vw;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 3vh;
+  font-size: 4vw;
+  margin: 3vh 2vw 0 2vw;
+`;
+
+const ModalBackground = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  overflow-y: auto;
+`;
+
+const ModalContainer = styled.div`
+  width: 80%;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+`;
+
+const ModalTitle = styled.h2`
+  color: #333;
+  font-size: 5vw;
+  font-weight: bold;
+  margin-bottom: 2vh;
+  text-align: center;
+`;
+
+const ModalDescription = styled.p`
+  color: #666;
+  font-size: 3.5vw;
+  text-align: center;
+  margin-bottom: 4vh;
+`;
+
+const UncheckedItem = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 1vh 2vw;
+  background-color: #f8f8f8;
+  border-radius: 1vw;
+  margin-bottom: 2vh;
+  position: relative;
+`;
+
+const UncheckedImage = styled.img`
+  width: 7vw;
+  height: 7vw;
+  margin-right: 3vw;
+`;
+
+const UncheckedTitle = styled.span`
+  font-size: 3.5vw;
+  font-weight: bold;
+  color: #333;
+`;
+
+const WarningIcon = styled.img`
+  width: 4vw;
+  height: 4vw;
+  position: absolute;
+  right: 2vw;
+  top: 50%;
+  transform: translateY(-50%);
+`;
+
+const ModalButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 2vh;
+`;
+
 interface ChecklistItem {
   checklistId: number;
   content: string;
@@ -119,6 +213,11 @@ interface ChecklistRegistrationTabProps {
   onPrevious: () => void;
 }
 
+interface UncheckedItemType {
+  index: number;
+  content: string;
+}
+
 const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
   check,
   setCheck,
@@ -129,6 +228,8 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [uncheckedItems, setUncheckedItems] = useState<UncheckedItemType[]>([]);
 
   // 체크리스트 제목 배열
   const titles = [
@@ -190,25 +291,23 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
 
   const checkedCount = checkedItems.filter(Boolean).length; // 선택된 항목 개수
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   const handleNext = () => {
-    const checkedIndices = checkedItems
-      .map((checked, index) => (checked ? index : null))
-      .filter((index) => index !== null) as number[];
+    const unchecked = checkedItems
+      .map((isChecked, index) =>
+        !isChecked ? { index, content: checklist[index].content } : null,
+      )
+      .filter(Boolean) as UncheckedItemType[];
 
-    setCheck(checkedIndices); // 선택된 인덱스 저장
-
-    const uncheckedIndices = checkedItems
-      .map((checked, index) => (checked ? null : index + 1))
-      .filter((index) => index !== null);
-
-    if (uncheckedIndices.length > 0) {
-      const message = `${uncheckedIndices.join(', ')}번이 체크되지 않았습니다. 계속 등록하시겠습니까?`;
-      if (!window.confirm(message)) {
-        return;
-      }
+    if (unchecked.length > 0) {
+      setUncheckedItems(unchecked);
+      setIsModalOpen(true);
+    } else {
+      onNext(); // 모든 항목이 체크되었을 때
     }
-
-    onNext(); // 다음 단계로 이동
   };
 
   if (loading) {
@@ -251,6 +350,35 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
         <RegisterButton onClick={handleNext}>다음</RegisterButton>{' '}
         {/* 다음 버튼 */}
       </RegistContainer>
+
+      {isModalOpen && (
+        <ModalBackground>
+          <ModalContainer>
+            <ModalTitle>토지 구매 예정이신가요?</ModalTitle>
+            <ModalDescription>
+              토지 개발이 제한된 구역이거나 관련 사기로 인해 예상보다 큰 비용이
+              발생할 수 있으니 반드시 체크리스트의 모든 항목을 확인하고
+              투자하시길 바랍니다.
+            </ModalDescription>
+            {uncheckedItems.map((item, index) => (
+              <UncheckedItem key={index}>
+                <UncheckedImage
+                  src={images[item.index]}
+                  alt={`Unchecked ${item.index + 1}`}
+                />
+                <UncheckedTitle>{titles[index]}</UncheckedTitle>
+                <WarningIcon src={symbol} alt="Warning Icon" />
+              </UncheckedItem>
+            ))}
+            <ModalButtonContainer>
+              <ModalButton onClick={closeModal}>다시 체크하기</ModalButton>
+              <ModalButton primary onClick={onNext}>
+                등록하기
+              </ModalButton>
+            </ModalButtonContainer>
+          </ModalContainer>
+        </ModalBackground>
+      )}
     </Container>
   );
 };
