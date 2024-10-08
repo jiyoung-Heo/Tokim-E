@@ -29,6 +29,8 @@ interface LandInformationRegistrationTabProps {
   setExpectedArea: React.Dispatch<React.SetStateAction<number | ''>>;
   expectedPrice: number | '';
   setExpectedPrice: React.Dispatch<React.SetStateAction<number | ''>>;
+  landNickname: string | '';
+  setLandNickname: React.Dispatch<React.SetStateAction<string | ''>>;
   onNext: () => void;
 }
 
@@ -42,12 +44,14 @@ const Container = styled.div`
 const InputContainer = styled.div`
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  word-break: keep-all;
+  white-space: normal;
 `;
 
 const InputLabel = styled.label`
   font-size: 15px;
   font-weight: bold;
-  width: 15%;
 `;
 
 const Address = styled.div`
@@ -73,8 +77,6 @@ const MultiplyIcon = styled.img`
 `;
 
 const LandInfoContainer = styled.div`
-  border: 1px solid #ccc;
-  padding: 10px;
   width: 100%;
 `;
 
@@ -100,29 +102,10 @@ const UserSearchInput = styled.input`
   border-radius: 10px;
   padding: 1vh;
   width: 50%;
+  text-align: right;
   @media (max-width: 768px) {
     width: 100%; /* 전체 너비로 설정 */
   }
-`;
-
-const UserSearchDiv = styled.div`
-  box-sizing: border-box;
-  background: #ffffff;
-  border: 1px solid #000000;
-  border-radius: 10px;
-  padding: 1vh;
-  width: 50%;
-  @media (max-width: 768px) {
-    width: 100%; /* 전체 너비로 설정 */
-  }
-`;
-
-// 가로선
-const Divider = styled.hr`
-  width: 100%;
-  border: none;
-  border-top: 3px solid rgba(121, 121, 130, 0.1);
-  margin: 3vh 0;
 `;
 
 const RegistContainer = styled.div`
@@ -140,9 +123,8 @@ const RegisterButton = styled.button`
   font-weight: bold;
   cursor: pointer;
   z-index: 800; /* z-index 추가 */
-  margin-top: 3vh;
   font-size: 15px;
-  margin: 3vh 2vw 0 2vw;
+  margin: 0.5vh 2vw 0 2vw;
 `;
 
 function LandInformationRegistrationTab({
@@ -153,6 +135,8 @@ function LandInformationRegistrationTab({
   setExpectedArea,
   expectedPrice,
   setExpectedPrice,
+  landNickname,
+  setLandNickname,
   setLandInfo,
   onNext,
 }: LandInformationRegistrationTabProps) {
@@ -162,12 +146,15 @@ function LandInformationRegistrationTab({
   const location = useLocation();
 
   const selectedDetail = location.state?.selectedDetail;
+  const [errorMessage, setErrorMessage] = useState(''); // 에러 메시지 상태 추가
+  const maxLandScale = landInfo
+    ? Math.floor(landInfo.landScale / 3.3)
+    : Number.MAX_SAFE_INTEGER;
 
   const openModal = (message: string) => {
     setModalMessage(message);
     setIsModalOpen(true);
   };
-  console.log(selectedDetail);
 
   useEffect(() => {
     if (selectedDetail) {
@@ -192,7 +179,12 @@ function LandInformationRegistrationTab({
     // @ts-ignore
     new window.daum.Postcode({
       oncomplete: (data: any) => {
-        const fullAddress = data.jibunAddress;
+        let fullAddress = '';
+        if (data.jibunAddress === '') {
+          fullAddress = data.autoJibunAddress;
+        } else {
+          fullAddress = data.jibunAddress;
+        }
         setAddress(fullAddress); // Set selected address
         // Extract district and detailed address
         const addressParts = fullAddress.split(' ');
@@ -204,9 +196,15 @@ function LandInformationRegistrationTab({
           .then((response: LandInfo[]) => {
             // Save the first item from the response
             if (response[0] === undefined) {
-              setAddress('');
+              setLandInfo(null);
+              setExpectedPrice('');
+              setExpectedArea('');
+              setErrorMessage('국토교통부에서 세부 정보를 제공하지 않습니다.');
             } else {
               setLandInfo(response[0] || null);
+              setExpectedPrice('');
+              setExpectedArea('');
+              setErrorMessage('');
             }
           })
           .catch((error: Error) => {
@@ -239,7 +237,6 @@ function LandInformationRegistrationTab({
   const closeModal = () => {
     setIsModalOpen(false);
   };
-  const maxLandScale = landInfo ? Math.floor(landInfo.landScale / 3.3) : 0;
 
   return (
     <Container>
@@ -261,65 +258,33 @@ function LandInformationRegistrationTab({
               alt="multiply"
               onClick={() => {
                 setLandInfo(null);
+                setLandNickname('');
                 setAddress('');
+                setExpectedPrice('');
+                setExpectedArea('');
               }}
             />
           </>
         )}
       </InputContainer>
-      <InputContainer>
-        <InputLabel> </InputLabel>
-        {landInfo !== null ? (
-          <LandInfoContainer>
-            <LandInfoFieldContainer>
-              <LandInfoFieldLabel>용도</LandInfoFieldLabel>
-              <UserSearchInput value={landInfo.landUse} readOnly />
-            </LandInfoFieldContainer>
-            <LandInfoFieldContainer>
-              <LandInfoFieldLabel>용도 상태</LandInfoFieldLabel>
-              <UserSearchInput value={landInfo.landUseStatus} readOnly />
-            </LandInfoFieldContainer>
-            <LandInfoFieldContainer>
-              <LandInfoFieldLabel>지형</LandInfoFieldLabel>
-              <UserSearchInput value={landInfo.landGradient} readOnly />
-            </LandInfoFieldContainer>
-            <LandInfoFieldContainer>
-              <LandInfoFieldLabel>도로</LandInfoFieldLabel>
-              <UserSearchInput value={landInfo.landRoad} readOnly />
-            </LandInfoFieldContainer>
-            <LandInfoFieldContainer>
-              <LandInfoFieldLabel>가격 ㎡당</LandInfoFieldLabel>
-              <UserSearchInput
-                value={`${landInfo.landPrice.toLocaleString()} 원`}
-                readOnly
-              />
-            </LandInfoFieldContainer>
-            <LandInfoFieldContainer>
-              <LandInfoFieldLabel>위험정도</LandInfoFieldLabel>
-              <UserSearchInput
-                value={
-                  landInfo.landDanger === 1
-                    ? '중간'
-                    : landInfo.landDanger === 2
-                      ? '높음'
-                      : '낮음'
-                }
-                readOnly
-              />
-            </LandInfoFieldContainer>
-          </LandInfoContainer>
-        ) : (
-          <div> </div>
-        )}
-      </InputContainer>
-      <Divider />
-
-      <h3>투자예정지 정보</h3>
       <LandInfoFieldContainer>
-        <LandInfoFieldLabel>평수</LandInfoFieldLabel>
+        <LandInfoFieldLabel>부지명</LandInfoFieldLabel>
+        <UserSearchInput
+          type="string"
+          min=""
+          value={landNickname === '' ? '' : landNickname} // 빈 문자열 처리
+          onChange={(e) => {
+            const value = e.target.value === '' ? '' : e.target.value;
+            setLandNickname(typeof value === 'string' ? value : ''); // 빈 문자열 또는 0 이상인 정수만 허용, 최대값은 안전한 정수 범위 내
+          }}
+          placeholder="예: 대전시청"
+        />
+      </LandInfoFieldContainer>
+      <LandInfoFieldContainer>
+        <LandInfoFieldLabel>예정 평수</LandInfoFieldLabel>
         <UserSearchInput
           type="number"
-          min="0"
+          min="1"
           value={expectedArea === '' ? '' : expectedArea} // 빈 문자열 처리
           onChange={(e) => {
             const value = e.target.value === '' ? '' : Number(e.target.value);
@@ -332,12 +297,15 @@ function LandInformationRegistrationTab({
                 : '',
             );
           }}
-          placeholder={`최대 입력 가능 값: ${maxLandScale} 평`}
+          placeholder={
+            maxLandScale === Number.MAX_SAFE_INTEGER
+              ? '구매 예정 평수를 입력하세요.'
+              : `최대 입력 가능 값: ${maxLandScale} 평`
+          }
         />
       </LandInfoFieldContainer>
-
       <LandInfoFieldContainer>
-        <LandInfoFieldLabel>총가격</LandInfoFieldLabel>
+        <LandInfoFieldLabel>예정 가격</LandInfoFieldLabel>
         <UserSearchInput
           type="number"
           min="0"
@@ -357,17 +325,58 @@ function LandInformationRegistrationTab({
         />
       </LandInfoFieldContainer>
       <LandInfoFieldContainer>
-        <LandInfoFieldLabel>평당가</LandInfoFieldLabel>
-        <UserSearchDiv>
-          {
+        <LandInfoFieldLabel>예상 평당가</LandInfoFieldLabel>
+        <UserSearchInput
+          value={
             Number(expectedArea) > 0 && Number(expectedPrice) > 0
-              ? `${Math.floor(
-                  Number(expectedPrice) / Number(expectedArea),
-                ).toLocaleString()} 원` // 평당가 계산 및 포맷
-              : '값이 없습니다.' // 계산할 수 없을 때 메시지
+              ? `${Math.floor(Number(expectedPrice) / Number(expectedArea)).toLocaleString()} 원`
+              : '값이 없습니다.'
           }
-        </UserSearchDiv>
+        />
       </LandInfoFieldContainer>
+      {landInfo !== null ? (
+        <LandInfoContainer>
+          <LandInfoFieldContainer>
+            <LandInfoFieldLabel>용도</LandInfoFieldLabel>
+            <UserSearchInput value={landInfo.landUse} readOnly />
+          </LandInfoFieldContainer>
+          <LandInfoFieldContainer>
+            <LandInfoFieldLabel>용도 상태</LandInfoFieldLabel>
+            <UserSearchInput value={landInfo.landUseStatus} readOnly />
+          </LandInfoFieldContainer>
+          <LandInfoFieldContainer>
+            <LandInfoFieldLabel>지형</LandInfoFieldLabel>
+            <UserSearchInput value={landInfo.landGradient} readOnly />
+          </LandInfoFieldContainer>
+          <LandInfoFieldContainer>
+            <LandInfoFieldLabel>도로</LandInfoFieldLabel>
+            <UserSearchInput value={landInfo.landRoad} readOnly />
+          </LandInfoFieldContainer>
+          <LandInfoFieldContainer>
+            <LandInfoFieldLabel>㎡당 공시지가</LandInfoFieldLabel>
+            <UserSearchInput
+              value={`${landInfo.landPrice.toLocaleString()} 원`}
+              readOnly
+            />
+          </LandInfoFieldContainer>
+          <LandInfoFieldContainer>
+            <LandInfoFieldLabel>개발가능성</LandInfoFieldLabel>
+            <UserSearchInput
+              value={
+                landInfo.landDanger === 1
+                  ? '보통'
+                  : landInfo.landDanger === 2
+                    ? '안전'
+                    : '주의'
+              }
+              readOnly
+            />
+          </LandInfoFieldContainer>
+        </LandInfoContainer>
+      ) : (
+        <div> </div>
+      )}
+      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}{' '}
       <RegistContainer>
         <RegisterButton onClick={handleCancel}>취소</RegisterButton>
         <RegisterButton onClick={handleNext}>다음</RegisterButton>
