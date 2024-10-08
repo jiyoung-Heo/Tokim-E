@@ -152,18 +152,32 @@ function RiskMapReportPage() {
   }, []);
 
   const handleSearch = () => {
+    // 검색창이 비어있거나 100자를 초과하는 경우
+    if (!searchQuery.trim() || searchQuery.length > 100) {
+      alert('유효하지 않은 주소입니다. 주소를 입력해 주세요 (최대 100자).');
+      return;
+    }
+
     window.naver.maps.Service.geocode(
       {
         query: searchQuery,
       },
-      (status: any, response: any) => {
+      (status: number, response: any) => {
+        // 매개변수 타입 명시
         if (status !== window.naver.maps.Service.Status.OK) {
           alert('주소 변환에 실패했습니다.');
           return;
         }
 
-        const latSearch = response.v2.addresses[0].y;
-        const lngSearch = response.v2.addresses[0].x;
+        // 주소 변환 결과가 있는지 확인
+        const address = response.v2.addresses;
+        if (!address || address.length === 0) {
+          alert('유효하지 않은 주소입니다.');
+          return;
+        }
+
+        const latSearch = address[0].y;
+        const lngSearch = address[0].x;
 
         setLat(latSearch);
         setLng(lngSearch);
