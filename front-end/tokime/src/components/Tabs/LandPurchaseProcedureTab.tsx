@@ -3,6 +3,11 @@ import styled, { css } from 'styled-components';
 import { useSwipeable } from 'react-swipeable';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
+import pro1 from '../../assets/images/procedure/1.png';
+import pro2 from '../../assets/images/procedure/2.png';
+import pro3 from '../../assets/images/procedure/3.png';
+import pro4 from '../../assets/images/procedure/4.png';
+import pro5 from '../../assets/images/procedure/5.png';
 
 const TabContent = styled.div`
   height: 60vh;
@@ -106,6 +111,8 @@ const RightButton = styled(SlideButton)`
   color: #00c99c;
 `;
 
+const imgSrcs = [pro1, pro2, pro3, pro4, pro5];
+
 function LandPurchaseProcedureTab() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 1; // 한 페이지에 보여줄 항목 수
@@ -146,7 +153,10 @@ function LandPurchaseProcedureTab() {
       {currentItems.length > 0 ? (
         currentItems.map((item, index) => (
           <ItemContainer key={index}>
-            <Image src={item.knowledgeImageUrl} alt={item.knowledgeName} />
+            <Image
+              src={imgSrcs[(currentPage - 1) % imgSrcs.length]}
+              alt={item.knowledgeName}
+            />
             <Text>{item.knowledgeName}</Text>
             <Description>{item.knowledgeDescribe}</Description>
           </ItemContainer>
