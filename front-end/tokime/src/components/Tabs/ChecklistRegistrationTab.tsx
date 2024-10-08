@@ -321,6 +321,12 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
   };
 
   const handleNext = () => {
+    const checkedIndices = checkedItems
+      .map((checked, index) => (checked ? index : null))
+      .filter((index) => index !== null) as number[];
+
+    setCheck(checkedIndices); // 선택된 인덱스 저장
+
     const unchecked = checkedItems
       .map((isChecked, index) =>
         !isChecked ? { index, content: checklist[index].content } : null,
