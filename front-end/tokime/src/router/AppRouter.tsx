@@ -1,6 +1,5 @@
 import React from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import StartPage from '../pages/StartPage';
 import MainPage from '../pages/MainPage';
 import AddressSearch from '../pages/AddressSearch';
@@ -17,11 +16,22 @@ import RiskMapPage from '../pages/RiskMapPage'; // 새로 추가
 import Layout from '../components/layouts/layout'; // Layout 추가
 import RiskMapReportPage from '../pages/RiskMapReportPage';
 import LandScorePage from '../pages/LandScorePage';
-import { RootState } from '../redux/store';
+
+function getCookieValue(name: string): string | null {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    const cookieValue = parts.pop();
+    console.log(cookieValue);
+    if (cookieValue) {
+      return cookieValue.split(';').shift() || null; // split이나 shift가 undefined일 경우 null 반환
+    }
+  }
+  return null;
+}
 
 function AppRouter() {
-  const user = useSelector((state: RootState) => state.user);
-  console.log(user);
+  const authCookie = getCookieValue('Authorization');
   return (
     <Routes>
       <Route path="/" element={<StartPage />} /> {/* 하단탭과 사이드바 없음 */}
@@ -70,7 +80,7 @@ function AppRouter() {
       <Route
         path="/my-page"
         element={
-          user.email ? ( // 인증 여부 확인
+          authCookie ? ( // 인증 여부 확인
             <Layout>
               <MyPage />
             </Layout>
@@ -82,7 +92,7 @@ function AppRouter() {
       <Route
         path="/investment"
         element={
-          user.email ? ( // 인증 여부 확인
+          authCookie ? ( // 인증 여부 확인
             <Layout>
               <InvestmentPage />
             </Layout>
@@ -94,7 +104,7 @@ function AppRouter() {
       <Route
         path="/investment-register"
         element={
-          user.email ? ( // 인증 여부 확인
+          authCookie ? ( // 인증 여부 확인
             <Layout>
               <InvestmentRegisterPage />
             </Layout>
@@ -106,7 +116,7 @@ function AppRouter() {
       <Route
         path="/investment-detail/:invest"
         element={
-          user.email ? ( // 인증 여부 확인
+          authCookie ? ( // 인증 여부 확인
             <Layout>
               <InvestmentDetailPage />
             </Layout>
@@ -118,7 +128,7 @@ function AppRouter() {
       <Route
         path="/land-purchase-quiz"
         element={
-          user.email ? (
+          authCookie ? (
             <Layout>
               <LandPurchaseQuiz />
             </Layout>
