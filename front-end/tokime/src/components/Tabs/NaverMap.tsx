@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { getSearchLandInfo } from '../../api/landAxios';
+import notFoundIcon from '../../assets/images/Tokimlogo.png'; // 대체 이미지 경로
 
 const MapContainer = styled.div`
   width: 100%;
@@ -12,6 +13,8 @@ const MapContainer = styled.div`
 const NaverMap: React.FC = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const markerRef = useRef<any>(null); // 마커를 저장하기 위한 ref
+
+  const [hasError, setHasError] = useState(false); // 오류 상태 관리
 
   const selectedDetail = useSelector(
     (state: RootState) => state.landinfo.landDetail, // Redux에서 선택된 상세 정보 가져오기
@@ -115,12 +118,15 @@ const NaverMap: React.FC = () => {
             initMap({ y, x }, landDanger);
           } else {
             console.error('지번 정보를 찾을 수 없습니다.');
+            setHasError(true); // 오류 상태 업데이트
           }
         } else {
           console.error('주소를 찾을 수 없습니다:', data.errorMessage);
+          setHasError(true); // 오류 상태 업데이트
         }
       } catch (error) {
         console.error('Fetch 오류 발생:', error);
+        setHasError(true); // 오류 상태 업데이트
       }
     };
 
@@ -130,10 +136,23 @@ const NaverMap: React.FC = () => {
           fetchCoordinates();
         }
       })
-      .catch((error) => console.error(error));
+      .catch((error) => {
+        console.error(error);
+        setHasError(true); // 오류 상태 업데이트
+      });
   }, [district, address]);
 
-  return <MapContainer ref={mapContainer} />;
+  return (
+    <MapContainer ref={mapContainer}>
+      {hasError ? (
+        <img
+          src={notFoundIcon}
+          alt="대체 이미지"
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        />
+      ) : null}
+    </MapContainer>
+  );
 };
 
 export default NaverMap;
