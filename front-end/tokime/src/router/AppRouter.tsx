@@ -6,7 +6,7 @@ import AddressSearch from '../pages/AddressSearch';
 import LandPurchaseKnowledge from '../pages/LandPurchaseKnowledge';
 import LandTerms from '../pages/LandTerms';
 import LandTermDetail from '../pages/LandTermDetail';
-import MyPage from '../pages/MyPage';
+import StoryAnalysis from '../pages/StoryAnalysis';
 import InvestmentPage from '../pages/InvestmentPage';
 import InvestmentRegisterPage from '../pages/InvestmentRegisterPage';
 import InvestmentDetailPage from '../pages/InvestmentDetailPage'; // 투자 예정지 상세 페이지 추가
@@ -65,12 +65,12 @@ function AppRouter() {
         }
       />
       <Route
-        path="/my-page"
+        path="/Story-Analysis"
         element={
           <ProtectedRoute
             element={
               <Layout>
-                <MyPage />
+                <StoryAnalysis />
               </Layout>
             }
           />
