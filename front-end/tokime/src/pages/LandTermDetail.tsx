@@ -6,6 +6,7 @@ import {
   registTermLike,
   deleteTermLike,
 } from '../api/termAxios'; // API 호출
+import elasticNewsAxios from '../api/elasticNewsAxios';
 import OpenAiUtil from '../utils/OpenAiUtill';
 import starIcon from '../assets/images/icon/star.svg';
 import starFilled from '../assets/images/icon/star_filled.svg';
@@ -163,6 +164,15 @@ const ModalBody = styled.div`
   margin-bottom: 20px; /* 다른 요소와의 간격 조정 */
 `;
 
+const ArticleTitle = styled.h3`
+  margin-top: 0px;
+  margin-bottom: 1vh;
+  a {
+    text-decoration: none; // 링크의 밑줄 제거
+    color: inherit; // 텍스트 색상 유지 (부모의 색상 사용)
+  }
+`;
+
 function getCookieValue(name: string): string | null {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
@@ -185,6 +195,7 @@ function LandTermDetail() {
   const [loading, setLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(false); // 즐겨찾기 상태
   const [modalOpen, setModalOpen] = useState(false); // 모달 상태
+  const [newsData, setNewsData] = useState<string[]>([]); // 뉴스 데이터를 위한 상태 추가
 
   const authCookie = getCookieValue('Authorization');
 
@@ -194,7 +205,6 @@ function LandTermDetail() {
       try {
         const data = await getSelectedTerm(Number(term)); // API로 용어 상세 정보 가져오기
         setTermData(data);
-
         // likeCheck 값에 따라 즐겨찾기 상태를 설정
         setIsLiked(data.likeCheck === true); // likeCheck 값이 true이면 즐겨찾기 상태로 설정
       } catch (error) {
@@ -206,6 +216,28 @@ function LandTermDetail() {
 
     fetchTermData();
   }, [term]);
+
+  // 관련 뉴스를 가져오는 useEffect
+  useEffect(() => {
+    const fetchNewsData = async () => {
+      console.log('요청 보낼 단어 :', termData);
+      if (termData && termData.termName) {
+        try {
+          const news = await elasticNewsAxios(termData.termName); // API 호출
+          console.log('뉴스 결과물 !!:', news.length);
+          // eslint-disable-next-line no-underscore-dangle
+          setNewsData(news.map((item: any) => item._source.original_data)); // 뉴스 데이터 저장
+          console.log('잘 들어 왔니?', newsData);
+        } catch (error) {
+          console.error('관련 뉴스를 불러오는데 실패했습니다.', error);
+        }
+      }
+    };
+
+    if (termData) {
+      fetchNewsData(); // termData가 있을 때만 호출
+    }
+  }, [termData]);
 
   // OpenAI 응답을 가져오는 useEffect
   useEffect(() => {
@@ -297,9 +329,17 @@ function LandTermDetail() {
       {/* 관련 뉴스 */}
       <RelatedNewsTitle>관련 뉴스</RelatedNewsTitle>
       <NewsContainer>
-        {termData.news && termData.news.length > 0 ? (
-          termData.news.map((newsItem: string, index: number) => (
-            <NewsItem key={index}>{newsItem}</NewsItem>
+        {newsData && newsData.length > 0 ? (
+          newsData.map((newsItem: any, index: number) => (
+            <NewsItem key={index}>
+              <a href={newsItem.link} target="_blank" rel="noopener noreferrer">
+                <ArticleTitle>
+                  {newsItem.title.length > 24
+                    ? `${newsItem.title.substring(0, 24)}...`
+                    : newsItem.title}
+                </ArticleTitle>
+              </a>
+            </NewsItem>
           ))
         ) : (
           <NewsItem>관련 뉴스가 없습니다.</NewsItem>
