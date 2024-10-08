@@ -148,6 +148,8 @@ function AppRouter() {
           </Layout>
         }
       />
+      <Route path="*" element={<Navigate to="/main" replace />} />{' '}
+      {/* 모든 잘못된 경로를 /main으로 리디렉션 */}
     </Routes>
   );
 }
