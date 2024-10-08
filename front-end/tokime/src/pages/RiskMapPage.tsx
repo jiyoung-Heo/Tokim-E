@@ -160,31 +160,52 @@ const RiskMapPage: React.FC = () => {
       dangerTitle: string,
       dangerContent: string,
     ) => {
-      if (!mapRef.current) return; // Check if mapRef is null
+      if (!mapRef.current) return;
 
       const marker = new window.naver.maps.Marker({
         position: new window.naver.maps.LatLng(lat, lng),
         map: mapRef.current,
         icon: {
           url: 'markers/report.png',
-          scaledSize: new window.naver.maps.Size(30, 30),
+          scaledSize: new window.naver.maps.Size(30, 30), // 마커 크기
         },
       });
 
       const infoWindow = new window.naver.maps.InfoWindow({
-        content: `<div style="padding:10px; max-width:200px; border-radius:10px; border: 1px solid #27C384; background-color: #fff;">
-                <h4 style="color: #333;">신고 제목: ${dangerTitle}</h4>
-                <p style="color: #555;">신고 내용: ${dangerContent}</p>
-                <p style="color: #777;">주소: 불러오는 중...</p>
-              </div>`,
+        content: `
+          <div id="infoWindow-${lat}-${lng}" style="position: relative; padding:10px; max-width:300px; border-radius:10px; border: 1px solid #27C384; background-color: #fff;">
+            <h4 style="text-align: center; font-size: 18px; color: #333;"><${dangerTitle}></h4>
+            <hr style="border: 0; height: 1px; background-color: #ccc; margin: 10px 0;">
+            <p style="color: #777; font-size: 14px; margin: 0;">주소: 불러오는 중...</p>
+            <hr style="border: 0; height: 1px; background-color: #ccc; margin: 10px 0;">
+            <p style="color: #555; font-size: 14px;">신고 내용: ${dangerContent}</p>
+            <div style="position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 10px solid #27C384;"></div>
+          </div>
+        `,
         backgroundColor: 'transparent',
         borderColor: '#27C384',
         borderWidth: '1px',
         anchorSize: new window.naver.maps.Size(0, 0),
-        pixelOffset: new window.naver.maps.Point(-100, -200),
+        pixelOffset: new window.naver.maps.Point(-100, -200), // 초기 값 설정
       });
 
+      // 마커 클릭 이벤트
       window.naver.maps.Event.addListener(marker, 'click', () => {
+        // 인포윈도우가 열리기 전에 요소 크기를 계산해서 pixelOffset을 조정함
+        setTimeout(() => {
+          const infoWindowElement = document.getElementById(
+            `infoWindow-${lat}-${lng}`,
+          );
+          if (infoWindowElement) {
+            const rect = infoWindowElement.getBoundingClientRect();
+            const newPixelOffset = new window.naver.maps.Point(
+              -(rect.width / 2),
+              -(rect.height + 10),
+            ); // 요소의 크기에 따라 pixelOffset 재설정
+            infoWindow.setOptions({ pixelOffset: newPixelOffset });
+          }
+        }, 0);
+
         infoWindow.open(mapRef.current, marker);
       });
 
@@ -203,13 +224,31 @@ const RiskMapPage: React.FC = () => {
               const address =
                 response.v2.address.jibunAddress ||
                 response.v2.address.roadAddress;
-              const newContent = `<div style="padding:10px; max-width:200px; border-radius:10px; border: 1px solid #27C384; background-color: #fff;">
-                              <h4 style="color: #333;">신고 제목: ${dangerTitle}</h4>
-                              <p style="color: #555;">신고 내용: ${dangerContent}</p>
-                              <p style="color: #777;">주소: ${address}</p>
-                            </div>`;
+              const newContent = `
+                <div id="infoWindow-${lat}-${lng}" style="position: relative; padding:10px; max-width:300px; border-radius:10px; border: 1px solid #27C384; background-color: #fff;">
+                  <h4 style="text-align: center; font-size: 18px; color: #333;"><${dangerTitle}></h4>
+                  <hr style="border: 0; height: 1px; background-color: #ccc; margin: 10px 0;">
+                  <p style="color: #777; font-size: 14px; margin: 0;">주소: ${address}</p>
+                  <hr style="border: 0; height: 1px; background-color: #ccc; margin: 10px 0;">
+                  <p style="color: #555; font-size: 14px;">신고 내용: ${dangerContent}</p>
+                  <div style="position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 10px solid #27C384;"></div>
+                </div>
+              `;
               infoWindow.setContent(newContent);
-              marker.address = address;
+
+              setTimeout(() => {
+                const infoWindowElement = document.getElementById(
+                  `infoWindow-${lat}-${lng}`,
+                );
+                if (infoWindowElement) {
+                  const rect = infoWindowElement.getBoundingClientRect();
+                  const newPixelOffset = new window.naver.maps.Point(
+                    -(rect.width / 2),
+                    -(rect.height + 10),
+                  );
+                  infoWindow.setOptions({ pixelOffset: newPixelOffset });
+                }
+              }, 0);
             } else {
               console.error('역지오코딩 실패:', status);
             }
