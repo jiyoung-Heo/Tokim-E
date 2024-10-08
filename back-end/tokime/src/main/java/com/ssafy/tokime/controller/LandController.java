@@ -1,5 +1,7 @@
 package com.ssafy.tokime.controller;
 
+import com.ssafy.tokime.dto.LawDTO;
+import com.ssafy.tokime.dto.LawSearchDTO;
 import com.ssafy.tokime.model.Land;
 import com.ssafy.tokime.model.Law;
 import com.ssafy.tokime.service.LandService;
@@ -12,8 +14,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.IllegalFormatException;
 import java.util.List;
 
 @RestController
@@ -89,6 +93,19 @@ public class LandController {
         }
         Long lawDistrict = Long.valueOf(districtCodeStr);
         return lawService.selectAllLawByDistrict(lawDistrict);
+    }
+
+    // 조례 검색 조회
+    @PostMapping("/bylaw/search")
+    public ResponseEntity<?> searchLaw(@RequestBody LawSearchDTO dto){
+        try {
+            List<Law> lawlist = lawService.seacrchLawByLandUse(dto);
+            return new ResponseEntity<>(lawlist,HttpStatus.OK);
+        }catch (IllegalFormatException e) {
+            return new ResponseEntity<>("잘못된 데이터 타입",HttpStatus.BAD_REQUEST);
+        }catch(Exception e){
+            return  new ResponseEntity<>("서버 에러",HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }
