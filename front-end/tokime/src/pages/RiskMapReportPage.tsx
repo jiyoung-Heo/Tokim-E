@@ -38,6 +38,7 @@ const SearchInput = styled.input`
   border-radius: 10px;
   text-align: center;
   font-weight: bold;
+  margin-bottom: 2vh;
 `;
 
 const SearchButton = styled.button`
@@ -75,9 +76,7 @@ const CancelButton = styled.button`
   border: none;
 `;
 
-const TitleContainer = styled.div`
-  margin-bottom: 2vh;
-`;
+const TitleContainer = styled.div``;
 
 const TitleText = styled.input`
   width: 100%;
@@ -98,11 +97,11 @@ const Content = styled.textarea`
   font-weight: bold;
   border: 1.4px solid #333;
   border-radius: 10px;
-  margin-bottom: 2vh;
+  margin-botton: 2vh;
 `;
 
 const DangerP = styled.p`
-  margin: 0;
+  margin-top: 1vh;
   margin-bottom: 1vh;
   font-size: 17px;
   font-weight: bold;
@@ -294,6 +293,7 @@ function RiskMapReportPage() {
           onChange={(e) => setDangerContent(e.target.value)}
         />
       </TitleContainer>
+      <DangerP>주소 검색</DangerP>
       <SearchContainer>
         <SearchInput
           type="text"
