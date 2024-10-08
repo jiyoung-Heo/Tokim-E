@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import LandDetailTab from '../components/Tabs/LandDetailTab';
 import OrdinanceInfoTab from '../components/Tabs/OrdinanceInfoTab';
@@ -8,12 +8,16 @@ import {
   setLandAddress,
   resetLandAddress,
 } from '../redux/slices/landAddressSlice'; // 액션 임포트
-import { setLandDetails, resetLandInfo } from '../redux/slices/landInfoSlice'; // 액션 임포트
+import {
+  setLandDetails,
+  resetLandInfo,
+  setLandDetail,
+} from '../redux/slices/landInfoSlice'; // 액션 임포트
 import { setLawInfo, resetLawInfo } from '../redux/slices/lawInfoSlice'; // 액션 임포트
 import { getSearchLandInfo, getLandLawInfo } from '../api/landAxios'; // API 임포트
 import searchIcon from '../assets/images/icon/search.svg';
 import nodataimg from '../../assets/images/Tokimlogo.png';
-
+import { RootState } from '../redux/store';
 // 검색창 스타일
 const SearchContainer = styled.div`
   padding: 10px;
@@ -49,9 +53,9 @@ const TabItem = styled.div<{ $isActive: boolean }>`
   flex: 1;
   text-align: center;
   padding: 10px;
-  font-size: 14px;
-  color: ${(props) => (props.$isActive ? '#27C384' : '#000')};
-  font-weight: ${(props) => (props.$isActive ? 'bold' : 'normal')};
+  font-size: 16px;
+  font-weight: bold;
+  color: ${(props) => (props.$isActive ? '#27C384' : '#333333')};
   border-bottom: ${(props) => (props.$isActive ? '2px solid #27C384' : 'none')};
   cursor: pointer;
 `;
@@ -64,9 +68,21 @@ const Content = styled.div`
 function AddressSearch() {
   const [activeTab, setActiveTab] = useState('landInfo');
   const [searchValue, setSearchValue] = useState('');
-
   const [errorMessage, setErrorMessage] = useState(''); // 에러 메시지 상태 추가
+  const landDetail = useSelector(
+    (state: RootState) => state.landinfo.landDetail, // Redux에서 선택된 상세 정보 가져오기
+  );
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log('LandDetail state has changed:', landDetail);
+
+    if (searchValue && (landDetail === null || landDetail === undefined)) {
+      setErrorMessage('DB에 없는 주소입니다. 다른 곳을 검색해주세요.');
+    } else {
+      setErrorMessage('');
+    }
+  }, [landDetail, searchValue, dispatch]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
@@ -79,106 +95,74 @@ function AddressSearch() {
       dispatch(resetLandInfo());
       dispatch(resetLawInfo());
       dispatch(resetLandAddress());
+      setSearchValue('');
     };
   }, [dispatch]);
 
-  const handleSearchSubmit = async () => {
-    const parts = searchValue
-      .replace(/(\d+-\d+)/g, ' $1 ') // '95-16'과 같이 번호와 주소를 구분
-      .replace(/(\s+)/g, ' ') // 다중 공백을 하나의 공백으로 변경
-      .trim() // 앞뒤 공백 제거
-      .split(' '); // 공백을 기준으로 분리
+  const handleAddressSearch = async () => {
+    // @ts-ignore
+    new window.daum.Postcode({
+      oncomplete: (data: any) => {
+        const fullAddress = data.jibunAddress;
+        // Extract district and detailed address
+        const addressParts = fullAddress.split(' ');
+        const district = `${data.sigungu} ${data.bname}`;
+        const addressDetail = addressParts.slice(-1)[0];
+        // 주소 정보를 바탕으로 토지 정보를 검색
+        getSearchLandInfo(district, addressDetail)
+          .then((response: any) => {
+            if (response[0] === undefined) {
+              console.error('no Address response');
+              setErrorMessage('DB에 없는 주소입니다. 다른 곳을 검색해주세요.');
+            } else {
+              // 토지 정보를 Redux에 저장
+              dispatch(setLandDetail(response[0] || null));
+              dispatch(setLandDetails(response[0] || null));
+              setSearchValue(
+                `${response[0].landDistrict} ${response[0].landAddress}`,
+              );
 
-    let localDistrict = '';
-    let localAddress = '';
+              // 법령 정보를 검색 (토지 정보에 landDistrictCode가 있을 때)
+              if (response[0].landDistrictCode) {
+                getLandLawInfo(response[0].landDistrictCode.toString())
+                  .then((lawInfoResponse: any) => {
+                    if (lawInfoResponse) {
+                      // 법령 정보를 Redux 상태에 저장
+                      dispatch(setLawInfo(lawInfoResponse));
+                    }
+                  })
+                  .catch((error: Error) => {
+                    console.error('Error fetching law information:', error);
+                  });
+              }
+            }
+          })
+          .catch((error: Error) => {
+            console.error('Error fetching land information:', error);
+          });
+      },
+    }).open();
 
-    // 구역 키워드 정규식 (예: 도, 시, 군, 구, 읍, 면, 리, 통, 동 등)
-    const districtKeywords = /(도|시|군|구|읍|면|리|통|동)$/;
-
-    // 숫자나 '-'가 포함된 경우 address로 간주
-    const isAddressCandidate = (part: any) => {
-      return /\d+/.test(part) || part.includes('-');
-    };
-
-    // 일반적인 지역명인지 판단
-    const isDistrictCandidate = (part: any) => {
-      return (
-        part.match(districtKeywords) ||
-        part.length === 2 ||
-        part.match(/^[가-힣]+$/)
-      );
-    };
-
-    parts.forEach((part) => {
-      // address 후보 판단
-      if (isAddressCandidate(part)) {
-        localAddress += `${part} `;
-      }
-      // district 후보 판단
-      else if (isDistrictCandidate(part)) {
-        localDistrict += `${part} `;
-      }
-      // 기타 상황: 일반적인 지역명으로 처리
-      else {
-        localDistrict += `${part} `;
-      }
-    });
-
-    // 불필요한 공백 제거
-    localDistrict = localDistrict.trim();
-    localAddress = localAddress.trim();
-
-    // 최종 처리: address만 있어도 가져오고 district만 있어도 가져오기
-    if (!localDistrict && !localAddress) {
-      setErrorMessage('주소 형식이 올바르지 않습니다.');
-      return;
-    }
-
-    // district와 address 상태 설정
-    console.log('district', localDistrict);
-    console.log('address', localAddress);
-
-    // Redux에 district와 address 저장
-    dispatch(
-      setLandAddress({ district: localDistrict, address: localAddress }),
-    );
-
-    try {
-      // 정보를 가져오는 로직
-      const landInfo = await getSearchLandInfo(localDistrict, localAddress);
-
-      // landInfo가 유효한지 체크
-      if (landInfo && landInfo.length > 0) {
-        dispatch(setLandDetails(landInfo));
-      } else {
-        setErrorMessage('해당 주소에 대한 정보가 없습니다.'); // 주소가 없을 경우 에러 메시지
-      }
-    } catch (error) {
-      console.error(error);
-      setErrorMessage('검색 중 오류가 발생했습니다.'); // 오류 처리
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSearchSubmit();
-    }
+    // 법령 정보를 초기화
+    dispatch(resetLawInfo());
   };
 
   return (
     <>
       <SearchContainer>
         <SearchInput
+          readOnly
           type="text"
           placeholder="주소를 입력하세요."
           value={searchValue}
           onChange={handleSearchChange}
-          onKeyDown={handleKeyDown}
+          onClick={handleAddressSearch}
+          style={{ fontWeight: 'bold' }}
         />
         <SearchIcon
           src={searchIcon}
           alt="search"
-          onClick={handleSearchSubmit}
+          onClick={handleAddressSearch}
         />
       </SearchContainer>
       {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}{' '}
@@ -189,12 +173,12 @@ function AddressSearch() {
         >
           토지 상세 정보
         </TabItem>
-        <TabItem
+        {/* <TabItem
           $isActive={activeTab === 'riskMap'}
           onClick={() => setActiveTab('riskMap')}
         >
           위험지도
-        </TabItem>
+        </TabItem> */}
         <TabItem
           $isActive={activeTab === 'regionalInfo'}
           onClick={() => setActiveTab('regionalInfo')}
@@ -204,8 +188,10 @@ function AddressSearch() {
       </TabsContainer>
       <Content>
         {activeTab === 'landInfo' && <LandDetailTab />}
-        {activeTab === 'riskMap' && <RiskMapTab />}
-        {activeTab === 'regionalInfo' && <OrdinanceInfoTab />}
+        {activeTab === 'regionalInfo' && (
+          <OrdinanceInfoTab setActiveTab={setActiveTab} />
+        )}
+        {/* {activeTab === 'riskMap' && <RiskMapTab />} */}
       </Content>
     </>
   );

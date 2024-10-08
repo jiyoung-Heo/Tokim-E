@@ -155,6 +155,19 @@ const ModalBody = styled.div`
   margin-bottom: 20px; /* 다른 요소와의 간격 조정 */
 `;
 
+function getCookieValue(name: string): string | null {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    const cookieValue = parts.pop();
+    console.log(cookieValue);
+    if (cookieValue) {
+      return cookieValue.split(';').shift() || null; // split이나 shift가 undefined일 경우 null 반환
+    }
+  }
+  return null;
+}
+
 // 용어 상세 컴포넌트
 function LandTermDetail() {
   const navigate = useNavigate();
@@ -165,6 +178,8 @@ function LandTermDetail() {
   const [loading, setLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(false); // 즐겨찾기 상태
   const [modalOpen, setModalOpen] = useState(false); // 모달 상태
+
+  const authCookie = getCookieValue('Authorization');
 
   // 용어 데이터를 가져오는 useEffect
   useEffect(() => {
@@ -243,12 +258,14 @@ function LandTermDetail() {
         <BackIcon src={backIcon} alt="back Icon" onClick={goBack} />
         {termData.termName}
         {/* 즐겨찾기 아이콘 */}
-        <FavoriteIcon
-          src={isLiked ? starFilled : starIcon}
-          alt="즐겨찾기"
-          isLiked={isLiked}
-          onClick={() => toggleLike(termData.termId)} // 클릭 시 함수 호출
-        />
+        {authCookie && (
+          <FavoriteIcon
+            src={isLiked ? starFilled : starIcon}
+            alt="즐겨찾기"
+            isLiked={isLiked}
+            onClick={() => toggleLike(termData.termId)} // 클릭 시 함수 호출
+          />
+        )}
       </Title>
 
       {/* 용어 정보 */}

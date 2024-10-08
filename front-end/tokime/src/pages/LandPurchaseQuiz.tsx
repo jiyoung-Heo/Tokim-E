@@ -43,7 +43,7 @@ const Container = styled.div`
 
 const Title = styled.h2`
   margin: 0 0 3vh 0;
-  font-size: 25px;
+  font-size: 33px;
   font-weight: bold;
   font-family: 'KoddiUD OnGothic';
   color: #333333;
@@ -63,6 +63,8 @@ const QuestionText = styled.p`
   font-family: 'Pretendard';
   color: #27c384;
   white-space: normal;
+  font-weight: bold;
+  font-size: 5vw;
   //word-break: keep-all;
   //overflow-wrap: break-word;
 `;

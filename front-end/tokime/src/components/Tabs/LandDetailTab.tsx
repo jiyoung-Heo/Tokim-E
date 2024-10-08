@@ -1,6 +1,7 @@
 import styled from 'styled-components';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { RootState } from '../../redux/store';
 import { setLandDetail } from '../../redux/slices/landInfoSlice';
 import { setLawInfo } from '../../redux/slices/lawInfoSlice'; // 액션 임포트
@@ -41,26 +42,66 @@ const InfoBox = styled.div`
   background-color: #fff;
 `;
 
+function getCookieValue(name: string): string | null {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    const cookieValue = parts.pop();
+    console.log(cookieValue);
+    if (cookieValue) {
+      return cookieValue.split(';').shift() || null; // split이나 shift가 undefined일 경우 null 반환
+    }
+  }
+  return null;
+}
+
 const LandDetailTab: React.FC = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const landDetails = useSelector(
     (state: RootState) => state.landinfo.landDetails,
   );
   const selectedDetail = useSelector(
     (state: RootState) => state.landinfo.landDetail, // Redux에서 선택된 상세 정보 가져오기
   );
+
   const [showInfo, setShowInfo] = useState<{ [key: string]: boolean }>({});
+  const prevLandDetailsRef = useRef(landDetails);
+  const infoButtonRefs = useRef<{ [key: string]: HTMLButtonElement | null }>(
+    {},
+  ); // 토글 버튼 참조
+  const authCookie = getCookieValue('Authorization');
 
-  const handleDetailClick = async (detail: any) => {
-    dispatch(setLandDetail(detail));
+  useEffect(() => {
+    // landDetails가 변경되었을 때만 상태를 리셋
+    if (landDetails !== prevLandDetailsRef.current) {
+      if (landDetails.length > 0) {
+        dispatch(setLandDetail(null));
+      }
+      prevLandDetailsRef.current = landDetails; // 이전 값 업데이트
+    }
+  }, [landDetails, dispatch]);
 
-    const lawData = await getLandLawInfo(detail.landDistrictCode); // detail에서 필요한 값을 사용해야 합니다.
-    dispatch(setLawInfo(lawData));
-  };
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // 클릭한 요소가 infoButtonRefs의 버튼이 아닐 때
+      if (
+        !Object.values(infoButtonRefs.current).some(
+          (ref) => ref && ref.contains(event.target as Node),
+        )
+      ) {
+        setShowInfo({}); // 모든 툴팁 닫기
+      }
+    };
 
-  const handleBackClick = () => {
-    dispatch(setLandDetail(null));
-  };
+    // 클릭 이벤트 리스너 등록
+    document.addEventListener('mousedown', handleClickOutside);
+
+    // 컴포넌트 언마운트 시 리스너 제거
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const toggleInfo = (key: string) => {
     setShowInfo((prev) => {
@@ -75,6 +116,10 @@ const LandDetailTab: React.FC = () => {
 
       return newShowInfo; // 새로운 상태를 반환
     });
+  };
+
+  const handleInvestClick = () => {
+    navigate('/investment-register', { state: { selectedDetail } }); // state를 통해 데이터 전달
   };
 
   const getLandUseDescription = (landUse: string) => {
@@ -287,14 +332,6 @@ const LandDetailTab: React.FC = () => {
 
   return (
     <div style={{ backgroundColor: '#f3f7fb' }}>
-      <h3 style={{ display: 'flex', alignItems: 'center' }}>
-        {selectedDetail && ( // 선택된 상세 정보가 있을 때만 BackIcon 표시
-          <BackIcon src={backIcon} alt="back Icon" onClick={handleBackClick} />
-        )}
-        {selectedDetail
-          ? `${selectedDetail.landDistrict} ${selectedDetail.landAddress}`
-          : null}
-      </h3>
       {selectedDetail ? ( // 선택된 상세 정보가 있으면
         <div>
           <MapBox>
@@ -390,6 +427,9 @@ const LandDetailTab: React.FC = () => {
                     }}
                     onClick={() => toggleInfo(item.key)}
                     aria-label={`${item.label} 정보`}
+                    ref={(el) => {
+                      infoButtonRefs.current[item.key] = el;
+                    }}
                   >
                     <img
                       src="/icons/info.png"
@@ -425,49 +465,46 @@ const LandDetailTab: React.FC = () => {
                 </p>
               </div>
             ))}
+            {authCookie && (
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <button
+                  type="button"
+                  style={{
+                    display: 'flex',
+                    fontWeight: 'bold',
+                    backgroundColor: '#00C99C',
+                    color: '#fff',
+                    border: '#00C99C',
+                    padding: 'calc(0.5vw + 0.5vh)',
+                    margin: 'calc(1vw + 1vh)',
+                    borderRadius: 'calc(1vw + 1vh)',
+                  }}
+                  onClick={handleInvestClick}
+                >
+                  투자 예정지 등록
+                </button>
+              </div>
+            )}
           </InfoBox>
         </div>
       ) : (
         // 선택된 상세 정보가 없으면
-        <div>
-          {landDetails.length > 0 ? (
-            landDetails.map((detail) => (
-              <div key={detail.landId} style={{ marginBottom: '16px' }}>
-                <button
-                  type="button"
-                  onClick={() => handleDetailClick(detail)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  주소: {detail.landDistrict} {detail.landAddress}
-                </button>
-              </div>
-            ))
-          ) : (
-            <div
-              style={{ textAlign: 'center', marginTop: '20px', opacity: 0.85 }}
-            >
-              <img
-                src={nodataimg}
-                alt="No data available"
-                style={{ width: '300px', height: 'auto' }} // 이미지 크기 조정
-              />
-              <div
-                style={{
-                  color: '#27C384',
-                  fontWeight: 'bold',
-                  marginTop: '10px',
-                  fontSize: '1.5em',
-                }}
-              >
-                <p>원하는 토지를 검색해보세요!</p>
-              </div>
-            </div>
-          )}
+        <div style={{ textAlign: 'center', marginTop: '20px', opacity: 0.85 }}>
+          <img
+            src={nodataimg}
+            alt="No data available"
+            style={{ width: '300px', height: 'auto' }} // 이미지 크기 조정
+          />
+          <div
+            style={{
+              color: '#27C384',
+              fontWeight: 'bold',
+              marginTop: '10px',
+              fontSize: '1.5em',
+            }}
+          >
+            <p>원하는 토지를 검색해보세요!</p>
+          </div>
         </div>
       )}
     </div>

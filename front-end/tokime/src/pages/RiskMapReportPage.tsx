@@ -1,4 +1,3 @@
-// src/pages/RiskMapReportPage.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
@@ -22,8 +21,36 @@ const Title = styled.h2`
   justify-content: left;
 `;
 
-// 뒤로가기 아이콘 정의
 const BackIcon = styled.img``;
+
+const SearchContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2vh;
+`;
+
+const SearchInput = styled.input`
+  width: 95%;
+  height: 5vh;
+  padding: 2vw;
+  font-size: 16px;
+  border: 1.4px solid #333;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: bold;
+`;
+
+const SearchButton = styled.button`
+  width: 15%;
+  margin-left: 3vh;
+  font-size: 16px;
+  background-color: #00c99c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+`;
+
 const DangerButton = styled.button`
   width: 30vw;
   background-color: #00c99c;
@@ -50,6 +77,7 @@ const TitleText = styled.input`
   text-align: center;
   font-weight: bold;
 `;
+
 const Content = styled.textarea`
   width: 100%;
   height: 15vh;
@@ -58,7 +86,6 @@ const Content = styled.textarea`
   font-weight: bold;
   border: 1.4px solid #333;
   border-radius: 10px;
-  // line-height: 1.5; // 필요에 따라 조절
   margin-bottom: 2vh;
 `;
 
@@ -70,15 +97,15 @@ const DangerP = styled.p`
 `;
 
 const MapP = styled.div`
-  height: 30vh;
+  height: 25vh;
   border: none;
-  borderradius: 10px;
+  border-radius: 10px;
   font-weight: bold;
 `;
 
 const ButtonDiv = styled.p`
   margin: 0;
-  display: flex; // flex container로 설정
+  display: flex;
   justify-content: center;
   gap: 7vw;
 `;
@@ -86,52 +113,99 @@ const ButtonDiv = styled.p`
 function RiskMapReportPage() {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const map = useRef<any>(null);
-  const marker = useRef<any>(null); // 마커를 저장할 ref
+  const markerRef = useRef<any>(null); // 클릭한 위치에 마커를 표시하기 위한 ref
   const navigate = useNavigate();
-
-  const handleBack = () => {
-    navigate(-1); // 이전 페이지로 이동
-  };
 
   const [lat, setLat] = useState<number | null>(null); // 위도 상태
   const [lng, setLng] = useState<number | null>(null); // 경도 상태
   const [dangerTitle, setDangerTitle] = useState(''); // 제목 상태
   const [dangerContent, setDangerContent] = useState(''); // 내용 상태
+  const [searchQuery, setSearchQuery] = useState(''); // 검색창 상태
 
   useEffect(() => {
     if (mapContainer.current) {
-      // 네이버 지도 초기화
       const mapOptions = {
         center: new window.naver.maps.LatLng(37.5665, 126.978), // 서울의 위경도
         zoom: 10,
       };
       map.current = new window.naver.maps.Map(mapContainer.current, mapOptions);
 
-      // 지도 클릭 이벤트 핸들러
+      // 지도 클릭 이벤트 추가
       window.naver.maps.Event.addListener(map.current, 'click', (e: any) => {
         const latMap = e.latlng.lat(); // 클릭한 위치의 위도
         const lngMap = e.latlng.lng(); // 클릭한 위치의 경도
 
-        console.log(`위도: ${latMap}, 경도: ${lngMap}`); // 위경도 정보를 콘솔에 출력
-
         setLat(latMap); // 클릭한 위도 저장
         setLng(lngMap); // 클릭한 경도 저장
 
-        // 기존 마커가 있으면 제거
-        if (marker.current) {
-          marker.current.setMap(null); // 마커를 지도에서 제거
+        // 클릭한 위치에 마커 표시 (기존 마커가 있으면 제거)
+        if (markerRef.current) {
+          markerRef.current.setMap(null);
         }
 
-        // 새로운 마커 추가
-        marker.current = new window.naver.maps.Marker({
-          position: e.latlng, // 클릭한 위치의 위경도
-          map: map.current, // 현재 지도에 마커 추가
+        markerRef.current = new window.naver.maps.Marker({
+          position: new window.naver.maps.LatLng(latMap, lngMap),
+          map: map.current,
         });
       });
     }
   }, []);
 
-  // 신고글 등록 함수
+  const handleSearch = () => {
+    // 검색창이 비어있거나 100자를 초과하는 경우
+    if (!searchQuery.trim() || searchQuery.length > 100) {
+      alert('유효하지 않은 주소입니다. 주소를 입력해 주세요 (최대 100자).');
+      return;
+    }
+
+    window.naver.maps.Service.geocode(
+      {
+        query: searchQuery,
+      },
+      (status: number, response: any) => {
+        // 매개변수 타입 명시
+        if (status !== window.naver.maps.Service.Status.OK) {
+          alert('주소 변환에 실패했습니다.');
+          return;
+        }
+
+        // 주소 변환 결과가 있는지 확인
+        const address = response.v2.addresses;
+        if (!address || address.length === 0) {
+          alert('유효하지 않은 주소입니다.');
+          return;
+        }
+
+        const latSearch = address[0].y;
+        const lngSearch = address[0].x;
+
+        setLat(latSearch);
+        setLng(lngSearch);
+
+        // 지도의 중앙을 검색된 위치로 이동
+        map.current.setCenter(
+          new window.naver.maps.LatLng(latSearch, lngSearch),
+        );
+
+        // 검색된 위치에 마커 표시 (기존 마커가 있으면 제거)
+        if (markerRef.current) {
+          markerRef.current.setMap(null);
+        }
+
+        markerRef.current = new window.naver.maps.Marker({
+          position: new window.naver.maps.LatLng(latSearch, lngSearch),
+          map: map.current,
+        });
+      },
+    );
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   const handleSubmit = async () => {
     if (lat && lng && dangerTitle && dangerContent) {
       const dangerData = {
@@ -142,15 +216,17 @@ function RiskMapReportPage() {
       };
 
       try {
-        const res = await registDanger(dangerData); // axios로 데이터 전송
-        if (res) {
-          alert('신고글이 성공적으로 등록되었습니다.');
+        const res = await registDanger(dangerData);
+        if (res === 200) {
+          navigate('/risk-map'); // 등록 성공 후 /risk-map 경로로 이동
         }
       } catch (e) {
         alert('신고글 등록에 실패했습니다.');
       }
     } else {
-      alert('모든 필드를 입력하고 지도를 클릭하여 위치를 선택하세요.');
+      alert(
+        '모든 필드를 입력하고 지도를 클릭하거나 주소를 검색하여 위치를 선택하세요.',
+      );
     }
   };
 
@@ -169,13 +245,23 @@ function RiskMapReportPage() {
         <TitleText
           type="text"
           placeholder="신고 제목을 입력하세요"
+          maxLength={255}
           value={dangerTitle}
-          onChange={(e) => setDangerTitle(e.target.value)} // 제목 상태 업데이트
+          onChange={(e) => setDangerTitle(e.target.value)}
         />
       </TitleContainer>
-
       <TitleContainer>
         <DangerP>신고위치</DangerP>
+        <SearchContainer>
+          <SearchInput
+            type="text"
+            placeholder="주소를 입력하세요"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyPress={handleKeyPress} // Enter 키 이벤트 추가
+          />
+          <SearchButton onClick={handleSearch}>검색</SearchButton>
+        </SearchContainer>
         <MapP ref={mapContainer} />
       </TitleContainer>
 
@@ -183,13 +269,14 @@ function RiskMapReportPage() {
         <DangerP>내용</DangerP>
         <Content
           placeholder="내용을 입력하세요"
+          maxLength={1500}
           value={dangerContent}
-          onChange={(e) => setDangerContent(e.target.value)} // 내용 상태 업데이트
+          onChange={(e) => setDangerContent(e.target.value)}
         />
       </div>
       <ButtonDiv>
         <DangerButton onClick={handleSubmit}>작성</DangerButton>
-        <DangerButton onClick={handleBack}>취소</DangerButton>
+        <DangerButton onClick={goBack}>취소</DangerButton>
       </ButtonDiv>
     </Container>
   );

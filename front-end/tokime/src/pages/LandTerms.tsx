@@ -215,6 +215,19 @@ const alphabets = [
   'ㅎ',
 ];
 
+function getCookieValue(name: string): string | null {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    const cookieValue = parts.pop();
+    console.log(cookieValue);
+    if (cookieValue) {
+      return cookieValue.split(';').shift() || null; // split이나 shift가 undefined일 경우 null 반환
+    }
+  }
+  return null;
+}
+
 const LandTerms = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
@@ -225,6 +238,8 @@ const LandTerms = () => {
   const [likedTerms, setLikedTerms] = useState<number[]>([]); // 즐겨찾기된 용어 ID 목록
   const [showFavorites, setShowFavorites] = useState(false); // 즐겨찾기 모드 여부
   const termContainerRef = useRef<HTMLDivElement>(null);
+
+  const authCookie = getCookieValue('Authorization');
 
   const fetchTerms = async () => {
     try {
@@ -392,18 +407,31 @@ const LandTerms = () => {
             filteredTerms.map((term) => (
               <TermWrapper key={term.termId}>
                 <Term to={`/land-terms/${term.termId}`}>{term.termName}</Term>
-                <StarIcon
-                  src={likedTerms.includes(term.termId) ? starFilled : starIcon} // isLiked에 따라 이미지 변경
-                  alt="즐겨찾기"
-                  isLiked={likedTerms.includes(term.termId)}
-                  onClick={() =>
-                    toggleLike(term.termId, likedTerms.includes(term.termId))
-                  }
-                />
+                {authCookie && (
+                  <StarIcon
+                    src={
+                      likedTerms.includes(term.termId) ? starFilled : starIcon
+                    } // isLiked에 따라 이미지 변경
+                    alt="즐겨찾기"
+                    isLiked={likedTerms.includes(term.termId)}
+                    onClick={() =>
+                      toggleLike(term.termId, likedTerms.includes(term.termId))
+                    }
+                  />
+                )}
               </TermWrapper>
             ))
           ) : (
-            <div>검색 결과가 없습니다.</div>
+            <div
+              style={{
+                color: '#27C384',
+                fontWeight: 'bold',
+                marginTop: '10px',
+                fontSize: '1.5em',
+              }}
+            >
+              검색 결과가 없습니다. T^T
+            </div>
           )}
         </TermList>
         <AlphabetNavContainer>
