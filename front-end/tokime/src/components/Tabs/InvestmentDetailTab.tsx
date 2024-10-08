@@ -39,6 +39,20 @@ const InfoBox = styled.div`
   background-color: #fff;
 `;
 
+const SmallButton = styled.button<{ color?: string }>`
+  padding: 0.5rem 1rem;
+  margin: 0.5rem 0;
+  border: none;
+  border-radius: 5px;
+  background-color: ${(props) => props.color || '#007bff'};
+  color: white;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
 interface InvestmentInfo {
   investmentPlannedLandId: number;
   landAddress: string;
