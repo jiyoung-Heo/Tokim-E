@@ -46,7 +46,6 @@ const TabsContainer = styled.div`
   display: flex;
   justify-content: space-around;
   background-color: #f3f7fb;
-  border-bottom: 1px solid #ddd;
 `;
 
 const TabItem = styled.div<{ $isActive: boolean }>`
@@ -56,7 +55,8 @@ const TabItem = styled.div<{ $isActive: boolean }>`
   font-size: 16px;
   font-weight: bold;
   color: ${(props) => (props.$isActive ? '#27C384' : '#333333')};
-  border-bottom: ${(props) => (props.$isActive ? '2px solid #27C384' : 'none')};
+  border-bottom: ${(props) =>
+    props.$isActive ? '2px solid #27C384' : '2px solid #ddd'};
   cursor: pointer;
 `;
 
@@ -144,7 +144,6 @@ function AddressSearch() {
     }).open();
 
     // 법령 정보를 초기화
-    dispatch(resetLawInfo());
   };
 
   return (

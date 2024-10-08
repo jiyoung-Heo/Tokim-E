@@ -47,7 +47,6 @@ function getCookieValue(name: string): string | null {
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) {
     const cookieValue = parts.pop();
-    console.log(cookieValue);
     if (cookieValue) {
       return cookieValue.split(';').shift() || null; // split이나 shift가 undefined일 경우 null 반환
     }
