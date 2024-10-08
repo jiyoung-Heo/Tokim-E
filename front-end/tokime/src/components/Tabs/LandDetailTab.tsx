@@ -493,18 +493,26 @@ const LandDetailTab: React.FC = () => {
         </div>
       ) : (
         // 선택된 상세 정보가 없으면
-        <div style={{ textAlign: 'center', marginTop: '20px', opacity: 0.85 }}>
+        <div
+          style={{
+            textAlign: 'center',
+            marginTop: '3vh',
+            opacity: 0.85,
+          }}
+        >
           <img
             src={nodataimg}
             alt="No data available"
-            style={{ width: '300px', height: 'auto' }} // 이미지 크기 조정
+            style={{ width: '50vw', height: 'auto', opacity: 0.65 }} // 이미지 크기 조정
           />
           <div
             style={{
               color: '#27C384',
               fontWeight: 'bold',
-              marginTop: '10px',
+              marginTop: '1vh',
               fontSize: '1.5em',
+              wordBreak: 'keep-all',
+              whiteSpace: 'normal',
             }}
           >
             <p>원하는 토지를 검색해보세요!</p>
