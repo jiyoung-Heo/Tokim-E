@@ -127,7 +127,7 @@ public class InvestmentPlannedLandController {
     public ResponseEntity<?> getPlannedLandByaddress(@RequestBody LandFilterDTO dto){
      try{
          String email =getAuth();
-         List<InvestmentPlannedLandDTO> filteredlands = investmentPlannedLandService.filterInvestmentPlannedLands(dto);
+         List<InvestmentPlannedLandDTO> filteredlands = investmentPlannedLandService.filterInvestmentPlannedLands(dto,email);
         return new ResponseEntity<>(filteredlands,HttpStatus.OK);
      }catch(IllegalFormatException e){
          return new ResponseEntity<>("데이터 타입이 올바르지 않습니다.", HttpStatus.BAD_REQUEST);
