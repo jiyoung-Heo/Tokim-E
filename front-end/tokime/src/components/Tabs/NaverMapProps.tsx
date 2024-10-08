@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { getSearchLandInfo } from '../../api/landAxios';
+import notFoundIcon from '../../assets/images/Tokimlogo.png';
 
 const MapContainer = styled.div`
   width: 100%;
@@ -15,7 +16,7 @@ interface NaverMapPropsProps {
 const NaverMapProps: React.FC<NaverMapPropsProps> = ({ landAddress }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const markerRef = useRef<any>(null); // 마커를 저장하기 위한 ref
-
+  const [hasError, setHasError] = useState(false);
   const addressParts = landAddress.split(' ');
 
   const district = `${addressParts[1]} ${addressParts[2]}`;
@@ -110,12 +111,15 @@ const NaverMapProps: React.FC<NaverMapPropsProps> = ({ landAddress }) => {
             initMap({ y, x }, landDanger);
           } else {
             console.error('지번 정보를 찾을 수 없습니다.');
+            setHasError(true);
           }
         } else {
           console.error('주소를 찾을 수 없습니다:', data.errorMessage);
+          setHasError(true);
         }
       } catch (error) {
         console.error('Fetch 오류 발생:', error);
+        setHasError(true);
       }
     };
 
@@ -126,9 +130,20 @@ const NaverMapProps: React.FC<NaverMapPropsProps> = ({ landAddress }) => {
         }
       })
       .catch((error) => console.error(error));
+    setHasError(true);
   }, [district, address]);
 
-  return <MapContainer ref={mapContainer} />;
+  return (
+    <MapContainer ref={mapContainer}>
+      {hasError ? (
+        <img
+          src={notFoundIcon}
+          alt="대체 이미지"
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        />
+      ) : null}
+    </MapContainer>
+  );
 };
 
 export default NaverMapProps;
