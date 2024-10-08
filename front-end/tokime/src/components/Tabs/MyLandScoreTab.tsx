@@ -112,8 +112,12 @@ function MyLandScoreTab() {
         ) : score !== null ? (
           <>
             <Graph score={score} />
-            <Score>{score}점</Score>
-            <Percentile>{percentile}</Percentile>
+            <Score>{score === -1 ? '나의 점수는?' : ` ${score} 점`}</Score>
+            <Percentile>
+              {score === -1
+                ? ' 퀴즈 풀고 나의 실력을 확인해보세요! '
+                : ` ${percentile}`}
+            </Percentile>
           </>
         ) : (
           <p>로딩 중...</p>
