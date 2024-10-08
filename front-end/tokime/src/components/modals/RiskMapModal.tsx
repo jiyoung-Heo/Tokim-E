@@ -37,6 +37,21 @@ const ContentContainer = styled.div`
   padding: 10px;
   max-height: 200px; /* 최대 높이 설정 */
   overflow-y: auto; /* 스크롤 가능하게 설정 */
+
+  /* 스크롤바 색상 변경 */
+  &::-webkit-scrollbar {
+    width: 8px; /* 스크롤바 너비 */
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #27c384; /* 스크롤바 색상 */
+    border-radius: 4px; /* 스크롤바 둥글기 */
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1; /* 스크롤바 트랙 색상 */
+    border-radius: 4px; /* 트랙 둥글기 */
+  }
 `;
 
 interface RiskMapModalProps {
