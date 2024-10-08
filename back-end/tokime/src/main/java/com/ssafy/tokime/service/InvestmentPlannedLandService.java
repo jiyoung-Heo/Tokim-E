@@ -163,17 +163,19 @@ public class InvestmentPlannedLandService {
     }
 
     //필터 조회
-    public List<InvestmentPlannedLandDTO> filterInvestmentPlannedLands(LandFilterDTO dto) {
+    public List<InvestmentPlannedLandDTO> filterInvestmentPlannedLands(LandFilterDTO dto, String email) {
+        User user = userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(()->new RuntimeException("존재 하지 않는 유저입니다"));
+
         // Q타입 생성
         QInvestmentPlannedLand investmentPlannedLand = QInvestmentPlannedLand.investmentPlannedLand;
-        // 모든 엔티티가 아닌 경우
-        BooleanExpression predicate = investmentPlannedLand.isNotNull();
+        // 유저 필터링
+        BooleanExpression predicate = investmentPlannedLand.user.eq(user);
 
-
+        // 지역을 선택 했을 경우
         if (dto.getLandAddress() != null && !dto.getLandAddress().isEmpty()) {
             predicate = predicate.and(investmentPlannedLand.landAddress.contains(dto.getLandAddress()));
         }
-
+        // 별칭에 값을 넣었을 경우
         if (dto.getLandNickname() != null && !dto.getLandNickname().isEmpty()) {
             predicate = predicate.and(investmentPlannedLand.landNickname.contains(dto.getLandNickname()));
         }
