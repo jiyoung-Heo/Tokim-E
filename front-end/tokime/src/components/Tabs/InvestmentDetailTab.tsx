@@ -246,9 +246,9 @@ const InvestmentDetailTab: React.FC<{
 
   const getDevelopmentPotentialDescription = (developmentPotential: number) => {
     const descriptions: { [key: number]: string } = {
-      0: "개발 가능성은 토키미에서 여러 정보들을 종합해 알려드리는 추천 지수입니다. 해당 토지는 '주의'입니다. 가장 낮은 지표입니다.",
-      1: "개발 가능성은 토키미에서 여러 정보들을 종합해 알려드리는 추천 지수입니다. 해당 토지는 '양호'입니다. 중간 지표입니다.",
-      2: "개발 가능성은 토키미에서 여러 정보들을 종합해 알려드리는 추천 지수입니다. 해당 토지는 '안전'입니다. 가장 높은 지표입니다.",
+      0: "개발 적합성을 평가한 지표입니다. 이 토지는 '주의' 상태로, 개발에 있어 여러 제한 사항이나 리스크가 있을 수 있습니다. 신중한 검토가 필요합니다.",
+      1: "개발 적합성을 평가한 지표입니다. 이 토지는 '보통' 상태로, 개발에 무리가 없으나 세부적인 사항을 고려할 필요가 있습니다.",
+      2: "개발 적합성을 평가한 지표입니다. 이 토지는 '안전' 상태로, 개발하기에 적합한 조건을 갖추고 있습니다. 비교적 리스크가 적습니다.",
     };
 
     return (
@@ -328,7 +328,12 @@ const InvestmentDetailTab: React.FC<{
             },
             {
               label: '개발 가능성',
-              value: investmentInfoProp?.landDanger.toString(),
+              value:
+                investmentInfoProp?.landDanger === 0
+                  ? '주의'
+                  : investmentInfoProp?.landDanger === 1
+                    ? '보통'
+                    : '안전',
               tooltip: getDevelopmentPotentialDescription(
                 investmentInfoProp?.landDanger || 0,
               ),
