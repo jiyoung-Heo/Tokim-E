@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getSearchLandInfo } from '../../api/landAxios'; // Adjust this path as necessary.
 import multiply from '../../assets/images/icon/Multiply.png'; // x아이콘
+import Modal from '../modals/LandInformationRegistrationModal';
 
 interface LandInfo {
   landId: string;
@@ -155,11 +156,17 @@ function LandInformationRegistrationTab({
   setLandInfo,
   onNext,
 }: LandInformationRegistrationTabProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
 
   const selectedDetail = location.state?.selectedDetail;
 
+  const openModal = (message: string) => {
+    setModalMessage(message);
+    setIsModalOpen(true);
+  };
   console.log(selectedDetail);
 
   useEffect(() => {
@@ -215,22 +222,22 @@ function LandInformationRegistrationTab({
 
   const handleNext = () => {
     if (!address) {
-      // 이거 모달로 바꿔야해요
-      alert('주소를 입력하세요.'); // Alert for missing address
+      openModal('주소를 입력하세요.'); // 모달로 변경
       return;
     }
     if (expectedArea === '') {
-      // 이거 모달로 바꿔야해요
-      alert('투자예정평수를 입력하세요.'); // Alert for missing expected area
+      openModal('투자예정평수를 입력하세요.'); // 모달로 변경
       return;
     }
     if (expectedPrice === '') {
-      // 이거 모달로 바꿔야해요
-      alert('투자예정가격을 입력하세요.'); // Alert for missing expected price
+      openModal('투자예정가격을 입력하세요.'); // 모달로 변경
       return;
     }
 
     onNext();
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
   const maxLandScale = landInfo ? Math.floor(landInfo.landScale / 3.3) : 0;
 
@@ -365,6 +372,7 @@ function LandInformationRegistrationTab({
         <RegisterButton onClick={handleCancel}>취소</RegisterButton>
         <RegisterButton onClick={handleNext}>다음</RegisterButton>
       </RegistContainer>
+      {isModalOpen && <Modal message={modalMessage} onClose={closeModal} />}
     </Container>
   );
 }
