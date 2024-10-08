@@ -75,10 +75,8 @@ function AddressSearch() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log('LandDetail state has changed:', landDetail);
-
     if (searchValue && (landDetail === null || landDetail === undefined)) {
-      setErrorMessage('DB에 없는 주소입니다. 다른 곳을 검색해주세요.');
+      setErrorMessage('국토교통부에서 제공하지 않는 지번 정보입니다.');
     } else {
       setErrorMessage('');
     }
@@ -113,7 +111,9 @@ function AddressSearch() {
           .then((response: any) => {
             if (response[0] === undefined) {
               console.error('no Address response');
-              setErrorMessage('DB에 없는 주소입니다. 다른 곳을 검색해주세요.');
+              dispatch(setLandDetail(null));
+              setSearchValue(fullAddress);
+              setErrorMessage('국토교통부에서 제공하지 않는 지번 정보입니다.');
             } else {
               // 토지 정보를 Redux에 저장
               dispatch(setLandDetail(response[0] || null));
