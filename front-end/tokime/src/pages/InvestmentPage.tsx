@@ -513,7 +513,7 @@ function InvestmentPage() {
                   <span
                     style={{
                       color:
-                        invest.checkedCount === 10
+                        invest.checkedCount === 11
                           ? '#27c384'
                           : invest.checkedCount <= 3
                             ? 'red'
