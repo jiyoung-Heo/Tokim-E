@@ -247,7 +247,7 @@ function LandTermDetail() {
         <BackIcon src={backIcon} alt="back Icon" onClick={goBack} />
         {termData.termName}
         {/* 즐겨찾기 아이콘 */}
-        {user.name && (
+        {user.email && (
           <FavoriteIcon
             src={isLiked ? starFilled : starIcon}
             alt="즐겨찾기"
