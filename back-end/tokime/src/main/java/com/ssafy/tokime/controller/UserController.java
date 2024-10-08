@@ -47,6 +47,7 @@ public class UserController{
 
             // 쿠키에서 Authorization 쿠키 값 가져오기
             String accessToken = getCookieValue(request, "access-token");
+            logger.info("Access token: " + accessToken);
             if (accessToken == null) {
                 logger.error("accessToken is null");
                 ResponseDTO<Void> response = ResponseDTO.<Void>builder().error("jwtToken is null").build();
@@ -60,7 +61,9 @@ public class UserController{
                         .header("Authorization", "Bearer " + accessToken)
                         .retrieve()
                         .bodyToMono(String.class)
-                        .onErrorResume(e -> Mono.error(new RuntimeException("카카오 탈퇴 실패")));
+                        .onErrorResume(e -> Mono.error(new RuntimeException("카카오 탈퇴 실패")))
+                        .block(); // 응답을 블로킹하여 기다림
+                ;
                 logger.info("탈퇴성공");
 
             }else if(user.getProvider().equals("google")){
@@ -68,7 +71,9 @@ public class UserController{
                         .uri("https://accounts.google.com/o/oauth2/revoke?token=" + accessToken)
                         .retrieve()
                         .bodyToMono(String.class)
-                        .onErrorResume(e -> Mono.error(new RuntimeException("구글 탈퇴 실패")));
+                        .onErrorResume(e -> Mono.error(new RuntimeException("구글 탈퇴 실패")))
+                        .block(); // 응답을 블로킹하여 기다림
+                ;
                 logger.info("탈퇴성공");
 
             }
@@ -81,6 +86,7 @@ public class UserController{
             return ResponseEntity.badRequest().body(response);
         }
     }
+
 
     // 유저 정보 조회
     @GetMapping("")
