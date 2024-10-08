@@ -1,123 +1,103 @@
 import styled, { css } from 'styled-components';
 import React, { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useSwipeable } from 'react-swipeable';
 import { RootState } from '../../redux/store'; // RootState 경로에 맞게 수정 필요
 import LoadingSpinner from '../layouts/LoadingSpinner';
 import nodataimg from '../../assets/images/Tokimlogo.png';
 import { setLandDetail } from '../../redux/slices/landInfoSlice';
 import { setLawInfo } from '../../redux/slices/lawInfoSlice';
 import { setLandAddress } from '../../redux/slices/landAddressSlice';
+import lawIcon from '../../assets/images/icon/law.png'; // 아이콘 경로 확인 필요
+import LawDetailModal from '../modals/LawDetailModal'; // 법령 상세 정보를 보여줄 모달 컴포넌트
 
 // 스타일 정의
 const LawInfoContainer = styled.div`
+  width: 80vw; // 반응형 크기 설정
   height: 20vh;
-  background: #ffffff;
-  box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.2);
+  background-color: #ffffff;
   border-radius: 10px;
-  padding: 15px;
-  box-sizing: border-box;
-  overflow-y: auto;
-  margin-bottom: 3vh;
+  padding: 10px;
+  position: relative;
+  margin-bottom: 5vw; // 반응형 마진
+  cursor: pointer;
+`;
+const LawHeader = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
-const LawDetailContainer = styled.div`
-  height: 30vh;
-  background: #ffffff;
-  box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-  padding: 15px;
-  box-sizing: border-box;
-  overflow-y: auto;
-  margin-bottom: 3vh;
+const LawIcon = styled.img`
+  width: 6vw; // 반응형 크기 설정
+  height: 6vw; // 반응형 크기 설정
+  margin-right: 4vw; // 반응형 간격 설정
 `;
 
-const LawDescription = styled.div`
-  font-family: 'KoddiUD OnGothic';
-  font-weight: 400;
-  font-size: 4vw;
-  line-height: 5vw;
-  color: #000000;
-`;
-
+// 법령 제목 텍스트 스타일
 const LawTitle = styled.div`
-  font-family: 'KoddiUD OnGothic';
-  font-weight: 700;
-  font-size: 4vw;
-  text-align: left;
+  font-size: 4vw; // 반응형 폰트 크기 설정
+  font-weight: bold;
   color: #333333;
-  margin-bottom: 1vh;
+  word-break: keep-all; // 단어가 중간에 잘리지 않도록 설정
+  white-space: normal; // 일반적인 줄바꿈 허용
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+const LawUse = styled.div`
+  font-size: 3.5vw; // 반응형 폰트 크기 설정
+  font-weight: 400;
+  color: rgba(51, 51, 51, 0.8);
+  margin-top: 1vw;
 `;
 
-const PaginationContainer = styled.div`
+const LawNumber = styled.div`
+  font-size: 3.5vw; // 반응형 폰트 크기 설정
+  font-weight: bold;
+  color: #00c99c;
   position: absolute;
-  bottom: 15vh;
-  left: 50%;
-  transform: translateX(-50%);
+  right: 10px;
+  bottom: 25px;
+`;
+const LawDate = styled.div`
+  font-size: 3.5vw; // 반응형 폰트 크기 설정
+  font-weight: bold;
+  color: #333333;
+  text-align: center;
+  position: absolute;
+  bottom: 3px;
+  width: 100%;
+`;
+
+// 페이지네이션 컨테이너 스타일
+const PaginationContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1vw;
+  margin-top: 5vw; // 반응형 마진 설정
 `;
 
-const SlideButton = styled.button`
-  position: absolute;
-  top: 48%;
-  transform: translateY(-50%);
-  background-color: transparent;
+const PageButton = styled.button`
+  background-color: #00c99c;
   border: none;
-  font-size: 2rem;
+  color: white;
+  font-size: 4vw; // 반응형 폰트 크기 설정
+  padding: 2vw;
+  margin: 0 2vw;
+  border-radius: 5px;
   cursor: pointer;
-  z-index: 10;
 
   &:disabled {
-    opacity: 0.3;
+    background-color: #ccc;
     cursor: not-allowed;
   }
 `;
 
+// 데이터가 없을 때 표시할 메시지 스타일
 const NoDataMessage = styled.div`
-  color: #27c384; // 원하는 색상
-  font-weight: bold; // 볼드체
-  font-size: 1.5em; // 폰트 크기
-  margin-top: 10px; // 위쪽 여백
-  text-align: center; // 중앙 정렬
-`;
-
-const Dot = styled.div<{ active: boolean }>`
-  width: 2.5vw;
-  height: 2.5vw;
-  border-radius: 50%;
-  background-color: ${(props) => (props.active ? '#00C99C' : '#ddd')};
-  transition:
-    width 0.3s ease-in-out,
-    height 0.3s ease-in-out;
-
-  ${(props) =>
-    props.active &&
-    css`
-      width: 2.5vw;
-      height: 2.5vw;
-    `}
-`;
-
-// Ellipsis 스타일 컴포넌트
-const Ellipsis = styled.span`
-  display: inline-block;
-  margin: 0 5px; // 도트 간격
-  font-size: 30px; // 원하는 폰트 크기로 조정
-  color: #00c99c; // 원하는 색상으로 조정
-  cursor: default; // 기본 커서
-`;
-
-const LeftButton = styled(SlideButton)`
-  left: 3vw;
-  color: #00c99c;
-`;
-
-const RightButton = styled(SlideButton)`
-  right: 3vw;
-  color: #00c99c;
+  color: #27c384; // 텍스트 색상을 녹색(#27c384)으로 설정
+  font-weight: bold; // 텍스트를 굵게 설정
+  font-size: 1.5em; // 폰트 크기를 1.5em로 설정
+  margin-top: 10px; // 위쪽 여백을 10px로 설정
+  text-align: center; // 텍스트를 중앙 정렬
 `;
 
 function OrdinanceInfoTab({
@@ -125,153 +105,87 @@ function OrdinanceInfoTab({
 }: {
   setActiveTab: React.Dispatch<React.SetStateAction<string>>;
 }) {
-  const dispatch = useDispatch();
-  const ordinances = useSelector((state: RootState) => state.lawInfo.lawInfos); // 법령 정보 가져오기
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null); // error 상태 변수 이름 변경
-  const totalItems = ordinances?.length ?? 0;
-  const landAddress = useSelector((state: RootState) => state.landaddress);
+  const dispatch = useDispatch(); // Redux 액션을 디스패치하는 함수 가져오기
+  const ordinances = useSelector((state: RootState) => state.lawInfo.lawInfos); // Redux에서 법령 정보 가져오기
+  const [currentPage, setCurrentPage] = useState(0); // 현재 페이지 상태 관리
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState<boolean>(true); // 로딩 상태 관리
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // 에러 메시지 상태
+  const landAddress = useSelector((state: RootState) => state.landaddress); // Redux에서 토지 주소 정보 가져오기
+  const itemsPerPage = 3; // 한 페이지에 표시할 법령 정보 수
+  const totalItems = ordinances?.length ?? 0; // 총 법령 정보 수
+  const totalPages = Math.ceil(totalItems / itemsPerPage); // 전체 페이지 수 계산
+  const [selectedOrdinance, setSelectedOrdinance] = useState<any>(null); // 선택된 법령 정보 상태
 
-  const prevlawInfosRef = useRef(ordinances);
+  const prevlawInfosRef = useRef(ordinances); // 이전 법령 정보 저장을 위한 ref
+
+  // 주소가 변경될 때마다 법령 정보를 리셋하는 로직
   useEffect(() => {
-    // ordinances 변경되었을 때만 상태를 리셋
     if (ordinances !== prevlawInfosRef.current) {
-      dispatch(setLandDetail(null));
-      dispatch(setLawInfo([]));
-      setActiveTab('landInfo');
-      prevlawInfosRef.current = ordinances; // 이전 값 업데이트
+      dispatch(setLandDetail(null)); // 토지 상세 정보 리셋
+      dispatch(setLawInfo([])); // 법령 정보 리셋
+      setActiveTab('landInfo'); // 탭을 'landInfo'로 전환
+      prevlawInfosRef.current = ordinances; // 현재 법령 정보로 업데이트
     }
   }, [landAddress, dispatch, setActiveTab]);
 
+  // 법령 정보가 없을 때 에러 메시지 출력, 로딩 완료 상태 설정
   useEffect(() => {
     if (totalItems === 0) {
-      setErrorMessage('법령 정보가 없습니다.'); // 에러 메시지 설정
-      setLoading(false);
+      setErrorMessage('법령 정보가 없습니다.'); // 에러 메시지 출력
+      setLoading(false); // 로딩 상태 해제
     } else {
       setErrorMessage(null); // 에러 메시지 초기화
-      setLoading(false);
-      setCurrentIndex(0); // ordinances가 변경되면 인덱스 초기화
+      setLoading(false); // 로딩 상태 해제
     }
   }, [ordinances]);
 
+  // 모달을 열고 선택된 법령 정보 설정
+  const handleOpenModal = (ordinance: any) => {
+    setSelectedOrdinance(ordinance); // 선택된 법령 정보 저장
+    setIsModalOpen(true); // 모달 열기
+  };
+
+  // 모달을 닫고 선택된 법령 정보 초기화
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // 모달 닫기
+  };
+
+  // 페이지 전환을 위한 함수 (다음 페이지로 이동)
   const handleNext = () => {
-    if (currentIndex < totalItems - 1) {
-      setCurrentIndex(currentIndex + 1);
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1); // 현재 페이지를 1 증가
     }
   };
 
+  // 페이지 전환을 위한 함수 (이전 페이지로 이동)
   const handlePrevious = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1); // 현재 페이지를 1 감소
     }
   };
 
-  const handleIndexChange = (Index: number) => {
-    setCurrentIndex(Index);
-  };
+  // 현재 페이지에 해당하는 법령 정보를 슬라이스
+  const currentItems = ordinances.slice(
+    currentPage * itemsPerPage, // 현재 페이지의 첫 번째 아이템 인덱스
+    (currentPage + 1) * itemsPerPage, // 현재 페이지의 마지막 아이템 인덱스
+  );
 
-  const handlers = useSwipeable({
-    onSwipedLeft: handleNext,
-    onSwipedRight: handlePrevious,
-    trackMouse: true,
-  });
-
+  // 로딩 상태일 때 로딩 스피너 표시
   if (loading) {
     return <LoadingSpinner />;
   }
 
-  // Ellipsis 클릭 핸들러 추가
-  const handleEllipsisClick = (direction: 'left' | 'right') => {
-    if (direction === 'left') {
-      setCurrentIndex((prevIndex) => Math.max(0, prevIndex - 5));
-    } else {
-      setCurrentIndex((prevIndex) => Math.min(totalItems - 1, prevIndex + 5));
-    }
-  };
-
-  // renderDots 함수 수정
-  const renderDots = () => {
-    const dots = [];
-    const MAX_DOTS = 9; // 최대 도트 수 (홀수로 설정)
-    const half = Math.floor(MAX_DOTS / 2);
-
-    if (totalItems > MAX_DOTS) {
-      // 페이지 범위 설정
-      let start = Math.max(0, currentIndex - half);
-      let end = Math.min(totalItems, currentIndex + half + 1);
-
-      if (start === 0) {
-        end = Math.min(MAX_DOTS, totalItems);
-      } else if (end === totalItems) {
-        start = Math.max(0, totalItems - MAX_DOTS);
-      }
-
-      for (let i = start; i < end; i += 1) {
-        dots.push(
-          <Dot
-            key={i}
-            active={i === currentIndex}
-            onClick={() => handleIndexChange(i)}
-          />,
-        );
-      }
-
-      // 왼쪽 Ellipsis
-      if (start > 0) {
-        dots.unshift(
-          <Ellipsis
-            key="left-ellipsis"
-            onClick={() => handleEllipsisClick('left')}
-            style={{
-              opacity: currentIndex > 0 ? 1 : 0.5,
-              cursor: currentIndex > 0 ? 'pointer' : 'default',
-            }}
-          >
-            <span>{'<'}</span>
-          </Ellipsis>,
-        );
-      }
-
-      // 오른쪽 Ellipsis
-      if (end < totalItems) {
-        dots.push(
-          <Ellipsis
-            key="right-ellipsis"
-            onClick={() => handleEllipsisClick('right')}
-            style={{
-              opacity: currentIndex < totalItems - 1 ? 1 : 0.5,
-              cursor: currentIndex < totalItems - 1 ? 'pointer' : 'default',
-            }}
-          >
-            <span>{'>'}</span>
-          </Ellipsis>,
-        );
-      }
-    } else {
-      for (let i = 0; i < totalItems; i += 1) {
-        dots.push(
-          <Dot
-            key={i}
-            active={i === currentIndex}
-            onClick={() => handleIndexChange(i)}
-          />,
-        );
-      }
-    }
-
-    return dots;
-  };
-
+  // 법령 정보가 없을 때 출력할 메시지와 이미지
   if (errorMessage) {
     return (
       <div style={{ textAlign: 'center', marginTop: '20px' }}>
         <img
           src={nodataimg}
-          alt="No data available"
-          style={{ width: '300px', height: 'auto', opacity: 0.85 }} // 이미지 크기와 투명도
+          alt="No data available" // 데이터가 없을 때 표시할 이미지
+          style={{ width: '300px', height: 'auto', opacity: 0.85 }} // 이미지 크기와 투명도 조정
         />
-        <NoDataMessage>법령 정보가 없습니다.</NoDataMessage>
+        <NoDataMessage>법령 정보가 없습니다.</NoDataMessage> {/* 에러 메시지 */}
       </div>
     );
   }
@@ -279,42 +193,54 @@ function OrdinanceInfoTab({
   return (
     <div>
       {totalItems > 0 ? (
-        <div {...handlers}>
-          <h3>{ordinances[currentIndex].lawName}</h3>
-          <LawInfoContainer>
-            <LawTitle>법령 정보</LawTitle>
-            <LawDescription>
-              <p>법령 번호: {ordinances[currentIndex].lawItemNumber}</p>
-              <p>용도: {ordinances[currentIndex].lawLandUse}</p>
-              <p>
-                시행일:{' '}
-                {new Date(
-                  ordinances[currentIndex].lawImplementAt,
-                ).toLocaleDateString()}
-              </p>
-            </LawDescription>
-          </LawInfoContainer>
-          <LawDetailContainer>
-            <LawTitle>법령 본문</LawTitle>
-            <LawDescription>
-              {ordinances[currentIndex].lawContent}
-            </LawDescription>
-          </LawDetailContainer>
-          <div>
-            <LeftButton onClick={handlePrevious} disabled={currentIndex === 0}>
+        <>
+          {/* 현재 페이지의 법령 정보 표시 */}
+          {currentItems.map((ordinance, index) => (
+            <LawInfoContainer
+              key={index}
+              onClick={() => handleOpenModal(ordinance)} // 법령 정보를 클릭하면 모달 열기
+            >
+              <LawHeader>
+                <LawIcon src={lawIcon} /> {/* 법령 아이콘 */}
+                <LawTitle>{ordinance.lawName}</LawTitle> {/* 법령 제목 */}
+              </LawHeader>
+              <LawUse>{ordinance.lawLandUse}</LawUse> {/* 법령 용도 */}
+              <LawNumber>법령번호 {ordinance.lawItemNumber}</LawNumber>{' '}
+              {/* 법령 번호 */}
+              <LawDate>
+                {new Date(ordinance.lawImplementAt).toLocaleDateString()}{' '}
+                {/* 법령 시행일 */}
+              </LawDate>
+            </LawInfoContainer>
+          ))}
+
+          {/* 페이지네이션 */}
+          <PaginationContainer>
+            <PageButton
+              onClick={handlePrevious}
+              disabled={currentPage === 0} // 첫 번째 페이지일 때 비활성화
+            >
               {'<'}
-            </LeftButton>
-            <RightButton
+            </PageButton>
+            <PageButton
               onClick={handleNext}
-              disabled={currentIndex === ordinances.length - 1}
+              disabled={currentPage === totalPages - 1} // 마지막 페이지일 때 비활성화
             >
               {'>'}
-            </RightButton>
-          </div>
-          <PaginationContainer>{renderDots()}</PaginationContainer>
-        </div>
+            </PageButton>
+          </PaginationContainer>
+        </>
       ) : (
-        <p>조례 정보를 불러오는 중입니다...</p>
+        <LoadingSpinner /> // 데이터가 없을 때에도 로딩 스피너 표시
+      )}
+
+      {/* 선택된 법령 정보가 있을 때 모달 표시 */}
+      {selectedOrdinance && (
+        <LawDetailModal
+          isOpen={isModalOpen} // 모달 열림 상태
+          onRequestClose={handleCloseModal} // 모달 닫기 함수
+          ordinance={selectedOrdinance} // 선택된 법령 정보 전달
+        />
       )}
     </div>
   );
