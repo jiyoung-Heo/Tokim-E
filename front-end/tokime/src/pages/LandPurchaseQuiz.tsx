@@ -43,30 +43,28 @@ const Container = styled.div`
 
 const Title = styled.h2`
   margin: 0 0 3vh 0;
-  font-size: 33px;
+  font-size: 20px;
   font-weight: bold;
   font-family: 'KoddiUD OnGothic';
   color: #333333;
   display: flex;
   justify-content: left;
 `;
+
 const BackIcon = styled.img``;
 const Divider = styled.hr`
-  width: 90%;
-  border: none;
-  border-top: 2px solid rgba(121, 121, 130, 0.1);
+  width: 100%;
+  border-top: 2px solid #333333;
 `;
 
 const QuestionText = styled.p`
-  margin-top: 5vh;
-  margin-bottom: 5vh;
   font-family: 'Pretendard';
+  margin-top: 5vh;
+  margin-bottom: 8vh;
   color: #27c384;
   white-space: normal;
-  font-weight: bold;
+  font-weight: 700;
   font-size: 5vw;
-  //word-break: keep-all;
-  //overflow-wrap: break-word;
 `;
 
 const QuizContent = styled.div`
@@ -89,7 +87,7 @@ const Option = styled.button<{ isCorrect: boolean; isWrong: boolean }>`
   cursor: pointer;
   font-family: 'Pretendard';
   font-size: 5vw;
-  font-weight: bold;
+  // font-weight: bold;
   text-align: left;
   border-radius: 20px;
   background-color: ${({ isCorrect, isWrong }) => {
@@ -105,8 +103,8 @@ const Option = styled.button<{ isCorrect: boolean; isWrong: boolean }>`
 const OptionIcon = styled.img`
   width: 8vw;
   height: 8vw;
-  max-width: 30px;
-  max-height: 30px;
+  max-width: 20px;
+  max-height: 20px;
   margin-right: 3vw;
 `;
 
@@ -115,6 +113,18 @@ const QuizImage = styled.img<{ size: number }>`
   height: ${(props) => props.size}px;
   max-width: ${(props) => props.size}px;
   max-height: ${(props) => props.size}px;
+`;
+
+const QuizTitle = styled.h2`
+  font-family: 'Pretendard Variable';
+  font-style: normal;
+  font-weight: 800;
+  font-size: 40px;
+  line-height: 48px;
+  color: #333333;
+  margin-top: 7vh;
+  text-align: center; /* 텍스트를 가운데 정렬 */
+  margin-bottom: 1.5vh;
 `;
 
 const optionIcons = [Option1Icon, Option2Icon, Option3Icon, Option4Icon];
@@ -241,6 +251,7 @@ function LandPurchaseQuiz() {
         <BackIcon src={backIcon} alt="back Icon" onClick={goBack} />
         토지 상식 퀴즈
       </Title>
+      <QuizTitle>토지 상식 퀴즈</QuizTitle>
       <Divider />
       <QuestionText>
         {questionNumber}. {currentQuiz.question}
@@ -287,7 +298,7 @@ function LandPurchaseQuiz() {
           feedbackMessage="수고하셨습니다!" // 추가
           onClose={closeModal}
           onRetry={handleRetry} // 새로 정의 필요
-          onGoToResults={() => navigate('/results')} // 결과 페이지로 이동
+          onGoToResults={() => navigate('/land-score')} // 결과 페이지로 이동
         />
       )}
     </Container>
