@@ -26,7 +26,7 @@ const BackIcon = styled.img``;
 const SearchContainer = styled.div`
   display: flex;
   justify-content: center;
-  margin-bottom: 2vh;
+  margin-bottom: 1vh;
 `;
 
 const SearchInput = styled.input`
@@ -38,12 +38,12 @@ const SearchInput = styled.input`
   border-radius: 10px;
   text-align: center;
   font-weight: bold;
-  margin-bottom: 2vh;
 `;
 
 const SearchButton = styled.button`
-  width: 15%;
-  margin-left: 3vh;
+  width: 20%;
+  height: 5vh;
+  margin-left: 2vh;
   font-size: 16px;
   background-color: #00c99c;
   color: white;
@@ -97,7 +97,7 @@ const Content = styled.textarea`
   font-weight: bold;
   border: 1.4px solid #333;
   border-radius: 10px;
-  margin-botton: 2vh;
+  margin-botton: 1vh;
 `;
 
 const DangerP = styled.p`
@@ -116,7 +116,7 @@ const MapP = styled.div`
 
 const ButtonDiv = styled.p`
   margin: 0;
-  padding-top: 2vh;
+  padding-top: 1vh;
   display: flex;
   justify-content: center;
   gap: 7vw;
