@@ -92,12 +92,13 @@ const PageButton = styled.button`
 `;
 
 // 데이터가 없을 때 표시할 메시지 스타일
-const NoDataMessage = styled.div`
+const NoDataMessage = styled.p`
   color: #27c384; // 텍스트 색상을 녹색(#27c384)으로 설정
   font-weight: bold; // 텍스트를 굵게 설정
   font-size: 1.5em; // 폰트 크기를 1.5em로 설정
-  margin-top: 10px; // 위쪽 여백을 10px로 설정
-  text-align: center; // 텍스트를 중앙 정렬
+  margin-top: 3vh; // 위쪽 여백을 1vh로 설정
+  word-break: keep-all;
+  white-space: normal;
 `;
 
 function OrdinanceInfoTab({
@@ -179,11 +180,11 @@ function OrdinanceInfoTab({
   // 법령 정보가 없을 때 출력할 메시지와 이미지
   if (errorMessage) {
     return (
-      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+      <div style={{ textAlign: 'center', marginTop: '3vh' }}>
         <img
           src={nodataimg}
           alt="No data available" // 데이터가 없을 때 표시할 이미지
-          style={{ width: '300px', height: 'auto', opacity: 0.85 }} // 이미지 크기와 투명도 조정
+          style={{ width: '50vw', height: 'auto', opacity: 0.65 }} // 이미지 크기와 투명도 조정
         />
         <NoDataMessage>법령 정보가 없습니다.</NoDataMessage> {/* 에러 메시지 */}
       </div>
