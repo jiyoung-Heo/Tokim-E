@@ -99,7 +99,7 @@ const RegisterButton = styled.button`
   background-color: #27c384;
   color: #fff;
   border: none;
-  border-radius: 1vw; /* 반응형 모서리 둥글기 */
+  border-radius: 3vw; /* 반응형 모서리 둥글기 */
   font-weight: bold;
   cursor: pointer;
   margin-top: 3vh;
@@ -244,10 +244,7 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
           </ChecklistItemContainer>
         ))}
       </ChecklistContainer>
-      <div style={{ marginTop: '10px' }}>
-        체크한 항목 수: {checkedCount} / {checklist.length}{' '}
-        {/* 선택된 항목 개수 표시 */}
-      </div>
+
       <RegistContainer>
         <RegisterButton onClick={onPrevious}>이전</RegisterButton>{' '}
         {/* 이전 버튼 */}

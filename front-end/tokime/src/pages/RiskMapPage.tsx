@@ -318,6 +318,7 @@ const RiskMapPage: React.FC = () => {
         <SearchInput
           type="text"
           placeholder="신고 제목 또는 내용을 검색하세요"
+          maxLength={200}
           value={searchTerm}
           onChange={handleSearch}
         />

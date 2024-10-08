@@ -132,6 +132,18 @@ interface CarouselData {
   imageSrc: string;
 }
 
+function getCookieValue(name: string): string | null {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    const cookieValue = parts.pop();
+    if (cookieValue) {
+      return cookieValue.split(';').shift() || null; // split이나 shift가 undefined일 경우 null 반환
+    }
+  }
+  return null; // 모든 경우에 대해 null 반환
+}
+
 function MainPage() {
   const dispatch = useDispatch();
   const [currentCarousel, setCurrentCarousel] = useState(0); // 현재 캐러셀 인덱스
@@ -151,14 +163,16 @@ function MainPage() {
   ];
 
   useEffect(() => {
-    const fetchParentInfo = async () => {
-      const data = await userInfoAxios();
-      if (data) {
-        dispatch(changeUser(data));
-      }
-    };
-    fetchParentInfo();
-
+    const authCookie = getCookieValue('Authorization');
+    if (authCookie !== null) {
+      const fetchParentInfo = async () => {
+        const data = await userInfoAxios();
+        if (data) {
+          dispatch(changeUser(data));
+        }
+      };
+      fetchParentInfo();
+    }
     const fetchData = async () => {
       try {
         const data = await fetchKnowledgeByCategory(0);

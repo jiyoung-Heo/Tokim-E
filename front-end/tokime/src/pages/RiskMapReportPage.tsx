@@ -333,6 +333,7 @@ function RiskMapReportPage() {
           type="text"
           placeholder="주소를 검색하세요"
           value={searchQuery}
+          maxLength={100}
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyPress={handleKeyPress}
         />
@@ -352,15 +353,17 @@ function RiskMapReportPage() {
       <TitleContainer>
         <TitleText
           type="text"
-          placeholder="제목을 입력하세요"
+          placeholder="제목을 입력하세요(200자 이내)"
           value={dangerTitle}
+          maxLength={200}
           onChange={(e) => setDangerTitle(e.target.value)}
         />
       </TitleContainer>
       <DangerP>신고 내용</DangerP>
       <Content
-        placeholder="내용을 입력하세요"
+        placeholder="내용을 입력하세요(3000자 이내)"
         value={dangerContent}
+        maxLength={3000}
         onChange={(e) => setDangerContent(e.target.value)}
       />
       <ButtonDiv>
