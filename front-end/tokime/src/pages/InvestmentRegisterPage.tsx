@@ -66,8 +66,6 @@ function InvestmentRegistrationPage() {
 
   // 체크리스트 체크한것저장
   const [check, setCheck] = useState<number[]>([]);
-  // 사연 저장
-  const [story, setStory] = useState('');
 
   const handleNextFromLandInfo = () => {
     setActiveTab('checklist'); // 체크리스트 등록 탭 활성화
@@ -87,8 +85,8 @@ function InvestmentRegistrationPage() {
 
   const handleRegister = async () => {
     // 서버로 POST 요청 보내는 로직 구현
-    console.log(story.length);
-    console.log({ address, landInfo, check, story });
+    // console.log(stor.length);
+    console.log({ address, landInfo, check });
     if (!landInfo || expectedArea === '' || expectedPrice === '') {
       alert('모든 필드를 입력해주세요.');
       return;
@@ -100,7 +98,7 @@ function InvestmentRegistrationPage() {
       landPrice: landInfo.landPrice, // 가격
       landRoad: landInfo.landRoad, // 도로
       landUseStatus: landInfo.landUseStatus, // 용도 상태
-      landStory: story, // 사연
+      landStory: '', // 사연
       plannedLandPyeong: expectedArea, // 투자 예정 평수
       plannedLandPrice: expectedPrice, // 투자 예정 가격
       checkedCount: check.length, // 체크된 항목 개수
@@ -128,7 +126,6 @@ function InvestmentRegistrationPage() {
       <TabsContainer>
         <TabItem $isActive={activeTab === 'landInfo'}>1. 토지 정보</TabItem>
         <TabItem $isActive={activeTab === 'checklist'}>2. 체크리스트</TabItem>
-        <TabItem $isActive={activeTab === 'storyWriting'}>3. 사연 작성</TabItem>
       </TabsContainer>
 
       {activeTab === 'landInfo' && (
@@ -148,18 +145,10 @@ function InvestmentRegistrationPage() {
       )}
       {activeTab === 'checklist' && (
         <ChecklistRegistrationTab
-          onNext={handleNextFromChecklist}
+          onNext={handleRegister}
           onPrevious={handlePreviousFromChecklist} // 이전 버튼 기능 추가
           check={check}
           setCheck={setCheck}
-        />
-      )}
-      {activeTab === 'storyWriting' && (
-        <StoryWritingRegistrationTab
-          onPrevious={handlePreviousFromStoryWriting} // 이전 버튼 기능 추가
-          onRegister={handleRegister} // 등록 버튼 기능 추가
-          story={story}
-          setStory={setStory}
         />
       )}
     </Container>
