@@ -426,10 +426,10 @@ const LandTerms = () => {
                 color: '#27C384',
                 fontWeight: 'bold',
                 marginTop: '10px',
-                fontSize: '1.5em',
+                fontSize: '1.2em',
               }}
             >
-              검색 결과가 없습니다. T^T
+              검색 결과가 없습니다.
             </div>
           )}
         </TermList>
