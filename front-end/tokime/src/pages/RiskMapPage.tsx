@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { getDangerInfo } from '../api/dangerAxios';
 import backIcon from '../assets/images/icon/left-actionable.png';
 import searchIcon from '../assets/images/icon/search.svg';
+import RiskMapModal from '../components/modals/RiskMapModal'; // 모달 컴포넌트 임포트
 
 // 스타일드 컴포넌트 정의
 const Container = styled.div`
@@ -99,6 +100,8 @@ const RiskMapPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [markers, setMarkers] = useState<any[]>([]);
   const [filteredMarkers, setFilteredMarkers] = useState<any[]>([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedMarker, setSelectedMarker] = useState<any>(null);
   const mapRef = useRef<any>(null);
 
   useEffect(() => {
@@ -171,92 +174,15 @@ const RiskMapPage: React.FC = () => {
         },
       });
 
-      const infoWindow = new window.naver.maps.InfoWindow({
-        content: `
-          <div id="infoWindow-${lat}-${lng}" style="position: relative; padding:10px; max-width:300px; border-radius:10px; border: 1px solid #27C384; background-color: #fff;">
-            <h4 style="text-align: center; font-size: 18px; color: #333;"><${dangerTitle}></h4>
-            <hr style="border: 0; height: 1px; background-color: #ccc; margin: 10px 0;">
-            <p style="color: #777; font-size: 14px; margin: 0;">주소: 불러오는 중...</p>
-            <hr style="border: 0; height: 1px; background-color: #ccc; margin: 10px 0;">
-            <p style="color: #555; font-size: 14px;">신고 내용: ${dangerContent}</p>
-            <div style="position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 10px solid #27C384;"></div>
-          </div>
-        `,
-        backgroundColor: 'transparent',
-        borderColor: '#27C384',
-        borderWidth: '1px',
-        anchorSize: new window.naver.maps.Size(0, 0),
-        pixelOffset: new window.naver.maps.Point(-100, -200), // 초기 값 설정
-      });
-
       // 마커 클릭 이벤트
       window.naver.maps.Event.addListener(marker, 'click', () => {
-        // 인포윈도우가 열리기 전에 요소 크기를 계산해서 pixelOffset을 조정함
-        setTimeout(() => {
-          const infoWindowElement = document.getElementById(
-            `infoWindow-${lat}-${lng}`,
-          );
-          if (infoWindowElement) {
-            const rect = infoWindowElement.getBoundingClientRect();
-            const newPixelOffset = new window.naver.maps.Point(
-              -(rect.width / 2),
-              -(rect.height + 10),
-            ); // 요소의 크기에 따라 pixelOffset 재설정
-            infoWindow.setOptions({ pixelOffset: newPixelOffset });
-          }
-        }, 0);
-
-        infoWindow.open(mapRef.current, marker);
+        setSelectedMarker({ lat, lng, dangerTitle, dangerContent });
+        setModalOpen(true); // 모달 열기
       });
 
       window.naver.maps.Event.addListener(mapRef.current, 'click', () => {
-        infoWindow.close();
+        setModalOpen(false);
       });
-
-      if (
-        window.naver.maps.Service &&
-        window.naver.maps.Service.reverseGeocode
-      ) {
-        window.naver.maps.Service.reverseGeocode(
-          { coords: new window.naver.maps.LatLng(lat, lng) },
-          (status: any, response: any) => {
-            if (status === window.naver.maps.Service.Status.OK) {
-              const address =
-                response.v2.address.jibunAddress ||
-                response.v2.address.roadAddress;
-              const newContent = `
-                <div id="infoWindow-${lat}-${lng}" style="position: relative; padding:10px; max-width:300px; border-radius:10px; border: 1px solid #27C384; background-color: #fff;">
-                  <h4 style="text-align: center; font-size: 18px; color: #333;"><${dangerTitle}></h4>
-                  <hr style="border: 0; height: 1px; background-color: #ccc; margin: 10px 0;">
-                  <p style="color: #777; font-size: 14px; margin: 0;">주소: ${address}</p>
-                  <hr style="border: 0; height: 1px; background-color: #ccc; margin: 10px 0;">
-                  <p style="color: #555; font-size: 14px;">신고 내용: ${dangerContent}</p>
-                  <div style="position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 10px solid #27C384;"></div>
-                </div>
-              `;
-              infoWindow.setContent(newContent);
-
-              setTimeout(() => {
-                const infoWindowElement = document.getElementById(
-                  `infoWindow-${lat}-${lng}`,
-                );
-                if (infoWindowElement) {
-                  const rect = infoWindowElement.getBoundingClientRect();
-                  const newPixelOffset = new window.naver.maps.Point(
-                    -(rect.width / 2),
-                    -(rect.height + 10),
-                  );
-                  infoWindow.setOptions({ pixelOffset: newPixelOffset });
-                }
-              }, 0);
-            } else {
-              console.error('역지오코딩 실패:', status);
-            }
-          },
-        );
-      } else {
-        console.error('Naver Maps Service가 정의되지 않았습니다.');
-      }
     };
 
     const fetchData = async () => {
@@ -339,6 +265,12 @@ const RiskMapPage: React.FC = () => {
           기획부동산 의심 토지 신고하기
         </RegisterButton>
       </RegistContainer>
+      {/* 모달 컴포넌트 추가 */}
+      <RiskMapModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        markerData={selectedMarker}
+      />
     </Container>
   );
 };
