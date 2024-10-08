@@ -16,21 +16,9 @@ import RiskMapPage from '../pages/RiskMapPage'; // 새로 추가
 import Layout from '../components/layouts/layout'; // Layout 추가
 import RiskMapReportPage from '../pages/RiskMapReportPage';
 import LandScorePage from '../pages/LandScorePage';
-
-function getCookieValue(name: string): string | null {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) {
-    const cookieValue = parts.pop();
-    if (cookieValue) {
-      return cookieValue.split(';').shift() || null; // split이나 shift가 undefined일 경우 null 반환
-    }
-  }
-  return null;
-}
+import ProtectedRoute from './ProtectedRoute';
 
 function AppRouter() {
-  const authCookie = getCookieValue('Authorization');
   return (
     <Routes>
       <Route path="/" element={<StartPage />} /> {/* 하단탭과 사이드바 없음 */}
@@ -79,61 +67,61 @@ function AppRouter() {
       <Route
         path="/my-page"
         element={
-          authCookie ? ( // 인증 여부 확인
-            <Layout>
-              <MyPage />
-            </Layout>
-          ) : (
-            <Navigate to="/login-required" replace /> // 비회원일 경우 로그인 페이지로 이동
-          )
-        }
+          <ProtectedRoute
+            element={
+              <Layout>
+                <MyPage />
+              </Layout>
+            }
+          />
+        } // 보호된 라우트
       />
       <Route
         path="/investment"
         element={
-          authCookie ? ( // 인증 여부 확인
-            <Layout>
-              <InvestmentPage />
-            </Layout>
-          ) : (
-            <Navigate to="/login-required" replace /> // 비회원일 경우 로그인 페이지로 이동
-          )
+          <ProtectedRoute
+            element={
+              <Layout>
+                <InvestmentPage />
+              </Layout>
+            }
+          />
         }
       />
       <Route
         path="/investment-register"
         element={
-          authCookie ? ( // 인증 여부 확인
-            <Layout>
-              <InvestmentRegisterPage />
-            </Layout>
-          ) : (
-            <Navigate to="/login-required" replace /> // 비회원일 경우 로그인 페이지로 이동
-          )
+          <ProtectedRoute
+            element={
+              <Layout>
+                <InvestmentRegisterPage />
+              </Layout>
+            }
+          />
         }
       />
       <Route
         path="/investment-detail/:invest"
         element={
-          authCookie ? ( // 인증 여부 확인
-            <Layout>
-              <InvestmentDetailPage />
-            </Layout>
-          ) : (
-            <Navigate to="/login-required" replace /> // 비회원일 경우 로그인 페이지로 이동
-          )
+          <ProtectedRoute
+            element={
+              <Layout>
+                <InvestmentDetailPage />
+              </Layout>
+            }
+          />
         }
       />
       <Route
         path="/land-purchase-quiz"
         element={
-          authCookie ? (
-            <Layout>
-              <LandPurchaseQuiz />
-            </Layout>
-          ) : (
-            <Navigate to="/login-required" replace /> // 비회원일 경우 로그인 페이지로 이동
-          )
+          <ProtectedRoute
+            element={
+              <Layout>
+                <LandPurchaseQuiz />
+              </Layout>
+            }
+          />
         }
       />
       <Route
