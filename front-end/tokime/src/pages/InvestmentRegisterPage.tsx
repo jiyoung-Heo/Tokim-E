@@ -60,7 +60,9 @@ function InvestmentRegistrationPage() {
   // 작성자가 작성한 땅 정보
   const [expectedArea, setExpectedArea] = useState<number | ''>(''); // State for expected area
   const [expectedPrice, setExpectedPrice] = useState<number | ''>(''); // State for expected price
-  const [landNickname, setLandNickname] = useState<string | ''>('');
+  const [expectedLandNickname, setExpectedLandNickname] = useState<string | ''>(
+    '',
+  );
 
   // 체크리스트 체크한것저장
   const [check, setCheck] = useState<number[]>([]);
@@ -103,7 +105,7 @@ function InvestmentRegistrationPage() {
       plannedLandPrice: expectedPrice, // 투자 예정 가격
       checkedCount: check.length, // 체크된 항목 개수
       checklistIds: check, // 체크된 체크리스트 ID 배열
-      landNickname: '임시별칭',
+      landNickname: expectedLandNickname,
       landDanger: landInfo.landDanger,
     };
 
@@ -140,8 +142,8 @@ function InvestmentRegistrationPage() {
           setExpectedArea={setExpectedArea}
           expectedPrice={expectedPrice}
           setExpectedPrice={setExpectedPrice}
-          landNickname={landNickname}
-          setLandNickname={setLandNickname}
+          expectedLandNickname={expectedLandNickname}
+          setExpectedLandNickname={setExpectedLandNickname}
         />
       )}
       {activeTab === 'checklist' && (
