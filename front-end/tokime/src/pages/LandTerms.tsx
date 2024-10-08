@@ -395,7 +395,7 @@ const LandTerms = () => {
             filteredTerms.map((term) => (
               <TermWrapper key={term.termId}>
                 <Term to={`/land-terms/${term.termId}`}>{term.termName}</Term>
-                {user.name && (
+                {user.email && (
                   <StarIcon
                     src={
                       likedTerms.includes(term.termId) ? starFilled : starIcon
