@@ -28,6 +28,7 @@ import know21 from '../../assets/images/knowledge/21.png';
 // dfjsalfsdajkfldsaj
 // dklfjsalkfjdskljfslakjfdlsak
 // asdfjskdlajfldksa
+// frfrf
 const TabContent = styled.div`
   height: 60vh;
   background-color: #ffffff;
