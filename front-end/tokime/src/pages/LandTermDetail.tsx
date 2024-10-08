@@ -223,11 +223,11 @@ function LandTermDetail() {
       console.log('요청 보낼 단어 :', termData);
       if (termData && termData.termName) {
         try {
-          const news = await elasticNewsAxios(termData.termName); // API 호출
-          console.log('뉴스 결과물 !!:', news.length);
+          // const keyword = `${termData.termName.trim()} : ${termData.termDescribe}`;
+          const keyword = `${termData.termDescribe}`;
+          const news = await elasticNewsAxios(keyword); // API 호출
           // eslint-disable-next-line no-underscore-dangle
           setNewsData(news.map((item: any) => item._source.original_data)); // 뉴스 데이터 저장
-          console.log('잘 들어 왔니?', newsData);
         } catch (error) {
           console.error('관련 뉴스를 불러오는데 실패했습니다.', error);
         }
