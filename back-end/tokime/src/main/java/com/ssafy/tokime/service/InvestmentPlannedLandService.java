@@ -34,7 +34,7 @@ public class InvestmentPlannedLandService {
                 .orElseThrow(() -> new RuntimeException("email로 조회 했으나 존재 하지 않는 유저"));
 
             // 투자예정지 등록정보 entity로 변환
-        InvestmentPlannedLand investmentPlannedLand = dto.toEntity(user);
+            InvestmentPlannedLand investmentPlannedLand = dto.toEntity(user);
             // 투자 예정지 저장
             investmentPlannedLand = investmentPlannedLandRepository.save(investmentPlannedLand);
 
