@@ -121,7 +121,8 @@ const NewsItem = styled.div`
   font-size: 3.5vw;
   line-height: 5vw;
   color: #333333;
-  padding: 8px 0;
+  // padding: 8px 0;
+  margin-top: 10px;
   border-bottom: 1px solid #bfbfbf;
 `;
 
@@ -164,12 +165,19 @@ const ModalBody = styled.div`
   margin-bottom: 20px; /* 다른 요소와의 간격 조정 */
 `;
 
-const ArticleTitle = styled.h3`
+const ArticleTitle = styled.a`
   margin-top: 0px;
   margin-bottom: 1vh;
-  a {
-    text-decoration: none; // 링크의 밑줄 제거
-    color: inherit; // 텍스트 색상 유지 (부모의 색상 사용)
+  text-decoration: none; // 링크의 밑줄 제거
+  color: black; // 기본 색상
+  font-family: 'KoddiUD OnGothic';
+
+  &:hover {
+    color: #27c384; // 링크에 마우스를 올렸을 때의 색상
+  }
+
+  &:active {
+    color: #27c384; // 링크 클릭 시의 색상
   }
 `;
 
@@ -223,8 +231,7 @@ function LandTermDetail() {
       console.log('요청 보낼 단어 :', termData);
       if (termData && termData.termName) {
         try {
-          // const keyword = `${termData.termName.trim()} : ${termData.termDescribe}`;
-          const keyword = `${termData.termDescribe}`;
+          const keyword = `${termData.termName.trim()} : ${termData.termDescribe}`;
           const news = await elasticNewsAxios(keyword); // API 호출
           // eslint-disable-next-line no-underscore-dangle
           setNewsData(news.map((item: any) => item._source.original_data)); // 뉴스 데이터 저장
@@ -332,13 +339,15 @@ function LandTermDetail() {
         {newsData && newsData.length > 0 ? (
           newsData.map((newsItem: any, index: number) => (
             <NewsItem key={index}>
-              <a href={newsItem.link} target="_blank" rel="noopener noreferrer">
-                <ArticleTitle>
-                  {newsItem.title.length > 24
-                    ? `${newsItem.title.substring(0, 24)}...`
-                    : newsItem.title}
-                </ArticleTitle>
-              </a>
+              <ArticleTitle
+                href={newsItem.link}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {newsItem.title.length > 30
+                  ? `${newsItem.title.substring(0, 30)}...`
+                  : newsItem.title}
+              </ArticleTitle>
             </NewsItem>
           ))
         ) : (
