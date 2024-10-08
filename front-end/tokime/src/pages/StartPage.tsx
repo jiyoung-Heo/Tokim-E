@@ -71,6 +71,18 @@ const Icon = styled.img`
   left: 10px; /* 왼쪽에서 10px 떨어짐 */
 `;
 
+function getCookieValue(name: string): string | null {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    const cookieValue = parts.pop();
+    if (cookieValue) {
+      return cookieValue.split(';').shift() || null; // split이나 shift가 undefined일 경우 null 반환
+    }
+  }
+  return null;
+}
+
 function StartPage() {
   const userInfo = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
@@ -94,13 +106,9 @@ function StartPage() {
   };
 
   useEffect(() => {
-    // 이메일이 존재하면 메인페이지로 이동
-    if (userInfo.email) {
-      const timeoutId = setTimeout(() => {
-        navigate('/main');
-      }, 0); // 즉시 이동하도록 설정
-
-      return () => clearTimeout(timeoutId); // 클린업 함수
+    const authCookie = getCookieValue('Authorization');
+    if (authCookie !== null) {
+      navigate('/main');
     }
     return undefined;
   }, [userInfo.email, navigate]);
