@@ -333,6 +333,7 @@ function RiskMapReportPage() {
           type="text"
           placeholder="주소를 검색하세요"
           value={searchQuery}
+          maxLength={100}
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyPress={handleKeyPress}
         />
