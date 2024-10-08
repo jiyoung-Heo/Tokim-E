@@ -228,7 +228,6 @@ function LandTermDetail() {
   // 관련 뉴스를 가져오는 useEffect
   useEffect(() => {
     const fetchNewsData = async () => {
-      console.log('요청 보낼 단어 :', termData);
       if (termData && termData.termName) {
         try {
           const keyword = `${termData.termName.trim()} : ${termData.termDescribe}`;
@@ -344,8 +343,8 @@ function LandTermDetail() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {newsItem.title.length > 30
-                  ? `${newsItem.title.substring(0, 30)}...`
+                {newsItem.title.length > 29
+                  ? `${newsItem.title.substring(0, 29)}...`
                   : newsItem.title}
               </ArticleTitle>
             </NewsItem>
