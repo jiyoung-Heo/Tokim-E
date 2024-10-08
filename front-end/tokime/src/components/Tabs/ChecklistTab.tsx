@@ -64,7 +64,7 @@ const ChecklistTab: React.FC<ChecklistTabProps> = ({ check }) => {
         ))}
       </ul>
       <div style={{ marginTop: '10px' }}>
-        체크한 항목 수: {checkedCount} / {checklist.length}{' '}
+        체크한 수: {checkedCount} / {checklist.length}{' '}
         {/* Display checked items count */}
       </div>
     </Container>

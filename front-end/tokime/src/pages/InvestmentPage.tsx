@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate, Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import backIcon from '../assets/images/icon/left-actionable.png';
 import searchIcon from '../assets/images/icon/search.svg';
 import multiply from '../assets/images/icon/Multiply.png'; // x아이콘
@@ -8,10 +9,15 @@ import dangerIcon from '../assets/images/icon/dangericon.svg';
 import okIcon from '../assets/images/icon/okicon.svg';
 import nodataimg from '../assets/images/Tokimlogo.png';
 import checklistimg from '../assets/images/icon/checklisticon.svg';
+
 import {
   getAllInvestLand,
   getAllInvestLandFilter,
+  deleteInvestDetail,
 } from '../api/landInvestAxios';
+import { setLandDetail } from '../redux/slices/landInfoSlice';
+import { setLawInfo } from '../redux/slices/lawInfoSlice';
+import NaverMapProps from '../components/Tabs/NaverMapProps';
 
 // 필요한 스타일 정의
 const Container = styled.div`
@@ -33,22 +39,20 @@ const Title = styled.h2`
 // 뒤로가기 아이콘 정의
 const BackIcon = styled.img``;
 
-// 투자예정지 리스트를 감싸는 박스 스타일
-const InvestBox = styled.div`
-  width: 100%;
-  background-color: white; /* 흰색 배경 */
-  border-radius: 5px; /* 모서리 둥글게 */
-  padding: 10px; /* 내부 여백 */
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* 약간의 그림자 추가 */
-  margin-bottom: 1vh; /* 아래쪽 여백 */
-`;
-
 // 가로선
 const Divider = styled.hr`
   width: 100%;
   border: none;
   border-top: 3px solid rgba(121, 121, 130, 0.1);
   margin: 3vh 0;
+`;
+// 투자예정지 리스트 박스
+const InvestBox = styled.div`
+  width: 100%;
+  background-color: white; /* 흰색 배경 */
+  border-radius: 5px; /* 모서리 둥글게 */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* 약간의 그림자 추가 */
+  margin-bottom: 1vh; /* 아래쪽 여백 */
 `;
 
 // 전체지역 + 검색창
@@ -155,6 +159,9 @@ const SearchInput = styled.input`
     color: #27c384;
   }
 `;
+const Test = styled.div`
+  visible: true;
+`;
 // 투자예정지내역나올 컨테이너
 const InvestContainer = styled.div`
   display: flex;
@@ -162,9 +169,15 @@ const InvestContainer = styled.div`
   align-items: flex-start;
   padding: 0;
   box-sizing: border-box;
-  overflow: hidden; /* 수직 스크롤 추가 */
+  max-height: 60vh; /* 스크롤을 적용할 최대 높이 */
+  overflow-y: auto; /* 수직 스크롤 추가 */
   width: 100%; /* 너비를 100%로 설정 */
+
+  &::-webkit-scrollbar {
+    transition: opacity 0.3s; /* 부드러운 전환 효과 */
+  }
 `;
+
 // 하나의 투자예정지 랩
 const InvestWrapper = styled.div`
   display: flex;
@@ -172,13 +185,27 @@ const InvestWrapper = styled.div`
   align-items: center;
   width: 100%;
 `;
-// 투자예정지 왼쪽 글 정보
-const Invest = styled(Link)`
-  width: 60vw;
+
+// 네이버 지도
+const NaverMap = styled.div`
+  width: 36.11vw;
+  height: 14.19vh;
+  background-color: black;
+  margin-right: 5vw;
+  border-radius: 10px;
+
   display: block;
   color: #333333;
+`;
+
+// 투자예정지 왼쪽 글 정보
+const Invest = styled.div`
+  width: 60vw;
+  display: block;
+  font-weight: 700;
+  color: #333333;
   text-decoration: none;
-  font-family: 'Hanna';
+  font-family: 'KoddiUD OnGothic';
 `;
 
 // 별칭
@@ -204,13 +231,16 @@ const WarningScore = styled.p`
 
 // 투자예정지 오른쪽 맵
 const Map = styled.div`
-  width: 36.11vw;
-  height: 14.19vh;
-  background-color: black;
+  width: 30vw;
+  height: 30vw;
+  background-color: yellow;
   margin-right: 5vw;
-  border-radius: 10px;
 `;
-
+const RegistContainer = styled.div`
+  position: fixed; /* 화면에 고정 */
+  bottom: 13vh; /* 화면 아래에서 위로 띄움 */
+  right: 5vw; /* 화면 오른쪽에서 왼쪽으로 띄움 */
+`;
 // 투자 예정지 등록 버튼 스타일
 const RegisterButton = styled.button`
   position: fixed; /* 화면에 고정 */
@@ -237,6 +267,7 @@ const RegisterButton = styled.button`
     font-size: 15px; /* 큰 화면에서 기본 크기 */
   }
 `;
+
 const options = [
   {
     options: [{ value: '전국', label: '전국' }],
@@ -275,22 +306,13 @@ const options = [
   },
 ];
 function InvestmentPage() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchAlias, setSearchAlias] = useState('');
   const [allInvest, setAllInvest] = useState<any[]>([]);
   const [filterInvest, setFilterInvest] = useState<any[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<string>('전국');
-  const [selectedInvestId, setSelectedInvestId] = useState<number | null>(null);
-
-  const handleInvestClick = (investId: number) => {
-    setSelectedInvestId(investId); // 클릭된 투자 예정지 ID 저장
-
-    // 일정 시간 후에 상세 페이지로 이동
-    setTimeout(() => {
-      navigate(`/investment-detail/${investId}`);
-    }, 300); // 300ms 후에 페이지 이동
-  };
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -415,6 +437,13 @@ function InvestmentPage() {
     }
   }, [allInvest, searchAlias]);
 
+  const handleDetailClick = (detail: any) => {
+    console.log(detail);
+    dispatch(setLandDetail(detail));
+    // 라우터 이동
+    navigate(`/investment-detail/${detail.investmentPlannedLandId}`);
+  };
+
   return (
     <Container>
       <Title>
@@ -467,13 +496,12 @@ function InvestmentPage() {
         {filterInvest.length > 0 ? (
           filterInvest.map((invest) => (
             <InvestBox key={invest.investmentPlannedLandId}>
-              {' '}
               <InvestWrapper>
-                <Map />
-                <Invest
-                  to={`/investment-detail/${invest.investmentPlannedLandId}`}
-                >
-                  <Address>{invest.landAddress}</Address>
+                <NaverMap>
+                  <NaverMapProps landAddress={invest.landAddress} />
+                </NaverMap>
+                <Invest onClick={() => handleDetailClick(invest)}>
+                  <Address> {invest.landAddress}</Address>
                   <NickName>{invest.landNickname}</NickName>
                   <WarningScore>
                     {invest.landDanger === 1 ? (
@@ -530,7 +558,9 @@ function InvestmentPage() {
           <div>저장한 투자 예정지가 없습니다.</div>
         )}
       </InvestContainer>
-      <RegisterButton onClick={handleRegisterClick}>등록</RegisterButton>
+      <RegistContainer>
+        <RegisterButton onClick={handleRegisterClick}>등록</RegisterButton>
+      </RegistContainer>
     </Container>
   );
 }
