@@ -142,7 +142,7 @@ function RiskMapReportPage() {
 
       try {
         const res = await registDanger(dangerData); // axios로 데이터 전송
-        if (res) {
+        if (res === 200) {
           navigate('/risk-map'); // 등록 성공 후 /risk-map 경로로 이동
         }
       } catch (e) {
