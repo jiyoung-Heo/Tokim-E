@@ -24,27 +24,11 @@ import know18 from '../../assets/images/knowledge/18.png';
 import know19 from '../../assets/images/knowledge/19.png';
 import know20 from '../../assets/images/knowledge/20.png';
 import know21 from '../../assets/images/knowledge/21.png';
-// 안해찬 바보똥멍청이
-// 안해찬 바보똥멍청이
-// 안해찬 바보똥멍청이
-// 안해찬 바보똥멍청이
-// 안해찬 바보똥멍청이
-// 안해찬 바보똥멍청이
-// 안해찬 바보똥멍청이
-// 안해찬 바보똥멍청이
-// 안해찬 바보똥멍청이
-// 안해찬 바보똥멍청이
-// 안해찬 바보똥멍청이
-// 안해찬 바보똥멍청이
-// 안해찬 바보똥멍청이
-// 안해찬 바보똥멍청이
-// 안해찬 바보똥멍청이
-// 안해찬 바보똥멍청이
-// 안해찬 바보똥멍청이
-// 안해찬 바보똥멍청이
-// 안해찬 바보똥멍청이
-// 안해찬 바보똥멍청이
-// 안해찬 바보똥멍청이
+// jdfkldsjfkdasjldsaj
+// dfjsalfsdajkfldsaj
+// dklfjsalkfjdskljfslakjfdlsak
+// asdfjskdlajfldksa
+// frfrf
 const TabContent = styled.div`
   height: 60vh;
   background-color: #ffffff;

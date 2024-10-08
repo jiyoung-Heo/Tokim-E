@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { getSearchLandInfo } from '../../api/landAxios';
 import notFoundIcon from '../../assets/images/Tokimlogo.png';
-
+// twqtq
 const MapContainer = styled.div`
   width: 100%;
   height: 100%;
