@@ -53,7 +53,7 @@ const GraphContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin-bottom: 50px;
+  margin-bottom: 6vh;
   position: relative;
 `;
 
