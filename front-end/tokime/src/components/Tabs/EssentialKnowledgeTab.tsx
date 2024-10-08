@@ -3,6 +3,27 @@ import styled, { css } from 'styled-components';
 import { useSwipeable } from 'react-swipeable';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
+import know1 from '../../assets/images/knowledge/1.png';
+import know2 from '../../assets/images/knowledge/2.png';
+import know3 from '../../assets/images/knowledge/3.png';
+import know4 from '../../assets/images/knowledge/4.png';
+import know5 from '../../assets/images/knowledge/5.png';
+import know6 from '../../assets/images/knowledge/6.png';
+import know7 from '../../assets/images/knowledge/7.png';
+import know8 from '../../assets/images/knowledge/8.png';
+import know9 from '../../assets/images/knowledge/9.png';
+import know10 from '../../assets/images/knowledge/10.png';
+import know11 from '../../assets/images/knowledge/11.png';
+import know12 from '../../assets/images/knowledge/12.png';
+import know13 from '../../assets/images/knowledge/13.png';
+import know14 from '../../assets/images/knowledge/14.png';
+import know15 from '../../assets/images/knowledge/15.png';
+import know16 from '../../assets/images/knowledge/16.png';
+import know17 from '../../assets/images/knowledge/17.png';
+import know18 from '../../assets/images/knowledge/18.png';
+import know19 from '../../assets/images/knowledge/19.png';
+import know20 from '../../assets/images/knowledge/20.png';
+import know21 from '../../assets/images/knowledge/21.png';
 
 const TabContent = styled.div`
   height: 60vh;
@@ -106,6 +127,30 @@ const RightButton = styled(SlideButton)`
   color: #00c99c;
 `;
 
+const imgSrcs = [
+  know1,
+  know2,
+  know3,
+  know4,
+  know5,
+  know6,
+  know7,
+  know8,
+  know9,
+  know10,
+  know11,
+  know12,
+  know13,
+  know14,
+  know15,
+  know16,
+  know17,
+  know18,
+  know19,
+  know20,
+  know21,
+];
+
 function EssentialKnowledgeTab() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 1;
@@ -141,7 +186,10 @@ function EssentialKnowledgeTab() {
       {currentItems.length > 0 ? (
         currentItems.map((item, index) => (
           <ItemContainer key={index}>
-            <Image src={item.knowledgeImageUrl} alt={item.knowledgeName} />
+            <Image
+              src={imgSrcs[(currentPage - 1) % imgSrcs.length]}
+              alt={item.knowledgeName}
+            />
             <Text>{item.knowledgeName}</Text>
             <Description>{item.knowledgeDescribe}</Description>
           </ItemContainer>

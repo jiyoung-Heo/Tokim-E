@@ -99,7 +99,7 @@ function LandPurchaseKnowledge() {
     <div>
       <Title>
         <BackIcon src={backIcon} alt="back Icon" onClick={goBack} />
-        용어 상세 설명
+        토지 구매 상식
       </Title>
 
       <TabsContainer>
