@@ -1,8 +1,12 @@
 import React from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import KakaoIcon from '../assets/images/icon/kakao.svg'; // 이미지 import
 import GoogleIcon from '../assets/images/icon/Google.png'; // 이미지 import
 import LogoImage from '../assets/images/Tokimlogo.png'; // 로고 이미지 import
+import TokimeIcon from '../assets/images/icon/Tokime.png'; // 이미지 import
+import { persistor } from '../redux/reduxStore';
 
 // 페이지 전체의 스타일 설정
 const LoginPageStyle = createGlobalStyle`
@@ -74,6 +78,8 @@ const Icon = styled.img`
 `;
 
 function LoginRequiredPage() {
+  const navigate = useNavigate();
+
   const kakaoLoginUrl = `${process.env.REACT_APP_API_URL}/oauth2/authorization/kakao`;
   const googleLoginUrl = `${process.env.REACT_APP_API_URL}/oauth2/authorization/google`;
 
@@ -83,6 +89,10 @@ function LoginRequiredPage() {
 
   const handleGoogleLogin = () => {
     window.location.href = googleLoginUrl;
+  };
+
+  const handleGuestLogin = () => {
+    navigate(-1);
   };
 
   return (
@@ -101,6 +111,11 @@ function LoginRequiredPage() {
         <Button $bgColor="#FFFFFF" onClick={handleGoogleLogin}>
           <Icon src={GoogleIcon} alt="구글 아이콘" />
           <ButtonText>구글로 로그인</ButtonText>
+        </Button>
+
+        <Button $bgColor="#FFFFFF" onClick={handleGuestLogin}>
+          <Icon src={TokimeIcon} alt="토킴이 아이콘" />
+          <ButtonText>비회원으로 돌아가기</ButtonText>
         </Button>
       </LoginRequiredPageContainer>
     </>
