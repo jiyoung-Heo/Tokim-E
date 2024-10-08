@@ -16,31 +16,32 @@ import userQuizPercentAxios from '../../api/userQuizPercentAxios';
 import logoutAxios from '../../api/logoutAxios';
 import { persistor } from '../../redux/reduxStore';
 import withdrawAxios from '../../api/withdrawAxios';
-// 오버레이 스타일 정의
+
 const Overlay = styled.div<{ isOpen: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw; /* 전체 화면 너비 */
-  height: 100vh; /* 전체 화면 높이 */
-  background-color: rgba(0, 0, 0, 0.1); /* 반투명 배경 */
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.1);
   display: ${(props) =>
     props.isOpen ? 'block' : 'none'}; /* 사이드바가 열리면 보이게 */
-  z-index: 900; /* 사이드바보다 아래에 위치 */
+  z-index: 900;
 `;
-// 사이드바 전체 스타일 정의
+
+// SidebarContainer에서도 isOpen prop을 사용하는 부분 수정
 const SidebarContainer = styled.div<{ $isOpen: boolean }>`
   position: fixed;
   top: 0;
   right: ${(props) =>
     props.$isOpen ? '0' : '-50vw'}; /* 너비를 기준으로 열리고 닫히도록 설정 */
   width: 50vw;
-  height: 90vh; /* 전체 화면 높이에 맞추기 */
+  height: 90vh;
   background-color: white;
   transition: right 0.3s ease-in-out;
   z-index: 1000;
-  padding: 2.5vh 2vw; /* 사이드바 안쪽 패딩 조정 */
-  box-sizing: border-box; /* 패딩을 포함한 크기 계산 */
+  padding: 2.5vh 2vw;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -115,7 +116,7 @@ const Divider = styled.hr`
 const Button = styled.button<{ $bgColor: string; $boxShadow?: string }>`
   width: 80%;
   margin: 1vh auto;
-  background-color: ${(props) => props.$bgColor};
+  background-color: ${(props) => props.$bgColor}; // $bgColor prop을 사용
   color: white;
   font-size: 4vw;
   font-weight: bold;
@@ -189,6 +190,14 @@ const WithdrawBtn = styled.p`
   opacity: 0.6;
 `;
 
+const deleteAllCookies = () => {
+  const cookies = document.cookie.split(';');
+  cookies.forEach((cookie) => {
+    const cookieName = cookie.split('=')[0].trim();
+    document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  });
+};
+
 function getCookieValue(name: string): string | null {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
@@ -198,7 +207,7 @@ function getCookieValue(name: string): string | null {
       return cookieValue.split(';').shift() || null; // split이나 shift가 undefined일 경우 null 반환
     }
   }
-  return null;
+  return null; // 모든 경우에 대해 null 반환
 }
 
 function Sidebar() {
@@ -239,14 +248,16 @@ function Sidebar() {
   };
 
   useEffect(() => {
-    const fetchPercent = async () => {
-      const data = await userQuizPercentAxios();
-      if (data) {
-        setPercent(data);
-      }
-    };
-    fetchPercent();
-
+    const authCookie = getCookieValue('Authorization');
+    if (authCookie !== null) {
+      const fetchPercent = async () => {
+        const data = await userQuizPercentAxios();
+        if (data) {
+          setPercent(data);
+        }
+      };
+      fetchPercent();
+    }
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -254,13 +265,16 @@ function Sidebar() {
   }, [modalOpen, modalWithdrawOpen]);
 
   useEffect(() => {
-    const fetchParentInfo = async () => {
-      const data = await userQuizPercentAxios();
-      if (data) {
-        setPercent(data);
-      }
-    };
-    fetchParentInfo();
+    const authCookie = getCookieValue('Authorization');
+    if (authCookie !== null) {
+      const fetchParentInfo = async () => {
+        const data = await userQuizPercentAxios();
+        if (data) {
+          setPercent(data);
+        }
+      };
+      fetchParentInfo();
+    }
   }, [modalOpen, modalWithdrawOpen]);
 
   const handleLogout = () => {
@@ -268,6 +282,7 @@ function Sidebar() {
       const data = await logoutAxios();
       if (data) {
         persistor.purge();
+        deleteAllCookies();
         dispatch({ type: 'RESET_ALL' });
       }
     };
@@ -282,17 +297,17 @@ function Sidebar() {
   const handleWithdraw = () => {
     const fetchLogout = async () => {
       const data = await withdrawAxios();
+      console.log(data); // 응답 데이터 확인
       if (data) {
-        console.log(data);
+        deleteAllCookies();
         persistor.purge();
-        dispatch({ type: 'RESET_ALL' });
+        dispatch({ type: 'RESET_ALL' }); // Redux 상태 초기화
+        navigate('/'); // 홈으로 리디렉션
       }
     };
     fetchLogout();
     setModalWithdrawOpen(false); // 모달 닫기
-    navigate('/');
   };
-
   return (
     <>
       <SidebarIcon
