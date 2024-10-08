@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { getDangerInfo } from '../api/dangerAxios';
 import backIcon from '../assets/images/icon/left-actionable.png';
+import searchIcon from '../assets/images/icon/search.svg';
 
 // 스타일드 컴포넌트 정의
 const Container = styled.div`
@@ -26,21 +27,32 @@ const BackIcon = styled.img`
 `;
 
 const SearchContainer = styled.div`
-  margin: 0 0 20px 0;
+  padding: 10px;
+  background-color: #f3f7fb;
+  display: flex;
+  align-items: center; // 세로 중앙 정렬
 `;
 
 const SearchInput = styled.input`
   width: 100%;
   padding: 10px;
+  font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  font-size: 16px;
+  outline: none;
+`;
+
+const SearchIcon = styled.img`
+  width: 24px;
+  height: 24px;
+  margin-left: 10px;
 `;
 
 const RegistContainer = styled.div`
-  position: fixed;
-  bottom: 13vh;
-  right: 5vw;
+  position: relative; // relative로 변경
+  margin-top: 3vh; // 리스트와의 간격
+  z-index: 800; // 다른 요소들과 겹치지 않도록 z-index 설정
+  margin-left: 15vw;
 `;
 
 const RegisterButton = styled.button`
@@ -51,8 +63,6 @@ const RegisterButton = styled.button`
   border-radius: 5px;
   font-weight: bold;
   cursor: pointer;
-  z-index: 800;
-  margin-top: 3vh;
   font-size: 15px;
 
   &:hover {
@@ -249,48 +259,44 @@ const RiskMapPage: React.FC = () => {
   };
 
   const handleMarkerClick = (marker: any) => {
-    if (mapRef.current) {
-      mapRef.current.setCenter(
-        new window.naver.maps.LatLng(marker.lat, marker.lng),
-      );
-      // 추가 동작을 원하시면 여기에 작성하세요
-    }
+    const { lat, lng } = marker;
+    mapRef.current.setCenter(new window.naver.maps.LatLng(lat, lng));
+    mapRef.current.setZoom(15);
   };
 
-  const handleBack = () => {
-    navigate(-1);
+  const handleRegister = () => {
+    // 작성 버튼 클릭 시 등록 로직 추가
+    navigate('./report'); // 등록 페이지로 이동
   };
 
   return (
     <Container>
       <Title>
-        <BackIcon src={backIcon} alt="Back" onClick={handleBack} />
-        위험 지역 지도
+        <BackIcon src={backIcon} alt="뒤로가기" onClick={() => navigate(-1)} />
+        위험 신고 지도
       </Title>
       <SearchContainer>
         <SearchInput
           type="text"
-          placeholder="검색"
+          placeholder="신고 제목 또는 내용을 검색하세요"
           value={searchTerm}
           onChange={handleSearch}
         />
+        <SearchIcon src={searchIcon} alt="검색 아이콘" />
       </SearchContainer>
       <MapContainer ref={mapContainer} />
-      {filteredMarkers.length > 0 && (
-        <MarkerList>
-          {filteredMarkers.map((marker) => (
-            <MarkerItem
-              key={marker.id}
-              onClick={() => handleMarkerClick(marker)}
-            >
-              {marker.dangerTitle}
+      <MarkerList>
+        {filteredMarkers.length > 0 &&
+          filteredMarkers.map((marker, index) => (
+            <MarkerItem key={index} onClick={() => handleMarkerClick(marker)}>
+              <strong>{marker.dangerTitle}</strong>
+              <p>{marker.dangerContent}</p>
             </MarkerItem>
           ))}
-        </MarkerList>
-      )}
+      </MarkerList>
       <RegistContainer>
-        <RegisterButton onClick={() => navigate('/risk-map/report')}>
-          작성
+        <RegisterButton onClick={handleRegister}>
+          기획부동산 의심 토지 신고하기
         </RegisterButton>
       </RegistContainer>
     </Container>
