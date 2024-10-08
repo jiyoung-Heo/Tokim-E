@@ -9,7 +9,6 @@ const GaugeWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 10vh;
   width: 100%;
 `;
 
@@ -17,14 +16,14 @@ const GaugeWrapper = styled.div`
 const Score = styled.p`
   font-size: 6vw;
   font-weight: bold;
-  margin-top: -20px;
+  margin-top: -2vh;
   color: #333333;
 `;
 
 // 백분위 텍스트 스타일
 const Percentile = styled.p`
   font-size: 4vw;
-  margin-top: -20px;
+  margin-top: -2vh;
   color: #333333;
 `;
 
@@ -38,11 +37,11 @@ const StyledButton = styled.button<{
   max-width: 360px;
   background-color: ${(props) => props.$bgColor};
   color: ${(props) => props.$textColor};
-  font-size: 13px;
+  font-size: calc(1vw + 1vh);
   font-weight: bold;
   border: none;
-  border-radius: 10px;
-  margin-top: 20px;
+  border-radius: 1vh;
+  margin-top: 2vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -56,7 +55,7 @@ const StyledButton = styled.button<{
 // 컨테이너 스타일 정의
 const Container = styled.div`
   width: 100vw;
-  height: 100vh;
+  height: 90vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
