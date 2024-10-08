@@ -70,7 +70,7 @@ function AppRouter() {
       <Route
         path="/my-page"
         element={
-          user.name ? ( // 인증 여부 확인
+          user.email ? ( // 인증 여부 확인
             <Layout>
               <MyPage />
             </Layout>
@@ -82,7 +82,7 @@ function AppRouter() {
       <Route
         path="/investment"
         element={
-          user.name ? ( // 인증 여부 확인
+          user.email ? ( // 인증 여부 확인
             <Layout>
               <InvestmentPage />
             </Layout>
@@ -94,7 +94,7 @@ function AppRouter() {
       <Route
         path="/investment-register"
         element={
-          user.name ? ( // 인증 여부 확인
+          user.email ? ( // 인증 여부 확인
             <Layout>
               <InvestmentRegisterPage />
             </Layout>
@@ -106,7 +106,7 @@ function AppRouter() {
       <Route
         path="/investment-detail/:invest"
         element={
-          user.name ? ( // 인증 여부 확인
+          user.email ? ( // 인증 여부 확인
             <Layout>
               <InvestmentDetailPage />
             </Layout>
@@ -118,7 +118,7 @@ function AppRouter() {
       <Route
         path="/land-purchase-quiz"
         element={
-          user.name ? (
+          user.email ? (
             <Layout>
               <LandPurchaseQuiz />
             </Layout>
