@@ -137,7 +137,7 @@ function MainPage() {
   const [currentCarousel, setCurrentCarousel] = useState(0); // 현재 캐러셀 인덱스
   const carouselData: CarouselData[] = [
     {
-      to: '/land-purchase-knowledge',
+      to: '/land-purchase-quiz',
       bgColor: 'linear-gradient(180deg, #00c99c 0%, #00a580 35%, #009977 47%)',
       content: '토지 상식 퀴즈 통해\n 나의 토지 상식 점수를\n알아보세요!',
       imageSrc: CarouselImage1,

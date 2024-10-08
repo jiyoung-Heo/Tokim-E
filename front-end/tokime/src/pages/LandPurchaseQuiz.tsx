@@ -43,7 +43,7 @@ const Container = styled.div`
 
 const Title = styled.h2`
   margin: 0 0 3vh 0;
-  font-size: 20px;
+  font-size: 25px;
   font-weight: bold;
   font-family: 'KoddiUD OnGothic';
   color: #333333;
@@ -65,6 +65,9 @@ const QuestionText = styled.p`
   white-space: normal;
   font-weight: 700;
   font-size: 5vw;
+  word-wrap: brea-word; /* 또는 overflow-wrap: break-word; */
+  word-break: keep-all; /* 단어가 중간에 끊기지 않도록 설정 */
+  white-space: normal; /* 공백을 정상적으로 처리 */
 `;
 
 const QuizContent = styled.div`
@@ -98,6 +101,9 @@ const Option = styled.button<{ isCorrect: boolean; isWrong: boolean }>`
   color: ${({ isCorrect, isWrong }) =>
     isCorrect || isWrong ? '#fff' : '#797982'};
   transition: background-color 0.3s ease;
+  word-wrap: break-word; /* 또는 overflow-wrap: break-word; */
+  word-break: keep-all; /* 단어가 중간에 끊기지 않도록 설정 */
+  white-space: normal; /* 공백을 정상적으로 처리 */
 `;
 
 const OptionIcon = styled.img`
