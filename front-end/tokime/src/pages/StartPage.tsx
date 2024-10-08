@@ -31,6 +31,7 @@ const Title = styled.h1`
   font-weight: 800; /* 굵기 강제 설정 */
   text-align: center;
 `;
+const BackIcon = styled.img``;
 
 const SubTitle = styled.p`
   font-size: 15px;
