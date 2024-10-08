@@ -58,6 +58,7 @@ const ContentContainer = styled.div`
   position: fixed; // 페이지가 아닌 탭 내용이 스크롤되도록 설정
   top: 15vh; // 탭 바로 아래에 위치하도록 조정
   left: 0;
+  height: 75vh;
   width: 100vw;
   overflow-y: auto; // 수직 스크롤 허용
   padding: 20px;
