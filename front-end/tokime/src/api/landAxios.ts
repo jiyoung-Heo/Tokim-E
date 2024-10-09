@@ -4,7 +4,7 @@ import API from '../utils/API';
 export const getAllLandInfo = async () => {
   return API.get('/land')
     .then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       return res.data;
     })
     .catch((e) => {
@@ -23,7 +23,7 @@ export const getSearchLandInfo = async (
     params: { district, address },
   })
     .then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       return res.data;
     })
     .catch((e) => {
@@ -41,7 +41,7 @@ export const getLandLawInfo = async (landDistrictCode: string | null) => {
   }
   return API.get(`/land/bylaw/${landDistrictCode}`)
     .then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       return res.data;
     })
     .catch((e) => {

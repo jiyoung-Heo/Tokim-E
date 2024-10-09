@@ -19,7 +19,7 @@ export const getAllInvestLandFilter = async (landAddress: string) => {
     landAddress,
   })
     .then((res) => {
-      console.log(landAddress);
+      // console.log(landAddress);
       return res.data;
     })
     .catch((e) => {
@@ -72,7 +72,7 @@ export const registInvestLand = async (investmentData: {
 }) => {
   try {
     const response = await API.post('/land/invest', investmentData);
-    console.log('투자 예정지 등록 성공:', response.data);
+    // console.log('투자 예정지 등록 성공:', response.data);
     return response.data;
   } catch (error) {
     console.error('투자 예정지 등록 실패:', error);
@@ -101,7 +101,7 @@ export const updateInvestDetail = async (
 export const deleteInvestDetail = async (investmentPlannedLandId: String) => {
   return API.delete(`/land/invest/${investmentPlannedLandId}`)
     .then((res) => {
-      console.log('Delete successful: ', res.data);
+      // console.log('Delete successful: ', res.data);
       return res.data;
     })
     .catch((e) => {

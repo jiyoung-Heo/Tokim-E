@@ -19,7 +19,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   // 경로 로그 출력해서 확인하기
-  console.log('Current path:', location.pathname);
+  // console.log('Current path:', location.pathname);
   const hideComponentsOnPaths = ['/main']; // 사이드바를 숨길 경로 목록 (StartPage 경로 '/')
 
   const shouldHideComponents = hideComponentsOnPaths.includes(

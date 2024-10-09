@@ -411,7 +411,7 @@ function InvestmentPage() {
       if (selectedOption === '전국') {
         const data = await getAllInvestLand();
         if (data) {
-          console.log(data);
+          // console.log(data);
           setAllInvest(data);
         }
       } else {
@@ -437,7 +437,7 @@ function InvestmentPage() {
   }, [allInvest, searchAlias]);
 
   const handleDetailClick = (detail: any) => {
-    console.log(detail);
+    // console.log(detail);
     dispatch(setLandDetail(detail));
     // 라우터 이동
     navigate(`/investment-detail/${detail.investmentPlannedLandId}`);

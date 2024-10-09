@@ -210,7 +210,7 @@ const StoryAnalysis = () => {
 
     if (response) {
       setSuccess(true); // 성공 상태 설정
-      console.log('사연 제출 성공:', response);
+      // console.log('사연 제출 성공:', response);
       navigate('/story-analysis/:result'); // 사연 제출 후 이동
     } else {
       console.log('사연 제출 실패');

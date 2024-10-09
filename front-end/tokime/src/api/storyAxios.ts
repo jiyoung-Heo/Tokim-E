@@ -15,7 +15,7 @@ export const storyAxios = async () => {
 export const storyRegistAxios = async (story: string) => {
   return API.post('/story', { story })
     .then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       return res.data;
     })
     .catch((e) => {
