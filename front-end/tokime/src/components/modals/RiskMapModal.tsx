@@ -22,6 +22,7 @@ const ModalContent = styled.div`
   border-radius: 10px;
   width: 80%;
   max-width: 500px;
+  text-align: center; /* Center align text */
 `;
 
 const CloseButton = styled.button`
@@ -29,49 +30,55 @@ const CloseButton = styled.button`
   border: none;
   font-size: 20px;
   cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
 `;
 
 const ContentContainer = styled.div`
-  border: 1px solid #ccc; /* Border for content */
+  border: 1px solid #ccc;
   border-radius: 5px;
   padding: 10px;
-  max-height: 200px; /* Max height */
-  overflow-y: auto; /* Scrollable */
-  width: 100%; /* Full width */
-  word-wrap: break-word; /* Break long words */
-  white-space: normal; /* Normal whitespace handling */
+  max-height: 200px;
+  overflow-y: auto;
+  width: 100%;
+  word-wrap: break-word;
+  white-space: normal;
 
-  /* Scrollbar styles */
   &::-webkit-scrollbar {
-    width: 8px; /* Scrollbar width */
+    width: 8px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: #27c384; /* Scrollbar color */
-    border-radius: 4px; /* Scrollbar rounded corners */
+    background-color: #27c384;
+    border-radius: 4px;
   }
 
   &::-webkit-scrollbar-track {
-    background: #f1f1f1; /* Scrollbar track color */
-    border-radius: 4px; /* Track rounded corners */
+    background: #f1f1f1;
+    border-radius: 4px;
   }
 `;
 
-// TitleContainer styled component with updated styles
 const TitleContainer = styled.div`
-  border-radius: 5px; /* Same radius as content */
+  border-radius: 5px;
   padding: 10px;
-  overflow: hidden; /* Prevent overflow */
-  width: 100%; /* Full width */
-  background: transparent; /* Transparent background */
-  word-wrap: break-word; /* Break long words */
-  white-space: normal; /* Normal whitespace handling */
-  margin-bottom: 10px; /* Margin added for space between title and content */
+  overflow: hidden;
+  width: 100%;
+  background: transparent;
+  word-wrap: break-word;
+  white-space: normal;
+  margin-bottom: 10px;
 `;
 
 const Title = styled.h2`
-  margin: 0; /* Remove default margin */
-  font-size: 18px; /* Adjust font size as needed */
+  margin: 0;
+  font-size: 18px;
+`;
+
+// New styled component for the image
+const ImageContainer = styled.div`
+  margin-bottom: 10px; /* Space between image and title */
 `;
 
 interface RiskMapModalProps {
@@ -96,6 +103,16 @@ const RiskMapModal: React.FC<RiskMapModalProps> = ({
     <ModalOverlay isOpen={isOpen} onClick={onClose}>
       <ModalContent onClick={(e) => e.stopPropagation()}>
         <CloseButton onClick={onClose}>×</CloseButton>
+
+        {/* Image added here */}
+        <ImageContainer>
+          <img
+            src="/icons/icon-siren.png"
+            alt="Siren Icon"
+            style={{ width: '50px', height: '50px' }}
+          />
+        </ImageContainer>
+
         <TitleContainer>
           <Title>{markerData.dangerTitle}</Title>
         </TitleContainer>
