@@ -326,8 +326,9 @@ function InvestmentPage() {
     setSelectedOption(label);
     setIsOpen(false);
   };
-  // 초성 추출 함수
-  const getChosung = (word: string) => {
+
+  // 초성 추출 함수 (리스트 형태로 반환)
+  const getChosungArray = (word: string) => {
     const CHOSUNG = [
       'ㄱ',
       'ㄲ',
@@ -350,41 +351,41 @@ function InvestmentPage() {
       'ㅎ',
     ];
 
-    // 자모만 입력된 경우 처리
-    if (CHOSUNG.includes(word)) {
-      return word; // 초성 리스트에 포함된 자모 그대로 반환
-    }
-
-    const unicode = word.charCodeAt(0) - 44032; // 한글의 유니코드 시작 값
-    const chosungIndex = Math.floor(unicode / 588); // 초성 계산
-
-    return CHOSUNG[chosungIndex]; // 초성 반환
+    return [...word].map((char) => {
+      const unicode = char.charCodeAt(0) - 44032; // 한글의 유니코드 시작 값
+      if (unicode < 0 || unicode > 11171) return ''; // 유효하지 않은 경우
+      const chosungIndex = Math.floor(unicode / 588); // 초성 계산
+      return CHOSUNG[chosungIndex]; // 초성 반환
+    });
   };
-  // 초성만 입력된 경우인지 확인하는 함수
-  const isChosungOnly = (word: string) => {
-    const CHOSUNG = [
-      'ㄱ',
-      'ㄲ',
-      'ㄴ',
-      'ㄷ',
-      'ㄸ',
-      'ㄹ',
-      'ㅁ',
-      'ㅂ',
-      'ㅃ',
-      'ㅅ',
-      'ㅆ',
-      'ㅇ',
-      'ㅈ',
-      'ㅉ',
-      'ㅊ',
-      'ㅋ',
-      'ㅌ',
-      'ㅍ',
-      'ㅎ',
-    ];
 
-    return [...word].every((char) => CHOSUNG.includes(char));
+  const filterByChosung = (items: any[], search: string) => {
+    const searchChosungs = getChosungArray(search); // 입력된 초성 배열
+
+    return items.filter((invest) => {
+      // invest가 유효한지 확인
+      if (!invest || typeof invest.landNickname !== 'string') {
+        return false; // invest가 유효하지 않거나 landNickname이 문자열이 아닌 경우 필터링
+      }
+
+      const { landNickname } = invest; // 비구조화 할당으로 landNickname 가져오기
+      const landChosungs = getChosungArray(landNickname); // 토지 이름의 초성 배열
+
+      // 입력된 초성이 landNickname의 초성의 시작 부분에서 정확히 일치하는지 확인
+      // searchChosungs.length와 landChosungs.length를 비교하여 길이 체크
+      if (searchChosungs.length > landChosungs.length) {
+        return false; // 입력된 초성이 더 길면 필터링
+      }
+
+      // 초성이 일치하는지 확인
+      for (let i = 0; i < searchChosungs.length; i += 1) {
+        if (landChosungs[i] !== searchChosungs[i]) {
+          return false; // 초성이 일치하지 않으면 필터링
+        }
+      }
+
+      return true; // 모든 초성이 일치하면 true 반환
+    });
   };
 
   // 등록 버튼 클릭 시 투자 예정지 등록 페이지로 이동
@@ -427,15 +428,8 @@ function InvestmentPage() {
     if (searchAlias === '') {
       setFilterInvest(allInvest);
       // 초성만 입력된 검색
-    } else if (isChosungOnly(searchAlias)) {
-      setFilterInvest(
-        allInvest.filter(
-          (invest) =>
-            getChosung(invest.landNickname) === getChosung(searchAlias),
-        ),
-      );
     } else {
-      // 단어검색
+      // 단어 검색
       setFilterInvest(
         allInvest.filter((invest) => invest.landNickname.includes(searchAlias)),
       );
@@ -460,7 +454,7 @@ function InvestmentPage() {
           <SearchIcon src={searchIcon} alt="search" />
           <SearchInput
             type="text"
-            placeholder="별칭 검색"
+            placeholder="부지명 검색"
             value={searchAlias}
             onChange={(e) => setSearchAlias(e.target.value)}
           />
@@ -481,7 +475,7 @@ function InvestmentPage() {
                   <NaverMapProps landAddress={invest.landAddress} />
                 </NaverMap>
                 <Invest onClick={() => handleDetailClick(invest)}>
-                  <NickName>{invest.landNickname || '별칭 없음'}</NickName>
+                  <NickName>{invest.landNickname || '부지명 없음'}</NickName>
                   <Address>{invest.landAddress}</Address>
                   <WarningScore>
                     {invest.landDanger === 2 ? (
