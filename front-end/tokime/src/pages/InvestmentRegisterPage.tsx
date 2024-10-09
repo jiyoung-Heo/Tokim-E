@@ -30,7 +30,6 @@ const TabItem = styled.div<{ $isActive: boolean }>`
   font-weight: ${(props) => (props.$isActive ? 'bold' : 'normal')};
   border-bottom: ${(props) =>
     props.$isActive ? '2px solid #27C384' : '2px solid #ddd'};
-  cursor: pointer;
   outline: none; /* 포커스 시 파란색 박스 제거 */
 `;
 
@@ -86,25 +85,39 @@ function InvestmentRegistrationPage() {
   const handleRegister = async () => {
     // 서버로 POST 요청 보내는 로직 구현
     // console.log(stor.length);
+    const defaultLandInfo = {
+      landGradient: '', // 기본값으로 빈 문자열 또는 기본적인 지형 값 설정
+      landPrice: 0, // 기본 가격을 0으로 설정
+      landRoad: '', // 기본 도로 정보를 빈 문자열로 설정
+      landUseStatus: '', // 기본 용도 상태 설정
+      landDanger: 0, // 기본 안전도 값을 0으로 설정
+    };
+
+    const finalLandInfo = landInfo || defaultLandInfo;
     console.log({ address, landInfo, check });
-    if (!landInfo || expectedArea === '' || expectedPrice === '') {
-      alert('모든 필드를 입력해주세요.');
+    if (expectedArea === '') {
+      alert('구매 예정 평수를 입력해주세요.');
+      return;
+    }
+
+    if (expectedPrice === '') {
+      alert('구매 예정 가격을 입력해주세요.');
       return;
     }
 
     const investmentData = {
       landAddress: address, // 주소
-      landGradient: landInfo.landGradient, // 지형
-      landPrice: landInfo.landPrice, // 가격
-      landRoad: landInfo.landRoad, // 도로
-      landUseStatus: landInfo.landUseStatus, // 용도 상태
+      landGradient: finalLandInfo.landGradient, // 지형
+      landPrice: finalLandInfo.landPrice, // 가격
+      landRoad: finalLandInfo.landRoad, // 도로
+      landUseStatus: finalLandInfo.landUseStatus, // 용도 상태
       landStory: '', // 사연
       plannedLandPyeong: expectedArea, // 투자 예정 평수
       plannedLandPrice: expectedPrice, // 투자 예정 가격
       checkedCount: check.length, // 체크된 항목 개수
       checklistIds: check, // 체크된 체크리스트 ID 배열
       landNickname: expectedLandNickname,
-      landDanger: landInfo.landDanger,
+      landDanger: finalLandInfo.landDanger,
     };
 
     try {
