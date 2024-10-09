@@ -65,8 +65,11 @@ function BottomTab() {
           </IconWrapper>
           지번 검색
         </TabItem>
-        <TabItem to="/risk-map" $isActive={location.pathname === '/risk-map'}>
-          <IconWrapper $isActive={location.pathname === '/risk-map'}>
+        <TabItem
+          to="/risk-map"
+          $isActive={location.pathname.includes('/risk-map')}
+        >
+          <IconWrapper $isActive={location.pathname.includes('/risk-map')}>
             <MapIcon />
           </IconWrapper>
           위험 지도
