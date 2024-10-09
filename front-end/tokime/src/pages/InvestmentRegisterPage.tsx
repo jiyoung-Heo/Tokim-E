@@ -5,6 +5,7 @@ import LandInformationRegistrationTab from '../components/Tabs/LandInformationRe
 import ChecklistRegistrationTab from '../components/Tabs/ChecklistRegistrationTab';
 import StoryWritingRegistrationTab from '../components/Tabs/StoryWritingRegistrationTab';
 import { registInvestLand } from '../api/landInvestAxios';
+import LandInformationRegistrationModal from '../components/modals/LandInformationRegistrationModal';
 
 // 필요한 스타일 정의
 const Container = styled.div`
@@ -50,6 +51,8 @@ interface LandInfo {
 function InvestmentRegistrationPage() {
   const [activeTab, setActiveTab] = useState('landInfo');
   const navigate = useNavigate(); // useNavigate 훅 사용
+  const [modalMessage, setModalMessage] = useState<string>(''); // 모달 메시지
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // 모달 열림 상태
 
   // 저장해야할 4가지 state 상태
   // 주소정보
@@ -96,12 +99,14 @@ function InvestmentRegistrationPage() {
     const finalLandInfo = landInfo || defaultLandInfo;
     console.log({ address, landInfo, check });
     if (expectedArea === '') {
-      alert('구매 예정 평수를 입력해주세요.');
+      setModalMessage('구매 예정 평수를 입력해주세요.');
+      setIsModalOpen(true);
       return;
     }
 
     if (expectedPrice === '') {
-      alert('구매 예정 가격을 입력해주세요.');
+      setModalMessage('구매 예정 가격을 입력해주세요.');
+      setIsModalOpen(true);
       return;
     }
 
@@ -123,14 +128,17 @@ function InvestmentRegistrationPage() {
     try {
       const result = await registInvestLand(investmentData); // POST 요청
       if (result) {
-        alert('투자 예정지 등록이 완료되었습니다!');
-        navigate('/investment'); // 등록이 완료되면 /investment 페이지로 이동
+        setModalMessage('투자 예정지 등록이 완료되었습니다!');
+        setIsModalOpen(true);
+        navigate('/investment');
       } else {
-        alert('등록에 실패했습니다. 다시 시도해주세요.');
+        setModalMessage('등록에 실패했습니다. 다시 시도해주세요.');
+        setIsModalOpen(true);
       }
     } catch (error) {
       console.error('등록 중 오류 발생:', error);
-      alert('등록 중 오류가 발생했습니다. 다시 시도해주세요.');
+      setModalMessage('등록 중 오류가 발생했습니다. 다시 시도해주세요.');
+      setIsModalOpen(true);
     }
   };
 
@@ -162,6 +170,12 @@ function InvestmentRegistrationPage() {
           onPrevious={handlePreviousFromChecklist} // 이전 버튼 기능 추가
           check={check}
           setCheck={setCheck}
+        />
+      )}
+      {isModalOpen && (
+        <LandInformationRegistrationModal
+          message={modalMessage}
+          onClose={() => setIsModalOpen(false)}
         />
       )}
     </Container>
