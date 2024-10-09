@@ -265,11 +265,11 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
     '개발이 가능한 지역인가요?',
     '고도가 낮고 경사가 완만한가요?',
     '구체적인 개발 계획이 있나요?',
-    '인근 지역에만 개발 호재가 있는 건\n아닌가요?',
+    '인근 지역에만 개발 호재가 있지는\n않나요?',
     '공유지분으로 거래하진 않나요?',
     '정확한 정보를 사전에 받으셨나요?',
     '매수 금액이 적당한가요?',
-    '주변 시세와 비교했을 때 가격이적절한가요?',
+    '주변 시세와 비교했을 때 가격이\n적절한가요?',
     '판매자의 신뢰할 수 있는\n상호인가요?',
     '법인이 아닌 개인 소유의\n토지인가요?',
   ];
@@ -366,7 +366,8 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
                 src={images[index]} // 체크리스트 이미지
                 alt={`Checklist ${index + 1}`}
               />
-              <TitleText>{titles[index]}</TitleText> {/* 체크리스트 제목 */}
+              <TitleText>{`${index + 1}. ${titles[index]}`}</TitleText>{' '}
+              {/* 체크리스트 제목 */}
             </TopRow>
             <DescriptionText>{item.content}</DescriptionText>{' '}
             {/* 체크리스트 설명 */}
