@@ -10,6 +10,7 @@ import InvestmentDetailTab from '../components/Tabs/InvestmentDetailTab';
 import {
   getInvestChecklistDetail,
   getInvestDetail,
+  updateInvestDetail,
 } from '../api/landInvestAxios';
 
 const Title = styled.h2`
@@ -73,6 +74,7 @@ function InvestmentDetailPage() {
   const [investmentInfo, setInvestmentInfo] = useState<InvestmentInfo>();
   // 체크리스트 체크한것저장
   const [check, setCheck] = useState<number[]>([]);
+
   useEffect(() => {
     const fetchInvestmentData = async () => {
       const data = await getInvestDetail(invest);
@@ -92,7 +94,8 @@ function InvestmentDetailPage() {
       }
     };
     fetchInvestmentChecklistData();
-  }, []);
+  }, [investmentInfo]);
+
   const goBack = () => {
     navigate(-1); // 이전 페이지로 이동
   };
@@ -116,20 +119,18 @@ function InvestmentDetailPage() {
         >
           체크리스트
         </TabItem>
-        <TabItem
-          $isActive={activeTab === 'storyAdvice'}
-          onClick={() => setActiveTab('storyAdvice')}
-        >
-          사연과 조언
-        </TabItem>
       </TabsContainer>
 
       {activeTab === 'landInfo' && (
         <InvestmentDetailTab investmentInfoProp={investmentInfo} />
       )}
-      {activeTab === 'checklist' && <ChecklistTab check={check} />}
-      {activeTab === 'storyAdvice' && (
-        <StoryAdviceTab story={investmentInfo?.landStory || null} />
+      {activeTab === 'checklist' && (
+        <ChecklistTab
+          check={check}
+          setCheck={setCheck}
+          investmentInfo={investmentInfo}
+          setInvestmentInfo={setInvestmentInfo}
+        />
       )}
     </div>
   );
