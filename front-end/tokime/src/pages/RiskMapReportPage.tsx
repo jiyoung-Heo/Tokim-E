@@ -142,7 +142,7 @@ const ResultItem = styled.div`
     background: #f0f0f0;
   }
 `;
-//
+
 function RiskMapReportPage() {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const map = useRef<any>(null);
@@ -320,6 +320,13 @@ function RiskMapReportPage() {
     setSearchResults([]);
     setSearchQuery(result.title); // 클릭한 결과 제목으로 검색창 업데이트
   };
+
+  useEffect(() => {
+    // 검색어가 비어있으면 검색 결과를 초기화
+    if (!searchQuery) {
+      setSearchResults([]);
+    }
+  }, [searchQuery]);
 
   return (
     <Container>
