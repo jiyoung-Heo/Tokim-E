@@ -4,7 +4,7 @@ import API from '../utils/API';
 export const getDangerInfo = async () => {
   return API.get('/danger')
     .then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       return res.data;
     })
     .catch((e) => {
@@ -17,7 +17,7 @@ export const getDangerInfo = async () => {
 export const getDangerInfoDetail = async (dangerId: number) => {
   return API.get(`/danger/${dangerId}`)
     .then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       return res.data;
     })
     .catch((e) => {

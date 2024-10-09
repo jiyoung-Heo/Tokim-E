@@ -97,7 +97,7 @@ function InvestmentRegistrationPage() {
     };
 
     const finalLandInfo = landInfo || defaultLandInfo;
-    console.log({ address, landInfo, check });
+    // console.log({ address, landInfo, check });
     if (expectedArea === '') {
       setModalMessage('구매 예정 평수를 입력해주세요.');
       setIsModalOpen(true);

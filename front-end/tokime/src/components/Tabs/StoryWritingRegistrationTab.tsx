@@ -139,7 +139,7 @@ const StoryAnalysisResult = () => {
   }, []);
 
   const goBack = () => {
-    console.log('뒤로 가기');
+    // console.log('뒤로 가기');
   };
 
   return (
