@@ -123,7 +123,7 @@ function AnalysisTab() {
         const data = await userQuizAverageAxios();
 
         setUserScore(data.quizScore);
-        setPeerAverage(data.ageAverage);
+        setPeerAverage(data.totalAverage);
         setUserTop(data.top); // 상위 % 값 가져오기
         setScoreList(data.scoreList);
       } catch (error) {
@@ -140,9 +140,9 @@ function AnalysisTab() {
     <Container>
       <TextContainer>
         {userScore > peerAverage
-          ? `평균보다 ${scoreDifference}점 높아요`
+          ? `전체 평균보다 ${scoreDifference}점 높아요`
           : userScore < peerAverage
-            ? `평균보다 ${scoreDifference}점 낮아요`
+            ? `전체 평균보다 ${scoreDifference}점 낮아요`
             : '평균과 같아요'}
       </TextContainer>
 
