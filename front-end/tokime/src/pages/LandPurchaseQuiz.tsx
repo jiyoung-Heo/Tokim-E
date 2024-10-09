@@ -232,7 +232,7 @@ function LandPurchaseQuiz() {
           // 점수 수정 요청 API 호출
           modifyUserQuizAxios(computedFinalScore)
             .then((updatedScore) => {
-              console.log(`서버에 점수 업데이트 완료: ${updatedScore}`);
+              // console.log(`서버에 점수 업데이트 완료: ${updatedScore}`);
             })
             .catch((e) => {
               console.error('점수 업데이트 실패:', e);
