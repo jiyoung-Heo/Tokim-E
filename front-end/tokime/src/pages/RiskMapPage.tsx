@@ -52,7 +52,10 @@ const RegistContainer = styled.div`
   position: relative;
   margin-top: 3vh;
   z-index: 800;
-  margin-left: 15vw;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  justify-content: center;
 `;
 
 const RegisterButton = styled.button`
@@ -114,7 +117,7 @@ const RiskMapPage: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedMarker, setSelectedMarker] = useState<any>(null);
   const [listVisible, setListVisible] = useState(false);
-  const listRef = useRef<HTMLDivElement>(null); // Ref for the list container
+  const listRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
 
   useEffect(() => {
@@ -143,7 +146,7 @@ const RiskMapPage: React.FC = () => {
                 center: new window.naver.maps.LatLng(latitude, longitude),
                 zoom: 14,
                 draggable: true,
-                zoomControl: true,
+                zoomControl: false,
                 scaleControl: true,
                 minZoom: 6,
                 maxZoom: 25,
@@ -157,7 +160,7 @@ const RiskMapPage: React.FC = () => {
                 center: new window.naver.maps.LatLng(37.5665, 126.978),
                 zoom: 14,
                 draggable: true,
-                zoomControl: true,
+                zoomControl: false,
                 scaleControl: true,
                 minZoom: 6,
                 maxZoom: 25,
@@ -190,10 +193,6 @@ const RiskMapPage: React.FC = () => {
       window.naver.maps.Event.addListener(marker, 'click', () => {
         setSelectedMarker({ lat, lng, dangerTitle, dangerContent });
         setModalOpen(true);
-      });
-
-      window.naver.maps.Event.addListener(mapRef.current, 'click', () => {
-        setModalOpen(false);
       });
     };
 
@@ -231,9 +230,21 @@ const RiskMapPage: React.FC = () => {
       }
     };
 
+    const handleMapClick = (event: MouseEvent) => {
+      if (
+        mapRef.current &&
+        !mapContainer.current?.contains(event.target as Node)
+      ) {
+        mapRef.current.setOptions({ zoomControl: false }); // Disable zoom controls
+      }
+    };
+
     document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handleMapClick);
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('mousedown', handleMapClick);
     };
   }, [listRef]);
 
@@ -281,7 +292,7 @@ const RiskMapPage: React.FC = () => {
         />
         <SearchIcon src={searchIcon} alt="검색 아이콘" />
       </SearchContainer>
-      {listVisible && ( // 리스트가 보일 때만 렌더링
+      {listVisible && (
         <MarkerListContainer ref={listRef}>
           <MarkerList>
             {filteredMarkers.length > 0 &&
@@ -292,13 +303,13 @@ const RiskMapPage: React.FC = () => {
                 >
                   <strong style={{ display: 'flex', alignItems: 'center' }}>
                     <img
-                      src="/icons/icon-siren.png" // 사이렌 아이콘 경로
+                      src="/icons/icon-siren.png"
                       alt="사이렌 아이콘"
                       style={{
-                        marginRight: '5px', // 오른쪽 여백
+                        marginRight: '5px',
                         width: '20px',
                         height: '20px',
-                      }} // 스타일 조정
+                      }}
                     />
                     신고 제목 : {marker.dangerTitle}
                   </strong>
@@ -310,13 +321,13 @@ const RiskMapPage: React.FC = () => {
                     }}
                   >
                     <img
-                      src="/icons/icon-speaker.png" // 스피커 아이콘 경로
+                      src="/icons/icon-speaker.png"
                       alt="스피커 아이콘"
                       style={{
-                        marginRight: '5px', // 오른쪽 여백
+                        marginRight: '5px',
                         width: '20px',
                         height: '20px',
-                      }} // 스타일 조정
+                      }}
                     />
                     신고 내용 : {marker.dangerContent}
                   </p>

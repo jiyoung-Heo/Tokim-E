@@ -12,16 +12,23 @@ const Container = styled.div`
 `;
 
 const Title = styled.h2`
-  margin: 0 0 1vh 0;
+  margin: 0;
   font-size: 25px;
   font-weight: bold;
   font-family: 'KoddiUD OnGothic';
   color: #333333;
-  display: flex;
-  justify-content: left;
+  margin-left: 10px; /* Adjust margin to position title properly */
 `;
 
-const BackIcon = styled.img``;
+const BackIcon = styled.img`
+  cursor: pointer; /* Add cursor pointer for better UX */
+`;
+
+const TitleContainer = styled.div`
+  display: flex;
+  align-items: center; /* Align items vertically centered */
+  margin-bottom: 1vh; /* Add margin below for spacing */
+`;
 
 const SearchContainer = styled.div`
   display: flex;
@@ -76,8 +83,6 @@ const CancelButton = styled.button`
   border: none;
 `;
 
-const TitleContainer = styled.div``;
-
 const TitleText = styled.input`
   width: 100%;
   height: 5vh;
@@ -124,14 +129,11 @@ const ButtonDiv = styled.p`
 `;
 
 const SearchResultsContainer = styled.div`
-  position: absolute;
-  top: 20vh; /* 검색창 아래 위치 */
-  left: 5%;
-  width: 90%;
+  width: 100%;
   background: white;
   border: 1px solid #ccc;
-  border-radius: 5px;
-  z-index: 9000; /* 지도 위에 겹쳐서 표시되도록 설정 */
+  border-radius: 10px;
+  border-color: #00c99c;
 `;
 
 const ResultItem = styled.div`
@@ -216,6 +218,23 @@ function RiskMapReportPage() {
         );
       });
     }
+
+    // 지도 외의 영역에서 마우스 휠 이벤트 방지
+    const preventZoom = (e: WheelEvent) => {
+      e.preventDefault(); // 기본 스크롤 방지
+    };
+
+    // mapContainer에 이벤트 리스너 추가
+    if (mapContainer.current) {
+      mapContainer.current.addEventListener('wheel', preventZoom);
+    }
+
+    return () => {
+      // 컴포넌트 언마운트 시 이벤트 리스너 제거
+      if (mapContainer.current) {
+        mapContainer.current.removeEventListener('wheel', preventZoom);
+      }
+    };
   }, []);
 
   const handleSearch = () => {
@@ -319,12 +338,12 @@ function RiskMapReportPage() {
     <Container>
       <TitleContainer>
         <BackIcon src={backIcon} onClick={goBack} />
-        <Title>위험요소 신고하기</Title>
+        <Title>의심 토지 신고하기</Title>
       </TitleContainer>
       <SearchContainer>
         <SearchInput
           type="text"
-          placeholder="주소를 입력하세요(장소 검색 불가?)"
+          placeholder="주소를 입력하세요(장소 검색 불가?)" // 수정 필요
           value={searchQuery}
           maxLength={30}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -332,24 +351,7 @@ function RiskMapReportPage() {
         />
         <SearchButton onClick={handleSearch}>검색</SearchButton>
       </SearchContainer>
-      <DangerP>위험요소를 선택하세요:</DangerP>
-      <MapP ref={mapContainer} />
-      <TitleText
-        placeholder="제목을 입력해주세요(최대 30자)"
-        value={dangerTitle}
-        maxLength={30}
-        onChange={(e) => setDangerTitle(e.target.value)}
-      />
-      <Content
-        placeholder="상세내용을 입력해주세요(최대 1400자)"
-        value={dangerContent}
-        maxLength={1400}
-        onChange={(e) => setDangerContent(e.target.value)}
-      />
-      <ButtonDiv>
-        <DangerButton onClick={handleSubmit}>신고하기</DangerButton>
-        <CancelButton onClick={handleCancel}>취소</CancelButton>
-      </ButtonDiv>
+      {/* Render search results here */}
       {searchResults.length > 0 && (
         <SearchResultsContainer>
           {searchResults.map((result, index) => (
@@ -382,6 +384,26 @@ function RiskMapReportPage() {
           ))}
         </SearchResultsContainer>
       )}
+      <DangerP>신고 위치</DangerP>
+      <MapP ref={mapContainer} />
+      <DangerP>신고 제목</DangerP>
+      <TitleText
+        placeholder="제목을 입력해주세요(최대 30자)"
+        value={dangerTitle}
+        maxLength={30}
+        onChange={(e) => setDangerTitle(e.target.value)}
+      />
+      <DangerP>신고 내용</DangerP>
+      <Content
+        placeholder="상세내용을 입력해주세요(최대 1400자)"
+        value={dangerContent}
+        maxLength={1400}
+        onChange={(e) => setDangerContent(e.target.value)}
+      />
+      <ButtonDiv>
+        <CancelButton onClick={handleCancel}>취소</CancelButton>
+        <DangerButton onClick={handleSubmit}>작성</DangerButton>
+      </ButtonDiv>
     </Container>
   );
 }
