@@ -195,6 +195,11 @@ const UncheckedImage2 = styled.img`
   height: 20px;
   margin-right: 1vw;
 `;
+const CheckedIcon = styled.img`
+  width: 20px;
+  height: 20px;
+  margin-right: 1vw;
+`;
 
 const UncheckedTitle = styled.span`
   font-size: 3.5vw;
@@ -344,7 +349,7 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
     };
   }, [isModalOpen]);
 
-  const handleNext = () => {
+  const handleNext = async () => {
     const checkedIndices = checkedItems
       .map((checked, index) => (checked ? index : null))
       .filter((index) => index !== null) as number[];
@@ -361,7 +366,7 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
       setUncheckedItems(unchecked);
       setIsModalOpen(true);
     } else {
-      onNext(); // 모든 항목이 체크되었을 때
+      setIsModalOpen(true);
     }
   };
 
@@ -421,19 +426,34 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
               </ModalDescription>
             </ModalHeader>
             <CautionTextContainer>
-              <UncheckedImage2 src={uncheck} alt="Unchecked Icon" />
-              <CautionText>아직 체크되지 않은 항목들입니다.</CautionText>
+              {uncheckedItems.length !== 0 ? (
+                <>
+                  <UncheckedImage2 src={uncheck} alt="Unchecked Icon" />
+                  <CautionText>아직 체크되지 않은 항목들입니다.</CautionText>
+                </>
+              ) : (
+                <>
+                  <CheckedIcon src={checkedIcon} alt="Unchecked Icon" />
+                  <CautionText>
+                    모든 항목을 체크하셨습니다.
+                    <br />
+                    등록하시겠습니까?
+                  </CautionText>
+                </>
+              )}
             </CautionTextContainer>
-            {uncheckedItems.map((item, index) => (
-              <UncheckedItem key={index}>
-                <UncheckedImage
-                  src={images[item.index]}
-                  alt={`Unchecked ${item.index + 1}`}
-                />
-                <UncheckedTitle>{titles[index]}</UncheckedTitle>
-                <WarningIcon src={symbol} alt="Warning Icon" />
-              </UncheckedItem>
-            ))}
+            {uncheckedItems.length !== 0
+              ? uncheckedItems.map((item, index) => (
+                  <UncheckedItem key={index}>
+                    <UncheckedImage
+                      src={images[item.index]}
+                      alt={`Unchecked ${item.index + 1}`}
+                    />
+                    <UncheckedTitle>{titles[index]}</UncheckedTitle>
+                    <WarningIcon src={symbol} alt="Warning Icon" />
+                  </UncheckedItem>
+                ))
+              : null}
             <ModalButtonContainer>
               <ModalButton onClick={closeModal}>다시 체크하기</ModalButton>
               <ModalButton primary onClick={onNext}>
