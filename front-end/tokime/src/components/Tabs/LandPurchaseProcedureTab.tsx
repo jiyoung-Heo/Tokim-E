@@ -10,7 +10,7 @@ import pro4 from '../../assets/images/procedure/4.png';
 import pro5 from '../../assets/images/procedure/5.png';
 
 const TabContent = styled.div`
-  height: 60vh;
+  height: 57vh;
   background-color: #ffffff;
   border-radius: 5.56vw;
   border: 0.28vw solid #ddd;
