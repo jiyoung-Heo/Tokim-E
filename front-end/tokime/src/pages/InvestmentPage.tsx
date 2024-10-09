@@ -122,7 +122,7 @@ const ListItem = styled.li`
 // 별칭검색상자
 const SearchBox = styled.div`
   height: 5vh;
-  width: 60%; /* 너비 조정 */
+  width: 85vw; /* 너비 조정 */
   background: #ffffff;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 10px;
@@ -456,31 +456,6 @@ function InvestmentPage() {
         나의 투자 예정지
       </Title>
       <SearchContainer>
-        <DropdownContainer>
-          <DropdownHeader onClick={toggleDropdown}>
-            {selectedOption}
-            <span>{isOpen ? '▲' : '▼'}</span>
-          </DropdownHeader>
-          {isOpen && (
-            <DropdownListContainer>
-              <DropdownList>
-                {options.map((group, index) => (
-                  <React.Fragment key={index}>
-                    <OptGroupLabel>{group.label}</OptGroupLabel>
-                    {group.options.map((option) => (
-                      <ListItem
-                        key={option.value}
-                        onClick={() => handleOptionClick(option.label)}
-                      >
-                        {option.label}
-                      </ListItem>
-                    ))}
-                  </React.Fragment>
-                ))}
-              </DropdownList>
-            </DropdownListContainer>
-          )}
-        </DropdownContainer>
         <SearchBox>
           <SearchIcon src={searchIcon} alt="search" />
           <SearchInput
