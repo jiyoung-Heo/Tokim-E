@@ -282,7 +282,7 @@ function LandInformationRegistrationTab({
         />
       </LandInfoFieldContainer>
       <LandInfoFieldContainer>
-        <LandInfoFieldLabel>예정 평수</LandInfoFieldLabel>
+        <LandInfoFieldLabel>구매 평수</LandInfoFieldLabel>
         <UserSearchInput
           type="number"
           min="1"
@@ -306,7 +306,7 @@ function LandInformationRegistrationTab({
         />
       </LandInfoFieldContainer>
       <LandInfoFieldContainer>
-        <LandInfoFieldLabel>예정 가격</LandInfoFieldLabel>
+        <LandInfoFieldLabel>구매 가격</LandInfoFieldLabel>
         <UserSearchInput
           type="number"
           min="0"
@@ -326,7 +326,7 @@ function LandInformationRegistrationTab({
         />
       </LandInfoFieldContainer>
       <LandInfoFieldContainer>
-        <LandInfoFieldLabel>예상 평당가</LandInfoFieldLabel>
+        <LandInfoFieldLabel>평당가</LandInfoFieldLabel>
         <UserSearchInput
           value={
             Number(expectedArea) > 0 && Number(expectedPrice) > 0
