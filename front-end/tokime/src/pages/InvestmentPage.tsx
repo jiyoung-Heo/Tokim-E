@@ -208,19 +208,23 @@ const Invest = styled.div`
   font-family: 'KoddiUD OnGothic';
 `;
 
-// 별칭
-const NickName = styled.p`
+// 주소
+const Address = styled.p`
   margin: 0;
   color: #b48a28;
   font-size: 14px;
+  word-break: keep-all; / 단어가 중간에 끊기지 않도록 설정 /
+  white-space: normal;
 `;
 
-// 주소
-const Address = styled.p`
+// 별칭
+const NickName = styled.p`
   margin: 0;
   font-weight: 900;
   font-family: 'Pretendard';
   font-size: 19px;
+  word-break: keep-all; / 단어가 중간에 끊기지 않도록 설정 /
+  white-space: normal;
 `;
 
 // 위험정도나타내줄곳
@@ -502,10 +506,10 @@ function InvestmentPage() {
                   <NaverMapProps landAddress={invest.landAddress} />
                 </NaverMap>
                 <Invest onClick={() => handleDetailClick(invest)}>
-                  <Address> {invest.landAddress}</Address>
-                  <NickName>{invest.landNickname}</NickName>
+                  <NickName>{invest.landNickname || '별칭 없음'}</NickName>
+                  <Address>{invest.landAddress}</Address>
                   <WarningScore>
-                    {invest.landDanger === 1 ? (
+                    {invest.landDanger === 2 ? (
                       <>
                         <img
                           src={okIcon}
@@ -514,14 +518,14 @@ function InvestmentPage() {
                         />
                         <span style={{ color: '#27c384' }}>안정적인 토지</span>
                       </>
-                    ) : invest.landDanger === 2 ? (
+                    ) : invest.landDanger === 0 ? (
                       <>
                         <img
                           src={dangerIcon}
                           alt="높음 위험"
                           style={{ width: '14px', marginRight: '5px' }}
                         />
-                        <span style={{ color: 'red' }}>투자에 주의!</span>
+                        <span style={{ color: 'red' }}>투자에 위험!</span>
                       </>
                     ) : (
                       <>
@@ -530,7 +534,7 @@ function InvestmentPage() {
                           alt="중간 위험"
                           style={{ width: '14px', marginRight: '5px' }}
                         />
-                        <span style={{ color: '#27c384' }}>안정적인 토지</span>
+                        <span style={{ color: '#27c384' }}>투자에 주의!</span>
                       </>
                     )}
                   </WarningScore>
