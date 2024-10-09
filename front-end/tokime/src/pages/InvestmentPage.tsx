@@ -122,7 +122,7 @@ const ListItem = styled.li`
 // 별칭검색상자
 const SearchBox = styled.div`
   height: 5vh;
-  width: 60%; /* 너비 조정 */
+  width: 85vw; /* 너비 조정 */
   background: #ffffff;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 10px;
@@ -208,19 +208,23 @@ const Invest = styled.div`
   font-family: 'KoddiUD OnGothic';
 `;
 
-// 별칭
-const NickName = styled.p`
+// 주소
+const Address = styled.p`
   margin: 0;
   color: #b48a28;
   font-size: 14px;
+  word-break: keep-all; / 단어가 중간에 끊기지 않도록 설정 /
+  white-space: normal;
 `;
 
-// 주소
-const Address = styled.p`
+// 별칭
+const NickName = styled.p`
   margin: 0;
   font-weight: 900;
   font-family: 'Pretendard';
   font-size: 19px;
+  word-break: keep-all; / 단어가 중간에 끊기지 않도록 설정 /
+  white-space: normal;
 `;
 
 // 위험정도나타내줄곳
@@ -452,31 +456,6 @@ function InvestmentPage() {
         나의 투자 예정지
       </Title>
       <SearchContainer>
-        <DropdownContainer>
-          <DropdownHeader onClick={toggleDropdown}>
-            {selectedOption}
-            <span>{isOpen ? '▲' : '▼'}</span>
-          </DropdownHeader>
-          {isOpen && (
-            <DropdownListContainer>
-              <DropdownList>
-                {options.map((group, index) => (
-                  <React.Fragment key={index}>
-                    <OptGroupLabel>{group.label}</OptGroupLabel>
-                    {group.options.map((option) => (
-                      <ListItem
-                        key={option.value}
-                        onClick={() => handleOptionClick(option.label)}
-                      >
-                        {option.label}
-                      </ListItem>
-                    ))}
-                  </React.Fragment>
-                ))}
-              </DropdownList>
-            </DropdownListContainer>
-          )}
-        </DropdownContainer>
         <SearchBox>
           <SearchIcon src={searchIcon} alt="search" />
           <SearchInput
@@ -502,10 +481,10 @@ function InvestmentPage() {
                   <NaverMapProps landAddress={invest.landAddress} />
                 </NaverMap>
                 <Invest onClick={() => handleDetailClick(invest)}>
-                  <Address> {invest.landAddress}</Address>
-                  <NickName>{invest.landNickname}</NickName>
+                  <NickName>{invest.landNickname || '별칭 없음'}</NickName>
+                  <Address>{invest.landAddress}</Address>
                   <WarningScore>
-                    {invest.landDanger === 1 ? (
+                    {invest.landDanger === 2 ? (
                       <>
                         <img
                           src={okIcon}
@@ -514,14 +493,14 @@ function InvestmentPage() {
                         />
                         <span style={{ color: '#27c384' }}>안정적인 토지</span>
                       </>
-                    ) : invest.landDanger === 2 ? (
+                    ) : invest.landDanger === 0 ? (
                       <>
                         <img
                           src={dangerIcon}
                           alt="높음 위험"
                           style={{ width: '14px', marginRight: '5px' }}
                         />
-                        <span style={{ color: 'red' }}>투자에 주의!</span>
+                        <span style={{ color: 'red' }}>투자에 위험!</span>
                       </>
                     ) : (
                       <>
@@ -530,7 +509,7 @@ function InvestmentPage() {
                           alt="중간 위험"
                           style={{ width: '14px', marginRight: '5px' }}
                         />
-                        <span style={{ color: '#27c384' }}>안정적인 토지</span>
+                        <span style={{ color: '#27c384' }}>투자에 주의!</span>
                       </>
                     )}
                   </WarningScore>
