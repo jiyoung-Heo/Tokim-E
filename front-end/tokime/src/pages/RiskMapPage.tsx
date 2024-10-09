@@ -4,9 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { getDangerInfo } from '../api/dangerAxios';
 import backIcon from '../assets/images/icon/left-actionable.png';
 import searchIcon from '../assets/images/icon/search.svg';
-import RiskMapModal from '../components/modals/RiskMapModal'; // 모달 컴포넌트 임포트
+import RiskMapModal from '../components/modals/RiskMapModal';
 
-// 스타일드 컴포넌트 정의
 const Container = styled.div`
   width: 100%;
   height: 100%;
@@ -31,7 +30,7 @@ const SearchContainer = styled.div`
   padding: 10px;
   background-color: #f3f7fb;
   display: flex;
-  align-items: center; // 세로 중앙 정렬
+  align-items: center;
 `;
 
 const SearchInput = styled.input`
@@ -50,9 +49,9 @@ const SearchIcon = styled.img`
 `;
 
 const RegistContainer = styled.div`
-  position: relative; // relative로 변경
-  margin-top: 3vh; // 리스트와의 간격
-  z-index: 800; // 다른 요소들과 겹치지 않도록 z-index 설정
+  position: relative;
+  margin-top: 3vh;
+  z-index: 800;
   margin-left: 15vw;
 `;
 
@@ -77,12 +76,12 @@ const MapContainer = styled.div`
 `;
 
 const MarkerListContainer = styled.div`
-  max-height: 30vh; // 최대 높이 설정
-  overflow-y: auto; // 세로 스크롤 가능
-  margin: 10px 0; // 위아래 여백
-  border: 1px solid #27c384; // 테두리 추가
-  border-radius: 5px; // 모서리 둥글게
-  background-color: #fff; // 배경색
+  max-height: 30vh;
+  overflow-y: auto;
+  margin: 10px 0;
+  border: 1px solid #27c384;
+  border-radius: 5px;
+  background-color: #fff;
 `;
 
 const MarkerList = styled.ul`
@@ -95,14 +94,14 @@ const MarkerItem = styled.li`
   padding: 10px;
   background-color: #fff;
   cursor: pointer;
-  border-bottom: 1px solid #27c384; // 경계선 추가
+  border-bottom: 1px solid #27c384;
 
   &:hover {
     background-color: #f0f0f0;
   }
 
   &:last-child {
-    border-bottom: none; // 마지막 항목은 경계선 없앰
+    border-bottom: none;
   }
 `;
 
@@ -114,7 +113,8 @@ const RiskMapPage: React.FC = () => {
   const [filteredMarkers, setFilteredMarkers] = useState<any[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedMarker, setSelectedMarker] = useState<any>(null);
-  const [listVisible, setListVisible] = useState(false); // 리스트 가시성 상태 추가
+  const [listVisible, setListVisible] = useState(false);
+  const listRef = useRef<HTMLDivElement>(null); // Ref for the list container
   const mapRef = useRef<any>(null);
 
   useEffect(() => {
@@ -149,7 +149,7 @@ const RiskMapPage: React.FC = () => {
                 maxZoom: 25,
               });
               mapRef.current = map;
-              resolve(true); // Resolve the promise after map is initialized
+              resolve(true);
             },
             (error) => {
               console.error('위치 정보 가져오기 실패:', error);
@@ -163,7 +163,7 @@ const RiskMapPage: React.FC = () => {
                 maxZoom: 25,
               });
               mapRef.current = map;
-              resolve(true); // Resolve the promise after map is initialized
+              resolve(true);
             },
           );
         }
@@ -183,14 +183,13 @@ const RiskMapPage: React.FC = () => {
         map: mapRef.current,
         icon: {
           url: 'markers/report.png',
-          scaledSize: new window.naver.maps.Size(30, 30), // 마커 크기
+          scaledSize: new window.naver.maps.Size(30, 30),
         },
       });
 
-      // 마커 클릭 이벤트
       window.naver.maps.Event.addListener(marker, 'click', () => {
         setSelectedMarker({ lat, lng, dangerTitle, dangerContent });
-        setModalOpen(true); // 모달 열기
+        setModalOpen(true);
       });
 
       window.naver.maps.Event.addListener(mapRef.current, 'click', () => {
@@ -207,7 +206,7 @@ const RiskMapPage: React.FC = () => {
             const { lat, lng, dangerTitle, dangerContent } = danger;
             createMarker(lat, lng, dangerTitle, dangerContent);
           });
-          setFilteredMarkers([]); // 초기 필터링 목록을 빈 배열로 설정
+          setFilteredMarkers([]);
         } else {
           console.error('위험 신고 데이터를 가져오지 못했습니다.');
         }
@@ -224,29 +223,41 @@ const RiskMapPage: React.FC = () => {
       });
   }, []);
 
+  // Close list if click is outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (listRef.current && !listRef.current.contains(event.target as Node)) {
+        setListVisible(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [listRef]);
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
     setSearchTerm(term);
-    // 마커 제목이나 내용에 검색어가 포함된 경우 필터링
     const filtered = markers.filter(
       (marker) =>
         marker.dangerTitle.toLowerCase().includes(term.toLowerCase()) ||
         marker.dangerContent.toLowerCase().includes(term.toLowerCase()),
     );
     setFilteredMarkers(filtered);
-    setListVisible(filtered.length > 0); // 필터링된 결과가 있으면 리스트 보이기
+    setListVisible(filtered.length > 0);
   };
 
   const handleMarkerClick = (marker: any) => {
     const { lat, lng } = marker;
     mapRef.current.setCenter(new window.naver.maps.LatLng(lat, lng));
     mapRef.current.setZoom(15);
-    setListVisible(false); // 마커 클릭 시 리스트 닫기
+    setListVisible(false);
   };
 
   const handleRegister = () => {
-    // 작성 버튼 클릭 시 등록 로직 추가
-    navigate('./report'); // 등록 페이지로 이동
+    navigate('./report');
   };
 
   return (
@@ -271,7 +282,7 @@ const RiskMapPage: React.FC = () => {
         <SearchIcon src={searchIcon} alt="검색 아이콘" />
       </SearchContainer>
       {listVisible && ( // 리스트가 보일 때만 렌더링
-        <MarkerListContainer>
+        <MarkerListContainer ref={listRef}>
           <MarkerList>
             {filteredMarkers.length > 0 &&
               filteredMarkers.map((marker, index) => (
@@ -279,8 +290,36 @@ const RiskMapPage: React.FC = () => {
                   key={index}
                   onClick={() => handleMarkerClick(marker)}
                 >
-                  <strong>{marker.dangerTitle}</strong>
-                  <p>{marker.dangerContent}</p>
+                  <strong style={{ display: 'flex', alignItems: 'center' }}>
+                    <img
+                      src="/icons/icon-siren.png" // 사이렌 아이콘 경로
+                      alt="사이렌 아이콘"
+                      style={{
+                        marginRight: '5px', // 오른쪽 여백
+                        width: '20px',
+                        height: '20px',
+                      }} // 스타일 조정
+                    />
+                    신고 제목 : {marker.dangerTitle}
+                  </strong>
+                  <p
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      marginTop: '5px',
+                    }}
+                  >
+                    <img
+                      src="/icons/icon-speaker.png" // 스피커 아이콘 경로
+                      alt="스피커 아이콘"
+                      style={{
+                        marginRight: '5px', // 오른쪽 여백
+                        width: '20px',
+                        height: '20px',
+                      }} // 스타일 조정
+                    />
+                    신고 내용 : {marker.dangerContent}
+                  </p>
                 </MarkerItem>
               ))}
           </MarkerList>
@@ -291,7 +330,6 @@ const RiskMapPage: React.FC = () => {
           기획부동산 의심 토지 신고하기
         </RegisterButton>
       </RegistContainer>
-      {/* 모달 컴포넌트 추가 */}
       <RiskMapModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
