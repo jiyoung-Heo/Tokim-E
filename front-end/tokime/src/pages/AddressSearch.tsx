@@ -117,6 +117,7 @@ function AddressSearch() {
             if (response[0] === undefined) {
               console.error('no Address response');
               dispatch(setLandDetail(null));
+              dispatch(setLawInfo([]));
               setSearchValue(fullAddress);
               setErrorMessage('국토교통부에서 제공하지 않는 지번 정보입니다.');
             } else {
