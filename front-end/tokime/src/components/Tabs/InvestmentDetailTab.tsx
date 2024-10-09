@@ -14,6 +14,7 @@ import scaleIcon from '../../assets/images/landInfo/scale.png';
 import useIcon from '../../assets/images/landInfo/use.png';
 import NaverMapProps from './NaverMapProps';
 import { deleteInvestDetail } from '../../api/landInvestAxios';
+import DeleteModal from '../modals/DeleteModal';
 
 const BackIcon = styled.img`
   cursor: pointer;
@@ -81,6 +82,7 @@ const InvestmentDetailTab: React.FC<{
   const navigate = useNavigate();
 
   const [showInfo, setShowInfo] = useState<{ [key: string]: boolean }>({});
+  const [showModal, setShowModal] = useState(false); // 모달 표시 상태
 
   const handleBackClick = () => {
     navigate('/investment');
@@ -100,18 +102,26 @@ const InvestmentDetailTab: React.FC<{
       return newShowInfo; // 새로운 상태를 반환
     });
   };
-  const handleDeleteClick = async () => {
+  const handleDeleteClick = () => {
+    setShowModal(true); // 모달 열기
+  };
+
+  const confirmDelete = async () => {
     if (investmentInfoProp) {
       const result = await deleteInvestDetail(
-        investmentInfoProp.investmentPlannedLandId.toString(), // 숫자를 문자열로 변환
+        investmentInfoProp.investmentPlannedLandId.toString(),
       );
       if (result) {
         alert('투자 예정지가 삭제되었습니다.');
-        navigate('/investment'); // 목록 페이지로 리다이렉트
+        navigate('/investment');
       } else {
         alert('삭제에 실패했습니다.');
       }
     }
+    setShowModal(false); // 모달 닫기
+  };
+  const cancelDelete = () => {
+    setShowModal(false); // 모달 닫기
   };
 
   const getLandUseStatusDescription = (landUseStatus: string) => {
@@ -423,13 +433,17 @@ const InvestmentDetailTab: React.FC<{
             </div>
           ))}
         </InfoBox>
-        {/* 삭제 버튼 추가 */}
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <SmallButton color="#ff4d4d" onClick={handleDeleteClick}>
-            투자 예정지 삭제
+            삭제
           </SmallButton>
         </div>
       </div>
+      <DeleteModal // 모달 추가
+        isVisible={showModal}
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+      />
     </div>
   );
 };
