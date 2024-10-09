@@ -5,6 +5,8 @@ import com.ssafy.tokime.dto.LandFilterDTO;
 import com.ssafy.tokime.dto.InvestmentPlannedLandDTO;
 import com.ssafy.tokime.service.InvestmentPlannedLandService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,7 @@ import java.util.List;
 @RequestMapping("/land/invest")
 @RequiredArgsConstructor
 public class InvestmentPlannedLandController {
+    private static final Logger logger = LoggerFactory.getLogger(InvestmentPlannedLandController.class);
 
     private final InvestmentPlannedLandService investmentPlannedLandService;
 
@@ -31,8 +34,10 @@ public class InvestmentPlannedLandController {
             investmentPlannedLandService.registInvestmentPlannedLand(dto, email);
             return new ResponseEntity<>("성공적으로 등록 되었습니다.", HttpStatus.CREATED);
         }  catch (DataIntegrityViolationException e) {
+            e.printStackTrace();
             return new ResponseEntity<>("데이터베이스 오류 발생: " + e.getMessage(), HttpStatus.CONFLICT);
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>("서버에서 오류 발생: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -85,6 +90,7 @@ public class InvestmentPlannedLandController {
         String email = getAuth(); // 인증된 사용자의 이메일 가져오기
         try {
             InvestmentPlannedLandDTO updatedLand = investmentPlannedLandService.updateInvestmentPlannedLand(investmentPlannedLandId, dto, email);
+            logger.info(updatedLand.toString());
             return ResponseEntity.ok(updatedLand); // 수정된 투자 예정지 DTO 반환
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>("유효하지 않은 데이터입니다: " + e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -125,15 +131,15 @@ public class InvestmentPlannedLandController {
     // 필터링
     @PostMapping("/filter")
     public ResponseEntity<?> getPlannedLandByaddress(@RequestBody LandFilterDTO dto){
-     try{
-         String email =getAuth();
-         List<InvestmentPlannedLandDTO> filteredlands = investmentPlannedLandService.filterInvestmentPlannedLands(dto,email);
-        return new ResponseEntity<>(filteredlands,HttpStatus.OK);
-     }catch(IllegalFormatException e){
-         return new ResponseEntity<>("데이터 타입이 올바르지 않습니다.", HttpStatus.BAD_REQUEST);
-     }catch(Exception e ){
-         return new ResponseEntity<>("서버 오류가 발생했습니다.",HttpStatus.INTERNAL_SERVER_ERROR);
-     }
+        try{
+            String email =getAuth();
+            List<InvestmentPlannedLandDTO> filteredlands = investmentPlannedLandService.filterInvestmentPlannedLands(dto,email);
+            return new ResponseEntity<>(filteredlands,HttpStatus.OK);
+        }catch(IllegalFormatException e){
+            return new ResponseEntity<>("데이터 타입이 올바르지 않습니다.", HttpStatus.BAD_REQUEST);
+        }catch(Exception e ){
+            return new ResponseEntity<>("서버 오류가 발생했습니다.",HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     private String getAuth() {
