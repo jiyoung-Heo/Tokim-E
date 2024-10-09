@@ -60,8 +60,13 @@ interface LandInformationRegistrationModalProps {
 const LandInformationRegistrationModal: React.FC<
   LandInformationRegistrationModalProps
 > = ({ message, onClose }) => {
+  const handleBackgroundClick = (event: React.MouseEvent) => {
+    if (event.target === event.currentTarget) {
+      onClose();
+    }
+  };
   return (
-    <ModalBackground>
+    <ModalBackground onClick={handleBackgroundClick}>
       <ModalContainer>
         <h4>{message}</h4>
         <CloseButton onClick={onClose}>닫기</CloseButton>

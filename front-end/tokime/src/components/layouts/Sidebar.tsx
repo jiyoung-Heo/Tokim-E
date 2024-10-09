@@ -322,7 +322,13 @@ function Sidebar() {
       {userInfo.name !== '' ? (
         <SidebarContainer ref={sidebarRef} $isOpen={isSidebarOpen}>
           <Logo src={TokimLogo} alt="Tokim Logo" />
-          <GaugeWrapper>
+          <GaugeWrapper
+            onClick={() => {
+              if (userInfo.quizScore !== -1) {
+                navigate('/land-score');
+              }
+            }}
+          >
             <Graph score={userInfo.quizScore} />
             <Score
               onClick={() => {
@@ -355,9 +361,9 @@ function Sidebar() {
             <Divider />
           </UserInfo>
           <ButtonContainer>
-            <Button $bgColor="#00C99C" onClick={() => navigate('/my-page')}>
+            {/* <Button $bgColor="#00C99C" onClick={() => navigate('/my-page')}>
               마이페이지
-            </Button>
+            </Button> */}
             <Button $bgColor="#00C99C" onClick={() => setModalOpen(true)}>
               로그아웃
             </Button>
