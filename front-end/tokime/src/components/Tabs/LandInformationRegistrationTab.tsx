@@ -277,7 +277,8 @@ function LandInformationRegistrationTab({
             const value = e.target.value === '' ? '' : e.target.value;
             setExpectedLandNickname(typeof value === 'string' ? value : ''); // 빈 문자열 또는 0 이상인 정수만 허용, 최대값은 안전한 정수 범위 내
           }}
-          placeholder="예: 대전시청"
+          placeholder="최대 10글자"
+          maxLength={10} // 여기에 추가: 최대 10글자 제한
         />
       </LandInfoFieldContainer>
       <LandInfoFieldContainer>
