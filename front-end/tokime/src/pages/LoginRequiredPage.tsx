@@ -115,7 +115,7 @@ function LoginRequiredPage() {
 
         <Button $bgColor="#FFFFFF" onClick={handleGuestLogin}>
           <Icon src={TokimeIcon} alt="토킴이 아이콘" />
-          <ButtonText>비회원으로 돌아가기</ButtonText>
+          <ButtonText>돌아가기</ButtonText>
         </Button>
       </LoginRequiredPageContainer>
     </>
