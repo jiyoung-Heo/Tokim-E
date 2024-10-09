@@ -297,7 +297,7 @@ function Sidebar() {
   const handleWithdraw = () => {
     const fetchLogout = async () => {
       const data = await withdrawAxios();
-      console.log(data); // 응답 데이터 확인
+      // console.log(data); // 응답 데이터 확인
       if (data) {
         deleteAllCookies();
         persistor.purge();

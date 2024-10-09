@@ -17,7 +17,7 @@ const OpenAiUtil = {
 
       return completion.choices[0]; // choices 배열의 첫 번째 요소 반환
     } catch (error) {
-      console.log('OpenAi API 실행 중 오류 발생: ', error);
+      // console.log('OpenAi API 실행 중 오류 발생: ', error);
       throw error;
     }
   },

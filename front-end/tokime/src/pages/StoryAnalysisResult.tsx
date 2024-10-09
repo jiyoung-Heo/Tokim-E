@@ -279,7 +279,7 @@ const StoryAnalysisResult = () => {
     const fetchData = async () => {
       // 스토리 받아오기
       const storyData = await storyAxios(); // 최신 스토리 불러오기
-      console.log('스토리 데이터:', storyData); // 데이터를 콘솔에 출력해 확인
+      // console.log('스토리 데이터:', storyData); // 데이터를 콘솔에 출력해 확인
 
       if (storyData && storyData.length > 0) {
         const latestStory =
