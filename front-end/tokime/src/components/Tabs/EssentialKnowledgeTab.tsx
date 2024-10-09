@@ -24,13 +24,9 @@ import know18 from '../../assets/images/knowledge/18.png';
 import know19 from '../../assets/images/knowledge/19.png';
 import know20 from '../../assets/images/knowledge/20.png';
 import know21 from '../../assets/images/knowledge/21.png';
-// jdfkldsjfkdasjldsaj
-// dfjsalfsdajkfldsaj
-// dklfjsalkfjdskljfslakjfdlsak
-// asdfjskdlajfldksa
-// frfrf
+
 const TabContent = styled.div`
-  height: 60vh;
+  height: 57vh;
   background-color: #ffffff;
   border-radius: 5.56vw;
   border: 0.28vw solid #ddd;
@@ -56,11 +52,10 @@ const ItemContainer = styled.div`
 const Image = styled.img`
   width: 41.67vw;
   height: 20.83vh;
-  margin-top: 8.33vh;
+  margin-top: 7.33vh;
 `;
 
 const Text = styled.p`
-  margin-top: 3vh;
   font-size: 5vw;
   font-family: 'KoddiUD OnGothic';
   font-weight: 700;
