@@ -140,7 +140,6 @@ const CaseTitle = styled.h3`
   font-weight: 600;
   font-size: 18px;
   color: #333333;
-  position: absolute;
   left: 50%;
   transform: translateX(-50%);
 `;
