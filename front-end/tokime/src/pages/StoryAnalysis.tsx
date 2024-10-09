@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import backIcon from '../assets/images/icon/left-actionable.png'; // 뒤로 가기 아이콘
 import mailIcon from '../assets/images/mail.png'; // 메일 아이콘
+import { storyRegistAxios } from '../api/storyAxios'; // 사연 제출 API 호출
 
 // 스타일 정의
 const Container = styled.div`
@@ -102,7 +103,6 @@ const AnalyzeButton = styled.button`
   cursor: pointer;
 `;
 
-// 사연 작성 뷰 스타일 정의
 const InputContainer = styled.div`
   width: 90%;
   height: 40vh;
@@ -118,7 +118,8 @@ const InputHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 2vh 4vw;
+  margin-top: -2vh;
+  margin-bottom: -2vh;
 `;
 
 const CancelButton = styled.button`
@@ -128,7 +129,6 @@ const CancelButton = styled.button`
   font-size: 3vw;
   font-weight: 600;
   cursor: pointer;
-  padding: 0;
   text-align: left;
   &:hover {
     color: #000;
@@ -140,9 +140,7 @@ const CaseTitle = styled.h3`
   font-weight: 600;
   font-size: 18px;
   color: #333333;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  margin-right: 40vw;
 `;
 
 const Divider = styled.hr`
@@ -183,11 +181,13 @@ const SubmitButton = styled.button`
 const StoryAnalysis = () => {
   const [isWriting, setIsWriting] = useState(false); // 사연 작성 모드인지 여부
   const [caseText, setCaseText] = useState(''); // 사연 입력 내용
+  const [loading, setLoading] = useState(false); // 로딩 상태
+  const [success, setSuccess] = useState(false); // 성공 메시지 상태
 
   const navigate = useNavigate();
 
   const goBack = () => {
-    navigate(-1); // 뒤로 가기
+    navigate('/main'); // 뒤로 가기
   };
 
   // 사연 작성 모드로 변경하는 함수
@@ -195,16 +195,39 @@ const StoryAnalysis = () => {
     setIsWriting(true);
   };
 
-  // 사연 제출하는 함수 (작성한 내용은 props로 보내기 위한 준비)
-  const submitCase = () => {
-    console.log('작성한 사연:', caseText);
-    // props로 caseText 내용을 보낼 준비
-  };
+  // 사연 제출하는 함수
+  const submitCase = async () => {
+    if (caseText.trim().length === 0) {
+      alert('사연을 작성해 주세요.'); // 사연이 비어있을 때 알림
+      return;
+    }
 
+    setLoading(true);
+    const response = await storyRegistAxios(caseText); // 사연을 제출하는 API 호출
+    setLoading(false);
+
+    if (response) {
+      setSuccess(true); // 성공 상태 설정
+      console.log('사연 제출 성공:', response);
+      navigate('/story-analysis/:result'); // 사연 제출 후 이동
+    } else {
+      console.log('사연 제출 실패');
+    }
+  };
+  //
   // 사연 작성 모드 취소 함수
   const cancelWriting = () => {
     setIsWriting(false); // 사연 작성 모드를 취소하여 원래 화면으로 돌아감
     setCaseText(''); // 입력된 사연 내용 초기화
+    setSuccess(false); // 성공 상태 초기화
+  };
+
+  // 3000자 제한 함수
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const text = e.target.value;
+    if (text.length <= 3000) {
+      setCaseText(text);
+    }
   };
 
   return (
@@ -224,9 +247,9 @@ const StoryAnalysis = () => {
             </InputHeader>
             <Divider />
             <CaseInput
-              placeholder="사연을 입력하세요"
+              placeholder="사연을 입력하세요. (최대 3000자)"
               value={caseText}
-              onChange={(e) => setCaseText(e.target.value)}
+              onChange={handleTextChange} // 3000자 제한 처리
             />
           </InputContainer>
           <InfoText>
@@ -234,7 +257,10 @@ const StoryAnalysis = () => {
             내용을 구체적으로 적어주시면, 관련 기사나 판례를 <br />더 정확하게
             찾아드릴 수 있습니다.
           </InfoText>
-          <SubmitButton onClick={submitCase}>사연 제출</SubmitButton>
+          <SubmitButton onClick={submitCase} disabled={loading}>
+            {loading ? '제출 중...' : '사연 제출'}
+          </SubmitButton>
+          {success && <p>사연 제출 성공!</p>}
         </>
       ) : (
         <>
