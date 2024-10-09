@@ -37,6 +37,11 @@ const ContentContainer = styled.div`
   padding: 10px;
   max-height: 200px; /* 최대 높이 설정 */
   overflow-y: auto; /* 스크롤 가능하게 설정 */
+  width: 100%; /* 전체 너비를 사용하도록 설정 */
+
+  /* 텍스트 자동 줄 바꿈 */
+  word-wrap: break-word; /* 긴 단어를 줄 바꿈할 수 있도록 설정 */
+  white-space: normal; /* 기본 공백 처리 설정 */
 
   /* 스크롤바 색상 변경 */
   &::-webkit-scrollbar {
