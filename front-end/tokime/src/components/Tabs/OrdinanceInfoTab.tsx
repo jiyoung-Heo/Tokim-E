@@ -180,14 +180,29 @@ function OrdinanceInfoTab({
   const landAddress = useSelector((state: RootState) => state.landaddress); // Redux에서 토지 주소 정보 가져오기
   const itemsPerPage = 3; // 한 페이지에 표시할 법령 정보 수
   const totalItems = ordinances?.length ?? 0; // 총 법령 정보 수
-  const totalPages = Math.ceil(totalItems / itemsPerPage); // 전체 페이지 수 계산
   const [selectedOrdinance, setSelectedOrdinance] = useState<any>(null); // 선택된 법령 정보 상태
-
   const prevlawInfosRef = useRef(ordinances); // 이전 법령 정보 저장을 위한 ref
 
   // 검색 관련 상태
   const [searchCategory, setSearchCategory] = useState('lawName'); // 기본값을 lawName으로 설정
   const [searchQuery, setSearchQuery] = useState('');
+
+  // 카테고리와 검색어에 따른 필터링
+  const filteredOrdinances = ordinances.filter((ordinance: any) => {
+    const fieldToSearch = ordinance[searchCategory] || ''; // 선택한 카테고리에 맞는 필드 선택
+    return fieldToSearch
+      .toString()
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase()); // 검색어 포함 여부
+  });
+
+  const currentItems = filteredOrdinances.slice(
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage,
+  );
+
+  const filterItems = filteredOrdinances.length; // 필터된 총 법령 정보 수
+  const totalPages = Math.ceil(filterItems / itemsPerPage);
 
   // 주소가 변경될 때마다 법령 정보를 리셋하는 로직
   useEffect(() => {
@@ -209,20 +224,6 @@ function OrdinanceInfoTab({
       setLoading(false); // 로딩 상태 해제
     }
   }, [ordinances]);
-
-  // 카테고리와 검색어에 따른 필터링
-  const filteredOrdinances = ordinances.filter((ordinance: any) => {
-    const fieldToSearch = ordinance[searchCategory] || ''; // 선택한 카테고리에 맞는 필드 선택
-    return fieldToSearch
-      .toString()
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase()); // 검색어 포함 여부
-  });
-
-  const currentItems = filteredOrdinances.slice(
-    currentPage * itemsPerPage,
-    (currentPage + 1) * itemsPerPage,
-  );
 
   // 페이지 전환을 위한 함수 (다음 페이지로 이동)
   const handleNext = () => {
