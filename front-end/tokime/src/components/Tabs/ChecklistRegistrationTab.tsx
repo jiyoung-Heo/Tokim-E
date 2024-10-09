@@ -120,8 +120,8 @@ const ModalButton = styled.button<{ primary?: boolean }>`
   font-weight: bold;
   cursor: pointer;
   margin-top: 3vh;
-  font-size: 4vw;
-  margin: 3vh 2vw 0 2vw;
+  font-size: 3.1vw;
+  border-radius: 10px;
 `;
 
 const ModalBackground = styled.div`
@@ -129,7 +129,7 @@ const ModalBackground = styled.div`
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: 90vh;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
@@ -140,6 +140,7 @@ const ModalBackground = styled.div`
 
 const ModalContainer = styled.div`
   width: 80%;
+  height: 95%;
   background-color: #fff;
   border-radius: 10px;
   padding: 20px;
@@ -147,6 +148,7 @@ const ModalContainer = styled.div`
   flex-direction: column;
   align-items: center;
   overflow-y: auto;
+  // overflow: hidden; /* Prevents the entire modal from scrolling */
 `;
 
 const ModalTitle = styled.h2`
@@ -162,6 +164,13 @@ const ModalDescription = styled.p`
   font-size: 3.5vw;
   text-align: center;
   margin-bottom: 4vh;
+`;
+
+const ModalButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 2vh;
 `;
 
 const UncheckedItem = styled.div`
@@ -202,13 +211,6 @@ const WarningIcon = styled.img`
   transform: translateY(-50%);
 `;
 
-const ModalButtonContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 2vh;
-`;
-
 const CautionText = styled.h5`
   align-items: center;
   color: #842222;
@@ -220,10 +222,11 @@ const CautionTextContainer = styled.div`
   margin-bottom: 2vh; /* 필요한 경우 간격 조정 */
 `;
 
-const UncheckImage = styled.img`
-  width: 4vw; /* 이미지 크기 조정 */
-  height: 4vw; /* 이미지 크기 조정 */
-  margin-right: 1vw; /* 텍스트와 이미지 사이 간격 */
+const ModalHeader = styled.div`
+  flex-shrink: 0; /* Ensures the header doesn't shrink */
+  width: 100%;
+  text-align: center;
+  padding-bottom: 10px;
 `;
 
 interface ChecklistItem {
@@ -262,11 +265,11 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
     '개발이 가능한 지역인가요?',
     '고도가 낮고 경사가 완만한가요?',
     '구체적인 개발 계획이 있나요?',
-    '인근 지역에만 개발 호재가 있는 건\n아닌가요?',
+    '인근 지역에만 개발 호재가 있지는\n않나요?',
     '공유지분으로 거래하진 않나요?',
     '정확한 정보를 사전에 받으셨나요?',
     '매수 금액이 적당한가요?',
-    '주변 시세와 비교했을 때 가격이적절한가요?',
+    '주변 시세와 비교했을 때 가격이\n적절한가요?',
     '판매자의 신뢰할 수 있는\n상호인가요?',
     '법인이 아닌 개인 소유의\n토지인가요?',
   ];
@@ -363,7 +366,8 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
                 src={images[index]} // 체크리스트 이미지
                 alt={`Checklist ${index + 1}`}
               />
-              <TitleText>{titles[index]}</TitleText> {/* 체크리스트 제목 */}
+              <TitleText>{`${index + 1}. ${titles[index]}`}</TitleText>{' '}
+              {/* 체크리스트 제목 */}
             </TopRow>
             <DescriptionText>{item.content}</DescriptionText>{' '}
             {/* 체크리스트 설명 */}
@@ -385,12 +389,14 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
       {isModalOpen && (
         <ModalBackground>
           <ModalContainer>
-            <ModalTitle>토지 구매 예정이신가요?</ModalTitle>
-            <ModalDescription>
-              토지 개발이 제한된 구역이거나 관련 사기로 인해 예상보다 큰 비용이
-              발생할 수 있으니 반드시 체크리스트의 모든 항목을 확인하고
-              투자하시길 바랍니다.
-            </ModalDescription>
+            <ModalHeader>
+              <ModalTitle>토지 구매 예정이신가요?</ModalTitle>
+              <ModalDescription>
+                토지 개발이 제한된 구역이거나 관련 사기로 인해 예상보다 큰
+                비용이 발생할 수 있으니 반드시 체크리스트의 모든 항목을 확인하고
+                투자하시길 바랍니다.
+              </ModalDescription>
+            </ModalHeader>
             <CautionTextContainer>
               <UncheckedImage2 src={uncheck} alt="Unchecked Icon" />
               <CautionText>아직 체크되지 않은 항목들입니다.</CautionText>
