@@ -26,8 +26,8 @@ const NaverMap: React.FC = () => {
   if (district === null || district === undefined) {
     if (address) {
       const addressParts = address?.split(' ');
-      district = `${addressParts[1]} ${addressParts[2]}`;
-      address = addressParts.slice(3).join(' ');
+      district = addressParts.slice(1, -1).join(' '); // 1번째부터 마지막 전까지
+      address = addressParts[addressParts.length - 1]; // 마지막 요소
     }
   }
 
