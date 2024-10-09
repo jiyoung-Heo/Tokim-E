@@ -188,14 +188,32 @@ function RiskMapReportPage() {
         setLat(latMap);
         setLng(lngMap);
 
-        if (markerRef.current) {
-          markerRef.current.setMap(null);
-        }
-
-        markerRef.current = new window.naver.maps.Marker({
-          position: new window.naver.maps.LatLng(latMap, lngMap),
-          map: map.current,
-        });
+        window.naver.maps.Service.reverseGeocode(
+          {
+            coords: new window.naver.maps.LatLng(latMap, lngMap),
+          },
+          (status: number, response: any) => {
+            if (status === window.naver.maps.Service.Status.OK) {
+              const { status: geocodeStatus } = response.v2;
+              if (geocodeStatus.code === 3) {
+                alert('위치에 대한 결과가 없습니다. 마커를 찍을 수 없습니다.');
+                setLat(null);
+                setLng(null);
+                return; // 마커를 찍지 않고 함수 종료
+              }
+              // 마커를 찍는 로직
+              if (markerRef.current) {
+                markerRef.current.setMap(null);
+              }
+              markerRef.current = new window.naver.maps.Marker({
+                position: new window.naver.maps.LatLng(latMap, lngMap),
+                map: map.current,
+              });
+            } else {
+              console.error('Reverse Geocoding Error:', status);
+            }
+          },
+        );
       });
     }
   }, []);
@@ -294,89 +312,76 @@ function RiskMapReportPage() {
   };
 
   const handleCancel = () => {
-    navigate('/risk-map');
+    navigate(-1); // Navigate back to the previous page
   };
-
-  const handleResultClick = (result: any) => {
-    setLat(result.location.lat);
-    setLng(result.location.lng);
-    map.current.setCenter(
-      new window.naver.maps.LatLng(result.location.lat, result.location.lng),
-    );
-
-    if (markerRef.current) {
-      markerRef.current.setMap(null);
-    }
-
-    markerRef.current = new window.naver.maps.Marker({
-      position: new window.naver.maps.LatLng(
-        result.location.lat,
-        result.location.lng,
-      ),
-      map: map.current,
-    });
-
-    // 검색 결과 초기화
-    setSearchResults([]);
-    setSearchQuery(result.title); // 클릭한 결과 제목으로 검색창 업데이트
-  };
-
-  useEffect(() => {
-    // 검색어가 비어있으면 검색 결과를 초기화
-    if (!searchQuery) {
-      setSearchResults([]);
-    }
-  }, [searchQuery]);
 
   return (
     <Container>
-      <Title>
-        <BackIcon src={backIcon} alt="back Icon" onClick={goBack} />
-        신고 등록
-      </Title>
-      <DangerP>신고 위치</DangerP>
+      <TitleContainer>
+        <BackIcon src={backIcon} onClick={goBack} />
+        <Title>위험요소 신고하기</Title>
+      </TitleContainer>
       <SearchContainer>
         <SearchInput
           type="text"
-          placeholder="주소를 검색하세요"
+          placeholder="주소를 입력하세요(장소 검색 불가?)"
           value={searchQuery}
-          maxLength={100}
+          maxLength={30}
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyPress={handleKeyPress}
         />
         <SearchButton onClick={handleSearch}>검색</SearchButton>
       </SearchContainer>
-      {searchResults.length > 0 && (
-        <SearchResultsContainer>
-          {searchResults.map((result, index) => (
-            <ResultItem key={index} onClick={() => handleResultClick(result)}>
-              {result.title}
-            </ResultItem>
-          ))}
-        </SearchResultsContainer>
-      )}
+      <DangerP>위험요소를 선택하세요:</DangerP>
       <MapP ref={mapContainer} />
-      <DangerP>신고 제목</DangerP>
-      <TitleContainer>
-        <TitleText
-          type="text"
-          placeholder="제목을 입력하세요(30자 이내)"
-          value={dangerTitle}
-          maxLength={30}
-          onChange={(e) => setDangerTitle(e.target.value)}
-        />
-      </TitleContainer>
-      <DangerP>신고 내용</DangerP>
+      <TitleText
+        placeholder="제목을 입력해주세요(최대 30자)"
+        value={dangerTitle}
+        maxLength={30}
+        onChange={(e) => setDangerTitle(e.target.value)}
+      />
       <Content
-        placeholder="내용을 입력하세요(1400자 이내)"
+        placeholder="상세내용을 입력해주세요(최대 1400자)"
         value={dangerContent}
         maxLength={1400}
         onChange={(e) => setDangerContent(e.target.value)}
       />
       <ButtonDiv>
-        <DangerButton onClick={handleSubmit}>작성</DangerButton>
+        <DangerButton onClick={handleSubmit}>신고하기</DangerButton>
         <CancelButton onClick={handleCancel}>취소</CancelButton>
       </ButtonDiv>
+      {searchResults.length > 0 && (
+        <SearchResultsContainer>
+          {searchResults.map((result, index) => (
+            <ResultItem
+              key={index}
+              onClick={() => {
+                setLat(result.location.lat);
+                setLng(result.location.lng);
+                map.current.setCenter(
+                  new window.naver.maps.LatLng(
+                    result.location.lat,
+                    result.location.lng,
+                  ),
+                );
+                if (markerRef.current) {
+                  markerRef.current.setMap(null);
+                }
+                markerRef.current = new window.naver.maps.Marker({
+                  position: new window.naver.maps.LatLng(
+                    result.location.lat,
+                    result.location.lng,
+                  ),
+                  map: map.current,
+                });
+                setSearchResults([]); // 검색 결과를 초기화
+              }}
+            >
+              {result.title}
+            </ResultItem>
+          ))}
+        </SearchResultsContainer>
+      )}
     </Container>
   );
 }
