@@ -32,7 +32,7 @@ export const getAllInvestLandFilter = async (landAddress: string) => {
 export const getInvestDetail = async (investmentPlannedLandId: String) => {
   return API.get(`/land/invest/${investmentPlannedLandId}`)
     .then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       return res.data;
     })
     .catch((e) => {
@@ -46,7 +46,7 @@ export const getInvestChecklistDetail = async (
 ) => {
   return API.get(`/land/invest/checked/${investmentPlannedLandId}`)
     .then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       return res.data;
     })
     .catch((e) => {
@@ -82,12 +82,13 @@ export const registInvestLand = async (investmentData: {
 
 // 투자 예정지 수정하기
 export const updateInvestDetail = async (
-  investmentPlannedLandId: String,
+  investmentPlannedLandId: number,
   updatedData: any,
 ) => {
+  // console.log(`원본: ${updatedData.checklistIds}`);
   return API.put(`/land/invest/${investmentPlannedLandId}`, updatedData)
     .then((res) => {
-      console.log('Update successful: ', res.data);
+      // console.log('Update successful: ', res.data);
       return res.data;
     })
     .catch((e) => {
@@ -113,7 +114,7 @@ export const deleteInvestDetail = async (investmentPlannedLandId: String) => {
 export const getCheckList = async () => {
   return API.get('/land/invest/checklist')
     .then((res) => {
-      console.log('Get successful : ', res.data);
+      // console.log('Get successful : ', res.data);
       return res.data;
     })
     .catch((e) => {
