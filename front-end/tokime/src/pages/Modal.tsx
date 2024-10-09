@@ -40,6 +40,7 @@ const ModalContainer = styled.div`
     #ff6b6b,
     #ffcc6b
   ); /* 투명도 없는 그라데이션 */
+  margin-bottom: 10vh;
   padding: 5vh; /* vh 단위로 패딩 조정 */
   border-radius: 2vw; /* vw 단위로 모서리 반경 조정 */
   box-shadow: 0 0.5vw 2vw rgba(0, 0, 0, 0.2); /* vw 단위로 그림자 조정 */
@@ -147,7 +148,7 @@ const Modal: React.FC<ModalProps> = ({
           맞춘 개수 : {correctAnswers} / {totalQuestions}
         </Message>
         <Message>
-          [ {score} 점{feedbackMessage} ]
+          점수 : {score} {feedbackMessage}
         </Message>
         <ButtonContainer>
           <RetryButton onClick={onRetry}>다시 풀기</RetryButton>
