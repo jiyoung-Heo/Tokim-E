@@ -6,9 +6,10 @@ import LoadingSpinner from '../layouts/LoadingSpinner';
 import nodataimg from '../../assets/images/Tokimlogo.png';
 import { setLandDetail } from '../../redux/slices/landInfoSlice';
 import { setLawInfo } from '../../redux/slices/lawInfoSlice';
-import { setLandAddress } from '../../redux/slices/landAddressSlice';
 import lawIcon from '../../assets/images/icon/law.png'; // 아이콘 경로 확인 필요
 import LawDetailModal from '../modals/LawDetailModal'; // 법령 상세 정보를 보여줄 모달 컴포넌트
+import searchIcon from '../../assets/images/icon/search.svg';
+import multiply from '../../assets/images/icon/Multiply.png'; // x아이콘
 
 // 스타일 정의
 const LawInfoContainer = styled.div`
@@ -101,6 +102,70 @@ const NoDataMessage = styled.p`
   white-space: normal;
 `;
 
+const SearchContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 2vh;
+`;
+
+const SearchBox = styled.div`
+  height: 4vh;
+  width: 70%; /* 너비 조정 */
+  background: #ffffff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  margin-left: 2vw;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding-left: 19px;
+`;
+
+const SearchInput = styled.input`
+  border: none;
+  font-size: 16px;
+  font-weight: 700;
+  color: #27c384;
+  margin-left: 10px;
+  width: 100%;
+  background: none;
+  font-family: 'KoddiUD OnGothic';
+
+  &::placeholder {
+    color: rgba(39, 195, 132, 0.5);
+  }
+  &:focus {
+    outline: none;
+    color: #27c384;
+  }
+`;
+
+const CategorySelect = styled.select`
+  border: none;
+  position: relative;
+  height: 4vh;
+  width: 30%;
+  color: #27c384;
+  background: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  margin-right: 2vw;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center; /* 가로 가운데 정렬 */
+  align-items: center;
+`;
+
+const MultiplyIcon = styled.img`
+  width: 8vw;
+  margin-right: 2vw;
+`;
+
+const SearchIcon = styled.img`
+  width: 5vw;
+  height: 5vh;
+`;
+
 function OrdinanceInfoTab({
   setActiveTab,
 }: {
@@ -115,10 +180,29 @@ function OrdinanceInfoTab({
   const landAddress = useSelector((state: RootState) => state.landaddress); // Redux에서 토지 주소 정보 가져오기
   const itemsPerPage = 3; // 한 페이지에 표시할 법령 정보 수
   const totalItems = ordinances?.length ?? 0; // 총 법령 정보 수
-  const totalPages = Math.ceil(totalItems / itemsPerPage); // 전체 페이지 수 계산
   const [selectedOrdinance, setSelectedOrdinance] = useState<any>(null); // 선택된 법령 정보 상태
-
   const prevlawInfosRef = useRef(ordinances); // 이전 법령 정보 저장을 위한 ref
+
+  // 검색 관련 상태
+  const [searchCategory, setSearchCategory] = useState('lawName'); // 기본값을 lawName으로 설정
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // 카테고리와 검색어에 따른 필터링
+  const filteredOrdinances = ordinances.filter((ordinance: any) => {
+    const fieldToSearch = ordinance[searchCategory] || ''; // 선택한 카테고리에 맞는 필드 선택
+    return fieldToSearch
+      .toString()
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase()); // 검색어 포함 여부
+  });
+
+  const currentItems = filteredOrdinances.slice(
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage,
+  );
+
+  const filterItems = filteredOrdinances.length; // 필터된 총 법령 정보 수
+  const totalPages = Math.ceil(filterItems / itemsPerPage);
 
   // 주소가 변경될 때마다 법령 정보를 리셋하는 로직
   useEffect(() => {
@@ -141,17 +225,6 @@ function OrdinanceInfoTab({
     }
   }, [ordinances]);
 
-  // 모달을 열고 선택된 법령 정보 설정
-  const handleOpenModal = (ordinance: any) => {
-    setSelectedOrdinance(ordinance); // 선택된 법령 정보 저장
-    setIsModalOpen(true); // 모달 열기
-  };
-
-  // 모달을 닫고 선택된 법령 정보 초기화
-  const handleCloseModal = () => {
-    setIsModalOpen(false); // 모달 닫기
-  };
-
   // 페이지 전환을 위한 함수 (다음 페이지로 이동)
   const handleNext = () => {
     if (currentPage < totalPages - 1) {
@@ -166,11 +239,16 @@ function OrdinanceInfoTab({
     }
   };
 
-  // 현재 페이지에 해당하는 법령 정보를 슬라이스
-  const currentItems = ordinances.slice(
-    currentPage * itemsPerPage, // 현재 페이지의 첫 번째 아이템 인덱스
-    (currentPage + 1) * itemsPerPage, // 현재 페이지의 마지막 아이템 인덱스
-  );
+  // 모달을 열고 선택된 법령 정보 설정
+  const handleOpenModal = (ordinance: any) => {
+    setSelectedOrdinance(ordinance); // 선택된 법령 정보 저장
+    setIsModalOpen(true); // 모달 열기
+  };
+
+  // 모달을 닫고 선택된 법령 정보 초기화
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // 모달 닫기
+  };
 
   // 로딩 상태일 때 로딩 스피너 표시
   if (loading) {
@@ -193,6 +271,32 @@ function OrdinanceInfoTab({
 
   return (
     <div>
+      <SearchContainer>
+        <CategorySelect
+          value={searchCategory}
+          onChange={(e) => setSearchCategory(e.target.value)} // 카테고리 변경
+        >
+          <option value="lawName">법령명</option>
+          <option value="lawLandUse">법령 용도</option>
+          <option value="lawItemNumber">법령 번호</option>
+          <option value="lawContent">법령 내용</option>
+        </CategorySelect>
+        <SearchBox>
+          <SearchIcon src={searchIcon} alt="search" />
+          <SearchInput
+            type="text"
+            placeholder="검색"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)} // 검색어 변경
+          />
+          <MultiplyIcon
+            src={multiply}
+            alt="multiply"
+            onClick={() => setSearchQuery('')}
+          />
+        </SearchBox>
+      </SearchContainer>
+
       {totalItems > 0 ? (
         <>
           {/* 현재 페이지의 법령 정보 표시 */}
