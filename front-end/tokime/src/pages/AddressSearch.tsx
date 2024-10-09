@@ -101,7 +101,12 @@ function AddressSearch() {
     // @ts-ignore
     new window.daum.Postcode({
       oncomplete: (data: any) => {
-        const fullAddress = data.jibunAddress;
+        let fullAddress = '';
+        if (data.jibunAddress === '') {
+          fullAddress = data.autoJibunAddress;
+        } else {
+          fullAddress = data.jibunAddress;
+        }
         // Extract district and detailed address
         const addressParts = fullAddress.split(' ');
         const district = `${data.sigungu} ${data.bname}`;
@@ -112,6 +117,7 @@ function AddressSearch() {
             if (response[0] === undefined) {
               console.error('no Address response');
               dispatch(setLandDetail(null));
+              dispatch(setLawInfo([]));
               setSearchValue(fullAddress);
               setErrorMessage('국토교통부에서 제공하지 않는 지번 정보입니다.');
             } else {

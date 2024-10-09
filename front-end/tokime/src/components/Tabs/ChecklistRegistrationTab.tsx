@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { getCheckList } from '../../api/landInvestAxios'; // API 경로에 맞게 수정하세요
 import LoadingSpinner from '../layouts/LoadingSpinner';
@@ -195,6 +195,11 @@ const UncheckedImage2 = styled.img`
   height: 20px;
   margin-right: 1vw;
 `;
+const CheckedIcon = styled.img`
+  width: 20px;
+  height: 20px;
+  margin-right: 1vw;
+`;
 
 const UncheckedTitle = styled.span`
   font-size: 3.5vw;
@@ -258,6 +263,7 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
   const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [uncheckedItems, setUncheckedItems] = useState<UncheckedItemType[]>([]);
+  const modalRef = useRef<HTMLDivElement>(null); // 모달창을 참조할 ref 생성
 
   // 체크리스트 제목 배열
   const titles = [
@@ -323,7 +329,27 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
     setIsModalOpen(false);
   };
 
-  const handleNext = () => {
+  // 모달창 외부 클릭 감지
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
+        closeModal(); // 모달창 외부 클릭 시 모달 닫기
+      }
+    };
+
+    if (isModalOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isModalOpen]);
+
+  const handleNext = async () => {
     const checkedIndices = checkedItems
       .map((checked, index) => (checked ? index : null))
       .filter((index) => index !== null) as number[];
@@ -340,7 +366,7 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
       setUncheckedItems(unchecked);
       setIsModalOpen(true);
     } else {
-      onNext(); // 모든 항목이 체크되었을 때
+      setIsModalOpen(true);
     }
   };
 
@@ -388,7 +414,9 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
 
       {isModalOpen && (
         <ModalBackground>
-          <ModalContainer>
+          <ModalContainer ref={modalRef}>
+            {' '}
+            {/* 모달창에 ref 추가 */}
             <ModalHeader>
               <ModalTitle>토지 구매 예정이신가요?</ModalTitle>
               <ModalDescription>
@@ -398,19 +426,34 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
               </ModalDescription>
             </ModalHeader>
             <CautionTextContainer>
-              <UncheckedImage2 src={uncheck} alt="Unchecked Icon" />
-              <CautionText>아직 체크되지 않은 항목들입니다.</CautionText>
+              {uncheckedItems.length !== 0 ? (
+                <>
+                  <UncheckedImage2 src={uncheck} alt="Unchecked Icon" />
+                  <CautionText>아직 체크되지 않은 항목들입니다.</CautionText>
+                </>
+              ) : (
+                <>
+                  <CheckedIcon src={checkedIcon} alt="Unchecked Icon" />
+                  <CautionText>
+                    모든 항목을 체크하셨습니다.
+                    <br />
+                    등록하시겠습니까?
+                  </CautionText>
+                </>
+              )}
             </CautionTextContainer>
-            {uncheckedItems.map((item, index) => (
-              <UncheckedItem key={index}>
-                <UncheckedImage
-                  src={images[item.index]}
-                  alt={`Unchecked ${item.index + 1}`}
-                />
-                <UncheckedTitle>{titles[index]}</UncheckedTitle>
-                <WarningIcon src={symbol} alt="Warning Icon" />
-              </UncheckedItem>
-            ))}
+            {uncheckedItems.length !== 0
+              ? uncheckedItems.map((item, index) => (
+                  <UncheckedItem key={index}>
+                    <UncheckedImage
+                      src={images[item.index]}
+                      alt={`Unchecked ${item.index + 1}`}
+                    />
+                    <UncheckedTitle>{titles[index]}</UncheckedTitle>
+                    <WarningIcon src={symbol} alt="Warning Icon" />
+                  </UncheckedItem>
+                ))
+              : null}
             <ModalButtonContainer>
               <ModalButton onClick={closeModal}>다시 체크하기</ModalButton>
               <ModalButton primary onClick={onNext}>

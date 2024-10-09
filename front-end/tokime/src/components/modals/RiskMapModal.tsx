@@ -32,26 +32,46 @@ const CloseButton = styled.button`
 `;
 
 const ContentContainer = styled.div`
-  border: 1px solid #ccc; /* 배경선 추가 */
+  border: 1px solid #ccc; /* Border for content */
   border-radius: 5px;
   padding: 10px;
-  max-height: 200px; /* 최대 높이 설정 */
-  overflow-y: auto; /* 스크롤 가능하게 설정 */
+  max-height: 200px; /* Max height */
+  overflow-y: auto; /* Scrollable */
+  width: 100%; /* Full width */
+  word-wrap: break-word; /* Break long words */
+  white-space: normal; /* Normal whitespace handling */
 
-  /* 스크롤바 색상 변경 */
+  /* Scrollbar styles */
   &::-webkit-scrollbar {
-    width: 8px; /* 스크롤바 너비 */
+    width: 8px; /* Scrollbar width */
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: #27c384; /* 스크롤바 색상 */
-    border-radius: 4px; /* 스크롤바 둥글기 */
+    background-color: #27c384; /* Scrollbar color */
+    border-radius: 4px; /* Scrollbar rounded corners */
   }
 
   &::-webkit-scrollbar-track {
-    background: #f1f1f1; /* 스크롤바 트랙 색상 */
-    border-radius: 4px; /* 트랙 둥글기 */
+    background: #f1f1f1; /* Scrollbar track color */
+    border-radius: 4px; /* Track rounded corners */
   }
+`;
+
+// TitleContainer styled component with updated styles
+const TitleContainer = styled.div`
+  border-radius: 5px; /* Same radius as content */
+  padding: 10px;
+  overflow: hidden; /* Prevent overflow */
+  width: 100%; /* Full width */
+  background: transparent; /* Transparent background */
+  word-wrap: break-word; /* Break long words */
+  white-space: normal; /* Normal whitespace handling */
+  margin-bottom: 10px; /* Margin added for space between title and content */
+`;
+
+const Title = styled.h2`
+  margin: 0; /* Remove default margin */
+  font-size: 18px; /* Adjust font size as needed */
 `;
 
 interface RiskMapModalProps {
@@ -76,12 +96,12 @@ const RiskMapModal: React.FC<RiskMapModalProps> = ({
     <ModalOverlay isOpen={isOpen} onClick={onClose}>
       <ModalContent onClick={(e) => e.stopPropagation()}>
         <CloseButton onClick={onClose}>×</CloseButton>
-        <h2>{markerData.dangerTitle}</h2>
+        <TitleContainer>
+          <Title>{markerData.dangerTitle}</Title>
+        </TitleContainer>
         <ContentContainer>
           <p>{markerData.dangerContent}</p>
         </ContentContainer>
-        <p>위도: {markerData.lat}</p>
-        <p>경도: {markerData.lng}</p>
       </ModalContent>
     </ModalOverlay>
   );

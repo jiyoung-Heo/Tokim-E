@@ -104,7 +104,7 @@ function InvestmentDetailPage() {
     <div>
       <Title>
         <BackIcon src={backIcon} alt="back Icon" onClick={goBack} />
-        {investmentInfo?.landNickname || '별칭 없음'}
+        {investmentInfo?.landNickname || '부지명 없음'}
       </Title>
       <TabsContainer>
         <TabItem

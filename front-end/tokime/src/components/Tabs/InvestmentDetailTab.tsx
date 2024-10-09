@@ -112,7 +112,6 @@ const InvestmentDetailTab: React.FC<{
         investmentInfoProp.investmentPlannedLandId.toString(),
       );
       if (result) {
-        alert('투자 예정지가 삭제되었습니다.');
         navigate('/investment');
       } else {
         alert('삭제에 실패했습니다.');
