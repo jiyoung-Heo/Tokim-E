@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { getCheckList } from '../../api/landInvestAxios'; // API 경로에 맞게 수정하세요
 import LoadingSpinner from '../layouts/LoadingSpinner';
@@ -258,6 +258,7 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
   const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [uncheckedItems, setUncheckedItems] = useState<UncheckedItemType[]>([]);
+  const modalRef = useRef<HTMLDivElement>(null); // 모달창을 참조할 ref 생성
 
   // 체크리스트 제목 배열
   const titles = [
@@ -322,6 +323,26 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
+  // 모달창 외부 클릭 감지
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
+        closeModal(); // 모달창 외부 클릭 시 모달 닫기
+      }
+    };
+
+    if (isModalOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isModalOpen]);
 
   const handleNext = () => {
     const checkedIndices = checkedItems
@@ -388,7 +409,9 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
 
       {isModalOpen && (
         <ModalBackground>
-          <ModalContainer>
+          <ModalContainer ref={modalRef}>
+            {' '}
+            {/* 모달창에 ref 추가 */}
             <ModalHeader>
               <ModalTitle>토지 구매 예정이신가요?</ModalTitle>
               <ModalDescription>
