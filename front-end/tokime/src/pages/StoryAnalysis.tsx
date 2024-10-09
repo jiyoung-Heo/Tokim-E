@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import backIcon from '../assets/images/icon/left-actionable.png'; // 뒤로 가기 아이콘
 import mailIcon from '../assets/images/mail.png'; // 메일 아이콘
 import { storyRegistAxios } from '../api/storyAxios'; // 사연 제출 API 호출
+import LandInformationRegistrationModal from '../components/modals/LandInformationRegistrationModal';
 
 // 스타일 정의
 const Container = styled.div`
@@ -183,6 +184,7 @@ const StoryAnalysis = () => {
   const [caseText, setCaseText] = useState(''); // 사연 입력 내용
   const [loading, setLoading] = useState(false); // 로딩 상태
   const [success, setSuccess] = useState(false); // 성공 메시지 상태
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -198,7 +200,7 @@ const StoryAnalysis = () => {
   // 사연 제출하는 함수
   const submitCase = async () => {
     if (caseText.trim().length === 0) {
-      alert('사연을 작성해 주세요.'); // 사연이 비어있을 때 알림
+      setIsModalOpen(true); // 모달 열기
       return;
     }
 
@@ -213,6 +215,9 @@ const StoryAnalysis = () => {
     } else {
       console.log('사연 제출 실패');
     }
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
   //
   // 사연 작성 모드 취소 함수
@@ -279,6 +284,13 @@ const StoryAnalysis = () => {
           </InfoText>
           <AnalyzeButton onClick={startWriting}>사연 분석 하기</AnalyzeButton>
         </>
+      )}
+      {/* 모달 컴포넌트 렌더링 */}
+      {isModalOpen && (
+        <LandInformationRegistrationModal
+          message="사연을 작성해 주세요."
+          onClose={closeModal}
+        />
       )}
     </Container>
   );
