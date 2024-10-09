@@ -2,6 +2,7 @@ package com.ssafy.tokime.service;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.tokime.controller.UserController;
 import com.ssafy.tokime.dto.ChecklistDTO;
 import com.ssafy.tokime.dto.InvestmentPlannedLandDTO;
 import com.ssafy.tokime.dto.LandFilterDTO;
@@ -12,15 +13,20 @@ import com.ssafy.tokime.repository.InvestmentPlannedLandRepository;
 import com.ssafy.tokime.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class InvestmentPlannedLandService {
+    private static final Logger logger = LoggerFactory.getLogger(InvestmentPlannedLandService.class);
+
     private final InvestmentPlannedLandRepository investmentPlannedLandRepository;
     private final UserRepository userRepository;
     private final ChecklistRepository checklistRepository;
@@ -33,13 +39,13 @@ public class InvestmentPlannedLandService {
         User user = userRepository.findByEmailAndIsDeletedFalse(email)
                 .orElseThrow(() -> new RuntimeException("email로 조회 했으나 존재 하지 않는 유저"));
 
-            // 투자예정지 등록정보 entity로 변환
-            InvestmentPlannedLand investmentPlannedLand = dto.toEntity(user);
-            // 투자 예정지 저장
-            investmentPlannedLand = investmentPlannedLandRepository.save(investmentPlannedLand);
+        // 투자예정지 등록정보 entity로 변환
+        InvestmentPlannedLand investmentPlannedLand = dto.toEntity(user);
+        // 투자 예정지 저장
+        investmentPlannedLand = investmentPlannedLandRepository.save(investmentPlannedLand);
 
-            // 체크리스트 상태 저장
-            saveChecklists(dto.getChecklistIds(), investmentPlannedLand); // 체크리스트 ID로 수정
+        // 체크리스트 상태 저장
+        saveChecklists(dto.getChecklistIds(), investmentPlannedLand); // 체크리스트 ID로 수정
 
     }
 
@@ -54,7 +60,7 @@ public class InvestmentPlannedLandService {
     // checklist 저장하는것
     public void saveChecklists(List<Integer> checklistIds , InvestmentPlannedLand investmentPlannedLand) {
         for (Integer checklistId : checklistIds) {
-
+            logger.info("checklistId: "+checklistId);
             Checklist checklist = checklistRepository.findById(checklistId)
                     .orElseThrow(() -> new RuntimeException("체크리스트 항목을 찾을 수 없습니다."));
 
@@ -104,13 +110,32 @@ public class InvestmentPlannedLandService {
         if (!investmentPlannedLand.getUser().getUserId().equals(user.getUserId())) {
             throw new RuntimeException("수정할 권한이 없습니다.");
         }
-
+        dto.setCheckedCount(dto.getChecklistIds().size());
         // DTO의 내용을 엔티티에 업데이트
         investmentPlannedLand.updateFromDto(dto);
         // 수정된 투자 예정지 저장
-        investmentPlannedLandRepository.save(investmentPlannedLand);
+//        investmentPlannedLandRepository.save(investmentPlannedLand);
 
-        return investmentPlannedLand.toDTO();
+        // 원래 체그되어있던것 삭제. 지금로직에서 이게 최선임
+        int number = statusRepository.deleteByInvestmentPlannedLand(investmentPlannedLand);
+        logger.info("삭제컬럼개수"+number);
+        logger.info("프론트인입"+dto.getChecklistIds().toString());
+        // 체크리스트 상태 저장
+        saveChecklists(dto.getChecklistIds(), investmentPlannedLand); // 체크리스트 ID로 수정
+
+        // 해당 투자 예정지에 대한 체크리스트 상태를 가져옴
+        List<ChecklistStatus> checklistStatuses = statusRepository.findByInvestmentPlannedLand(investmentPlannedLand);
+        List<Integer> checklistIds = checklistStatuses.stream()
+                .map(status -> status.getChecklist() != null ? status.getChecklist().getChecklistId() : null) // null 체크
+                .filter(Objects::nonNull) // null이 아닌 값만 필터링
+                .collect(Collectors.toList());
+
+        logger.info("선택리스트"+checklistIds.toString());
+
+        InvestmentPlannedLandDTO result = investmentPlannedLand.toDTO();
+        result.setChecklistIds(checklistIds);
+
+        return result;
     }
 
 
@@ -118,11 +143,11 @@ public class InvestmentPlannedLandService {
     public List<InvestmentPlannedLandDTO> getInvestmentPlannedLandsByUserEmail(String email){
         User user = userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(()->
                 new RuntimeException("email로 조회 했으나 존재 하지 않는 유저"));
-                List<InvestmentPlannedLand> lands = investmentPlannedLandRepository.findByUser(user);
+        List<InvestmentPlannedLand> lands = investmentPlannedLandRepository.findByUser(user);
 
-                return lands.stream()
-                        .map(InvestmentPlannedLand::toDTO)
-                        .collect(Collectors.toList());
+        return lands.stream()
+                .map(InvestmentPlannedLand::toDTO)
+                .collect(Collectors.toList());
 
     }
 
