@@ -101,7 +101,12 @@ function AddressSearch() {
     // @ts-ignore
     new window.daum.Postcode({
       oncomplete: (data: any) => {
-        const fullAddress = data.jibunAddress;
+        let fullAddress = '';
+        if (data.jibunAddress === '') {
+          fullAddress = data.autoJibunAddress;
+        } else {
+          fullAddress = data.jibunAddress;
+        }
         // Extract district and detailed address
         const addressParts = fullAddress.split(' ');
         const district = `${data.sigungu} ${data.bname}`;
