@@ -86,11 +86,14 @@ function BottomTab() {
           </IconWrapper>
           투자 예정지
         </TabItem>
-        <TabItem to="/my-page" $isActive={location.pathname === '/my-page'}>
-          <IconWrapper $isActive={location.pathname === '/my-page'}>
+        <TabItem
+          to="/story-analysis"
+          $isActive={location.pathname === '/story-analysis'}
+        >
+          <IconWrapper $isActive={location.pathname === '/story-analysis'}>
             <UserIcon />
           </IconWrapper>
-          마이 페이지
+          사연 분석
         </TabItem>
       </TabContainer>
     </>

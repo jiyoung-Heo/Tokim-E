@@ -13,6 +13,7 @@ import roadIcon from '../../assets/images/landInfo/road.png';
 import scaleIcon from '../../assets/images/landInfo/scale.png';
 import useIcon from '../../assets/images/landInfo/use.png';
 import NaverMapProps from './NaverMapProps';
+import { deleteInvestDetail } from '../../api/landInvestAxios';
 
 const BackIcon = styled.img`
   cursor: pointer;
@@ -98,6 +99,19 @@ const InvestmentDetailTab: React.FC<{
 
       return newShowInfo; // 새로운 상태를 반환
     });
+  };
+  const handleDeleteClick = async () => {
+    if (investmentInfoProp) {
+      const result = await deleteInvestDetail(
+        investmentInfoProp.investmentPlannedLandId.toString(), // 숫자를 문자열로 변환
+      );
+      if (result) {
+        alert('투자 예정지가 삭제되었습니다.');
+        navigate('/investment'); // 목록 페이지로 리다이렉트
+      } else {
+        alert('삭제에 실패했습니다.');
+      }
+    }
   };
 
   const getLandUseStatusDescription = (landUseStatus: string) => {
@@ -409,6 +423,12 @@ const InvestmentDetailTab: React.FC<{
             </div>
           ))}
         </InfoBox>
+        {/* 삭제 버튼 추가 */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <SmallButton color="#ff4d4d" onClick={handleDeleteClick}>
+            투자 예정지 삭제
+          </SmallButton>
+        </div>
       </div>
     </div>
   );
