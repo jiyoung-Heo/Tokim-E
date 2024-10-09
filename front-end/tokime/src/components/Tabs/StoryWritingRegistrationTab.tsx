@@ -1,76 +1,177 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import backIcon from '../assets/images/icon/left-actionable.png'; // 뒤로 가기 아이콘
+import beforeStoryIcon from '../assets/images/icon/beforestory.png'; // 이전 사연 아이콘
+import newsIcon from '../assets/images/news.png'; // 뉴스 아이콘
+import elasticNewsAxios from '../../api/elasticNewsAxios'; // 뉴스 관련 Axios
 
+// 스타일 정의
 const Container = styled.div`
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   background: #f3f7fb;
-`;
-
-const StyledTextInput = styled.textarea`
-  height: 50vh;
-  width: 100%;
-  border: 1px solid #ccc; /* Add border */
-  border-radius: 5px; /* Rounded corners */
-  padding: 10px; /* Padding inside the input */
-  margin-bottom: 20px; /* Space below the input */
-  font-size: 16px; /* Text size */
-  background-color: #00000; /* Background color */
-  resize: none; /* Disable resizing */
-`;
-
-const RegistContainer = styled.div`
   display: flex;
-  justify-content: right;
+  flex-direction: column;
+  padding: 2vh 5vw;
 `;
 
-// 투자 예정지 등록 버튼 스타일
-const RegisterButton = styled.button`
-  padding: 1.5vh 5vw;
-  background-color: #27c384;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
+const Title = styled.h2`
+  font-size: 20px;
   font-weight: bold;
-  cursor: pointer;
-  z-index: 800; /* z-index 추가 */
-  margin-top: 3vh;
-  font-size: 15px;
-  margin: 3vh 2vw 0 2vw;
+  font-family: 'KoddiUD OnGothic';
+  color: #333333;
+  display: flex;
+  justify-content: space-between;
 `;
 
-interface StoryWritingRegistrationTabProps {
-  story: string;
-  setStory: React.Dispatch<React.SetStateAction<string>>;
-  onRegister: () => void; // 다음 버튼을 위한 prop 타입 정의
-  onPrevious: () => void; // 이전 버튼을 위한 prop 타입 정의
-}
+const RecentStoryTitle = styled.h3`
+  font-family: 'Pretendard Variable';
+  font-weight: 800;
+  font-size: 16px;
+  color: #333333;
+  margin-top: 1vh;
+  margin-left: 2vw;
+`;
 
-function StoryWritingRegistrationTab({
-  story,
-  setStory,
-  onPrevious,
-  onRegister,
-}: StoryWritingRegistrationTabProps) {
+const PreviousStoryButton = styled.button`
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  color: #333333;
+  font-size: 14px;
+  cursor: pointer;
+`;
+
+const StoryContainer = styled.div`
+  width: 90%;
+  height: 240px;
+  background: #ffffff;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2vh 2vw;
+  margin-top: 3vh;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const NewsContainer = styled.div`
+  width: 90%;
+  height: 240px;
+  background: #ffffff;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  padding: 2vh 2vw;
+  margin-top: 2vh;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const NewsIcon = styled.img`
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+`;
+
+const NewsTitle = styled.h4`
+  font-size: 14px;
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 1vh;
+  display: -webkit-box;
+  -webkit-line-clamp: 1; /* 1줄에서 자름 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const NewsContent = styled.p`
+  font-size: 12px;
+  color: #333333;
+  margin-bottom: 1vh;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* 2줄에서 자름 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const NewsItem = styled.div`
+  margin-bottom: 2vh;
+`;
+
+// 이전 사연 아이콘과 텍스트 스타일 정의
+const BeforeStoryIcon = styled.img`
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+`;
+
+const SubmitButton = styled.button`
+  width: 90%;
+  height: 7vh;
+  background-color: #27c384;
+  color: #ffffff;
+  font-size: 4vw;
+  font-weight: bold;
+  border: none;
+  border-radius: 2vw;
+  margin-top: 3vh;
+  cursor: pointer;
+`;
+
+const StoryAnalysisResult = () => {
+  const [newsData, setNewsData] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchNewsData = async () => {
+      const story = '부동산에서 땅을 사고싶어'; // 임의로 지정한 스토리
+      const data = await elasticNewsAxios(story); // API 요청으로 뉴스 데이터 가져오기
+      if (data) {
+        const originalDataArray = data.map(
+          (item: any) => item._source.original_data,
+        );
+        setNewsData(originalDataArray); // 뉴스 데이터 상태로 저장
+      }
+    };
+    fetchNewsData();
+  }, []);
+
+  const goBack = () => {
+    console.log('뒤로 가기');
+  };
+
   return (
     <Container>
-      <p>
-        땅을 사려는 이유, 땅을 소개받은 경위 등 자세하게 입력할수록 좋아요
-        등등등 뭐라고 써야할지모르겠으니까 일단 임시로이렇게써두겠어
-        이정도길이면 될까요?
-      </p>
-      <StyledTextInput
-        placeholder="사연을 입력하세요."
-        maxLength={4000}
-        value={story}
-        onChange={(e) => setStory(e.target.value)} // Update state on change
-      />
-      <RegistContainer>
-        <RegisterButton onClick={onPrevious}>이전</RegisterButton>
-        <RegisterButton onClick={onRegister}>등록</RegisterButton>
-      </RegistContainer>
+      <Title>
+        <span>사연 분석 결과</span>
+        <PreviousStoryButton>
+          <BeforeStoryIcon src={beforeStoryIcon} alt="이전 사연 아이콘" />
+          이전 사연
+        </PreviousStoryButton>
+      </Title>
+      <RecentStoryTitle>XXX님의 최근 사연</RecentStoryTitle>
+      <StoryContainer>
+        <p>사연: 부동산에서 땅을 사고 싶어.</p>
+      </StoryContainer>
+
+      <RecentStoryTitle>사연 분석 결과</RecentStoryTitle>
+
+      <NewsContainer>
+        <NewsIcon src={newsIcon} alt="뉴스 아이콘" />
+        <RecentStoryTitle>분석된 유사 뉴스</RecentStoryTitle>
+        {newsData.map((item, index) => (
+          <NewsItem key={index}>
+            <NewsTitle>{item.title}</NewsTitle>
+            <NewsContent>{item.article}</NewsContent>
+          </NewsItem>
+        ))}
+      </NewsContainer>
+
+      <SubmitButton>분석 완료</SubmitButton>
     </Container>
   );
-}
+};
 
-export default StoryWritingRegistrationTab;
+export default StoryAnalysisResult;
