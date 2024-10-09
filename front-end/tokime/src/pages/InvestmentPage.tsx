@@ -399,13 +399,14 @@ function InvestmentPage() {
       }
     };
     fetchInvestmentData();
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     const fetchInvestmentFilterData = async () => {
       if (selectedOption === '전국') {
         const data = await getAllInvestLand();
         if (data) {
+          console.log(data);
           setAllInvest(data);
         }
       } else {
