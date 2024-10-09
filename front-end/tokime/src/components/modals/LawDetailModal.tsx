@@ -126,8 +126,8 @@ const LawDetailModal: React.FC<LawDetailModalProps> = ({
   };
 
   return (
-    <ModalOverlay>
-      <ModalContainer>
+    <ModalOverlay onClick={onRequestClose}>
+      <ModalContainer onClick={(e) => e.stopPropagation()}>
         <CloseButton onClick={onRequestClose}>×</CloseButton>
         <LawHeader>
           <LawIcon src={lawIcon} />
