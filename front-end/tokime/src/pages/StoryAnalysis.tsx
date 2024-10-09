@@ -214,7 +214,7 @@ const StoryAnalysis = () => {
       console.log('사연 제출 실패');
     }
   };
-
+  //
   // 사연 작성 모드 취소 함수
   const cancelWriting = () => {
     setIsWriting(false); // 사연 작성 모드를 취소하여 원래 화면으로 돌아감
