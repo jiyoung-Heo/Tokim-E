@@ -54,18 +54,18 @@ const StoryAdviceTab: React.FC<StoryAdviceTabProps> = ({ story }) => {
     const fetchEsNewsData = async () => {
       const data = await elasticNewsAxios(story);
       if (data) {
-        console.log(data);
+        // console.log(data);
         // original_data를 배열로 저장
         const originalDataArray = data.map(
           // eslint-disable-next-line no-underscore-dangle
           (item: any) => item._source.original_data,
         );
         setNewsData(originalDataArray); // 상태 업데이트
-        console.log(newsData);
+        // console.log(newsData);
       }
       const dataLaws = await elasticLawsAxios(story);
       if (dataLaws) {
-        console.log(dataLaws);
+        // console.log(dataLaws);
         // original_data를 배열로 저장
         const originalDataArray = dataLaws.map(
           // eslint-disable-next-line no-underscore-dangle

@@ -112,9 +112,9 @@ const NaverMap: React.FC = () => {
           const landData = await getSearchLandInfo(district, address);
           if (landData && landData.length > 0) {
             const { landDanger } = landData[0];
-            console.log(
-              `Coordinates: x=${x}, y=${y}, Land danger: ${landDanger}`,
-            );
+            // console.log(
+            //   `Coordinates: x=${x}, y=${y}, Land danger: ${landDanger}`,
+            // );
             initMap({ y, x }, landDanger);
           } else {
             console.error('지번 정보를 찾을 수 없습니다.');
