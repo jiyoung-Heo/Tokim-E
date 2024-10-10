@@ -73,7 +73,11 @@ const TitleContainer = styled.div`
 
 const Title = styled.h2`
   margin: 0;
-  font-size: 18px;
+  font-size: clamp(5px, 4vw, 18px); /* 화면 크기에 맞춰 반응형 폰트 크기 */
+  white-space: nowrap; /* 한 줄로 표시 */
+  overflow: hidden; /* 넘치는 부분 숨기기 */
+  text-overflow: ellipsis; /* 넘치는 텍스트에 ... 추가 */
+  max-width: 100%; /* 제목이 모달 너비를 넘지 않도록 설정 */
 `;
 
 // New styled component for the image
