@@ -148,6 +148,7 @@ function getCookieValue(name: string): string | null {
 function MainPage() {
   const dispatch = useDispatch();
   const [currentCarousel, setCurrentCarousel] = useState(0); // 현재 캐러셀 인덱스
+
   const carouselData: CarouselData[] = [
     {
       to: '/land-purchase-quiz',
