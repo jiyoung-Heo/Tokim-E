@@ -193,6 +193,22 @@ function getCookieValue(name: string): string | null {
   return null;
 }
 
+// SentenceDisplay 함수 추가
+const SentenceDisplay = ({ description }: { description: string }) => {
+  const sentences = description.split('.'); // 문장을 '。' 기준으로 나누기
+
+  return (
+    <div>
+      {sentences.map((sentence, index) => (
+        <div key={index}>
+          {sentence.trim()}
+          {index < sentences.length - 1 && <br />}{' '}
+          {/* 마지막 문장 이후에는 줄바꿈 추가하지 않음 */}
+        </div>
+      ))}
+    </div>
+  );
+};
 // 용어 상세 컴포넌트
 function LandTermDetail() {
   const navigate = useNavigate();
@@ -213,6 +229,7 @@ function LandTermDetail() {
       try {
         const data = await getSelectedTerm(Number(term)); // API로 용어 상세 정보 가져오기
         setTermData(data);
+        // console.log(data);
         // likeCheck 값에 따라 즐겨찾기 상태를 설정
         setIsLiked(data.likeCheck === true); // likeCheck 값이 true이면 즐겨찾기 상태로 설정
       } catch (error) {
@@ -286,7 +303,8 @@ function LandTermDetail() {
   };
 
   const goBack = () => {
-    navigate(-1); // 이전 페이지로 이동
+    // navigate(-1); // 이전 페이지로 이동
+    navigate('/land-terms');
   };
 
   if (loading) {
@@ -327,8 +345,15 @@ function LandTermDetail() {
       <RelatedLawsContainer>
         <RelatedLawsTitle>관련 법률 및 규제 정보</RelatedLawsTitle>
         <TermDescription>
-          {termData.termLaw}
-          {openAiResponse || '응답을 불러오는 중입니다...'}
+          {openAiResponse ? (
+            <>
+              {termData.termLaw}
+              <br />
+              {openAiResponse}
+            </>
+          ) : (
+            '응답을 불러오는 중입니다...'
+          )}
         </TermDescription>
       </RelatedLawsContainer>
 
@@ -355,13 +380,12 @@ function LandTermDetail() {
       </NewsContainer>
 
       {/* 모달 */}
-      {/* 모달 */}
       {modalOpen && (
         <ModalContainer onClick={closeModal}>
           <ModalContent onClick={(e) => e.stopPropagation()}>
             <h3>전체 설명</h3>
             <ModalBody>
-              <p>{termData.termDescribe}</p>
+              <SentenceDisplay description={termData.termDescribe || ''} />
             </ModalBody>
             <ModalCloseButton onClick={closeModal}>닫기</ModalCloseButton>
           </ModalContent>

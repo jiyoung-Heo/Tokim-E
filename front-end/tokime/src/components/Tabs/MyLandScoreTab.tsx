@@ -81,7 +81,7 @@ function MyLandScoreTab() {
         const response = await userQuizAverageAxios();
 
         // 응답 데이터 확인
-        console.log('API 응답 데이터:', response);
+        // console.log('API 응답 데이터:', response);
 
         if (response) {
           const { quizScore, top } = response; // quizScore와 top 필드 접근

@@ -6,7 +6,8 @@ import AddressSearch from '../pages/AddressSearch';
 import LandPurchaseKnowledge from '../pages/LandPurchaseKnowledge';
 import LandTerms from '../pages/LandTerms';
 import LandTermDetail from '../pages/LandTermDetail';
-import MyPage from '../pages/MyPage';
+import StoryAnalysis from '../pages/StoryAnalysis';
+import StoryAnalysisResult from '../pages/StoryAnalysisResult'; // 새로 추가된 페이지
 import InvestmentPage from '../pages/InvestmentPage';
 import InvestmentRegisterPage from '../pages/InvestmentRegisterPage';
 import InvestmentDetailPage from '../pages/InvestmentDetailPage'; // 투자 예정지 상세 페이지 추가
@@ -65,16 +66,28 @@ function AppRouter() {
         }
       />
       <Route
-        path="/my-page"
+        path="/story-analysis"
         element={
           <ProtectedRoute
             element={
               <Layout>
-                <MyPage />
+                <StoryAnalysis />
               </Layout>
             }
           />
         } // 보호된 라우트
+      />
+      <Route
+        path="/story-analysis/:result"
+        element={
+          <ProtectedRoute
+            element={
+              <Layout>
+                <StoryAnalysisResult /> {/* 분석 결과 페이지 */}
+              </Layout>
+            }
+          />
+        }
       />
       <Route
         path="/investment"

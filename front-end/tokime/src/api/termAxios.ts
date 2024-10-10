@@ -32,7 +32,7 @@ export const getSelectedTerm = async (termId: number) => {
 export const getTermLike = async () => {
   try {
     const response = await API.get('/term/like');
-    console.log('API 응답 데이터:', response.data);
+    // console.log('API 응답 데이터:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching Like term:', error);
@@ -44,7 +44,7 @@ export const getTermLike = async () => {
 export const registTermLike = async (termId: number) => {
   try {
     const response = await API.post(`/term/like/${termId}`);
-    console.log('좋아요 등록 성공:', response.data);
+    // console.log('좋아요 등록 성공:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error registering Like term:', error);
@@ -56,7 +56,7 @@ export const registTermLike = async (termId: number) => {
 export const deleteTermLike = async (termId: number) => {
   try {
     const response = await API.delete(`/term/like/${termId}`);
-    console.log('좋아요 삭제 성공:', response.data);
+    // console.log('좋아요 삭제 성공:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error deleting Like term:', error);

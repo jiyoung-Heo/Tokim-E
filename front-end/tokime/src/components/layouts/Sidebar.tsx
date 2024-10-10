@@ -17,7 +17,7 @@ import logoutAxios from '../../api/logoutAxios';
 import { persistor } from '../../redux/reduxStore';
 import withdrawAxios from '../../api/withdrawAxios';
 
-const Overlay = styled.div<{ isOpen: boolean }>`
+const Overlay = styled.div<{ $isOpen: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -25,7 +25,7 @@ const Overlay = styled.div<{ isOpen: boolean }>`
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.1);
   display: ${(props) =>
-    props.isOpen ? 'block' : 'none'}; /* 사이드바가 열리면 보이게 */
+    props.$isOpen ? 'block' : 'none'}; /* 사이드바가 열리면 보이게 */
   z-index: 900;
 `;
 
@@ -297,7 +297,7 @@ function Sidebar() {
   const handleWithdraw = () => {
     const fetchLogout = async () => {
       const data = await withdrawAxios();
-      console.log(data); // 응답 데이터 확인
+      // console.log(data); // 응답 데이터 확인
       if (data) {
         deleteAllCookies();
         persistor.purge();
@@ -317,12 +317,21 @@ function Sidebar() {
         $isOpen={isSidebarOpen}
       />
       {/* 오버레이 추가 */}
-      <Overlay isOpen={isSidebarOpen} onClick={() => setIsSidebarOpen(false)} />
+      <Overlay
+        $isOpen={isSidebarOpen}
+        onClick={() => setIsSidebarOpen(false)}
+      />
 
       {userInfo.name !== '' ? (
         <SidebarContainer ref={sidebarRef} $isOpen={isSidebarOpen}>
           <Logo src={TokimLogo} alt="Tokim Logo" />
-          <GaugeWrapper>
+          <GaugeWrapper
+            onClick={() => {
+              if (userInfo.quizScore !== -1) {
+                navigate('/land-score');
+              }
+            }}
+          >
             <Graph score={userInfo.quizScore} />
             <Score
               onClick={() => {
@@ -355,9 +364,9 @@ function Sidebar() {
             <Divider />
           </UserInfo>
           <ButtonContainer>
-            <Button $bgColor="#00C99C" onClick={() => navigate('/my-page')}>
+            {/* <Button $bgColor="#00C99C" onClick={() => navigate('/my-page')}>
               마이페이지
-            </Button>
+            </Button> */}
             <Button $bgColor="#00C99C" onClick={() => setModalOpen(true)}>
               로그아웃
             </Button>

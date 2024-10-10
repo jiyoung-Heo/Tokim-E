@@ -128,7 +128,7 @@ const QuizTitle = styled.h2`
   font-size: 40px;
   line-height: 48px;
   color: #333333;
-  margin-top: 7vh;
+  margin-top: 1vh;
   text-align: center; /* 텍스트를 가운데 정렬 */
   margin-bottom: 1.5vh;
 `;
@@ -187,7 +187,7 @@ function LandPurchaseQuiz() {
     preloadImages(tokimImages);
   }, []);
   const goBack = () => {
-    navigate(-1); // 이전 페이지로 이동
+    navigate('/land-purchase-knowledge');
   };
 
   const openModal = (score: number) => {
@@ -232,7 +232,7 @@ function LandPurchaseQuiz() {
           // 점수 수정 요청 API 호출
           modifyUserQuizAxios(computedFinalScore)
             .then((updatedScore) => {
-              console.log(`서버에 점수 업데이트 완료: ${updatedScore}`);
+              // console.log(`서버에 점수 업데이트 완료: ${updatedScore}`);
             })
             .catch((e) => {
               console.error('점수 업데이트 실패:', e);
@@ -254,10 +254,7 @@ function LandPurchaseQuiz() {
 
   return (
     <Container>
-      <Title>
-        <BackIcon src={backIcon} alt="back Icon" onClick={goBack} />
-        토지 상식 퀴즈
-      </Title>
+      <BackIcon src={backIcon} alt="back Icon" onClick={goBack} />
       <QuizTitle>토지 상식 퀴즈</QuizTitle>
       <Divider />
       <QuestionText>
