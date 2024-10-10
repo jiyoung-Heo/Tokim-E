@@ -106,19 +106,20 @@ const NaverMapProps: React.FC<NaverMapPropsProps> = ({ landAddress }) => {
           if (landData && landData.length > 0) {
             const { landDanger } = landData[0];
             // console.log(
-            // `Coordinates: x=${x}, y=${y}, Land danger: ${landDanger}`,
+            //   `Coordinates: x=${x}, y=${y}, Land danger: ${landDanger}`,
             // );
             initMap({ y, x }, landDanger);
           } else {
-            console.error('지번 정보를 찾을 수 없습니다.');
-            setHasError(true);
+            initMap({ y, x }, 0);
+            // console.error('지번 정보를 찾을 수 없습니다.');
+            // setHasError(true);
           }
         } else {
-          console.error('주소를 찾을 수 없습니다:', data.errorMessage);
+          // console.error('주소를 찾을 수 없습니다:', data.errorMessage);
           setHasError(true);
         }
       } catch (error) {
-        console.error('Fetch 오류 발생:', error);
+        // console.error('Fetch 오류 발생:', error);
         setHasError(true);
       }
     };
