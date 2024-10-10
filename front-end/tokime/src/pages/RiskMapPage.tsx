@@ -292,7 +292,6 @@ const RiskMapPage: React.FC = () => {
           value={searchTerm}
           onChange={handleSearch}
         />
-        <SearchIcon src={searchIcon} alt="검색 아이콘" />
       </SearchContainer>
       {listVisible && (
         <MarkerListContainer ref={listRef}>
