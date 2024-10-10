@@ -179,7 +179,7 @@ function AddressSearch() {
       </SearchContainer>
       {errorMessage && (
         <ErrorMessageContainer>
-          <p style={{ color: 'red', fontWeight: 'bold', fontSize: '1.2em' }}>
+          <p style={{ color: 'red', fontWeight: 'bold', fontSize: '1.0em' }}>
             {errorMessage}
           </p>
         </ErrorMessageContainer>
