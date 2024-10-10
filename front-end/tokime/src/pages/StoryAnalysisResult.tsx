@@ -380,7 +380,7 @@ const StoryAnalysisResult = () => {
               </div>
             ))
           ) : (
-            <p>유사한 뉴스가 없습니다.</p>
+            <p>보다 자세한 사례 작성이 필요합니다.</p>
           )}
         </NewsContainer>
         <LawsContainer>
@@ -405,7 +405,7 @@ const StoryAnalysisResult = () => {
               </LawInfoContainer>
             ))
           ) : (
-            <p>유사한 판례가 없습니다.</p>
+            <p>보다 자세한 사례 작성이 필요합니다.</p>
           )}
         </LawsContainer>
       </Container>
