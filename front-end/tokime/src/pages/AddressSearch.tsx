@@ -61,7 +61,7 @@ const TabItem = styled.div<{ $isActive: boolean }>`
 `;
 
 const Content = styled.div`
-  padding: 20px;
+  margin-top: 10px;
   background-color: #f3f7fb;
 `;
 
