@@ -6,6 +6,7 @@ export default async function elasticNewsAxios(story: string | null) {
   const data = {
     size: 2,
     _source: ['original_data'],
+    min_score: 5,
     query: {
       match: {
         tokens: queryStory, // story를 tokens에 넣음

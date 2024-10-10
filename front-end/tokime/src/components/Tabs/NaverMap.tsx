@@ -26,8 +26,8 @@ const NaverMap: React.FC = () => {
   if (district === null || district === undefined) {
     if (address) {
       const addressParts = address?.split(' ');
-      district = `${addressParts[1]} ${addressParts[2]}`;
-      address = addressParts.slice(3).join(' ');
+      district = addressParts.slice(1, -1).join(' '); // 1번째부터 마지막 전까지
+      address = addressParts[addressParts.length - 1]; // 마지막 요소
     }
   }
 
@@ -112,13 +112,14 @@ const NaverMap: React.FC = () => {
           const landData = await getSearchLandInfo(district, address);
           if (landData && landData.length > 0) {
             const { landDanger } = landData[0];
-            console.log(
-              `Coordinates: x=${x}, y=${y}, Land danger: ${landDanger}`,
-            );
+            // console.log(
+            //   `Coordinates: x=${x}, y=${y}, Land danger: ${landDanger}`,
+            // );
             initMap({ y, x }, landDanger);
           } else {
-            console.error('지번 정보를 찾을 수 없습니다.');
-            setHasError(true); // 오류 상태 업데이트
+            initMap({ y, x }, 0);
+            // console.error('지번 정보를 찾을 수 없습니다.');
+            // setHasError(true); // 오류 상태 업데이트
           }
         } else {
           console.error('주소를 찾을 수 없습니다:', data.errorMessage);

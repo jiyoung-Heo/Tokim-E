@@ -2,26 +2,38 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { registDanger } from '../api/dangerAxios';
+import LandInformationRegistrationModal from '../components/modals/LandInformationRegistrationModal';
 import backIcon from '../assets/images/icon/left-actionable.png';
+import mapIcon from '../assets/images/icon/icon-map.png';
+import sirenIcon from '../assets/images/icon/icon-siren.png';
+import speakerIcon from '../assets/images/icon/icon-speaker.png';
 
 // 필요한 스타일 정의
 const Container = styled.div`
   width: 100%;
   height: 100%;
   background: #f3f7fb;
+  touch-action: none;
 `;
 
 const Title = styled.h2`
-  margin: 0 0 1vh 0;
+  margin: 0;
   font-size: 25px;
   font-weight: bold;
   font-family: 'KoddiUD OnGothic';
   color: #333333;
-  display: flex;
-  justify-content: left;
+  margin-left: 10px; /* Adjust margin to position title properly */
 `;
 
-const BackIcon = styled.img``;
+const BackIcon = styled.img`
+  cursor: pointer; /* Add cursor pointer for better UX */
+`;
+
+const TitleContainer = styled.div`
+  display: flex;
+  align-items: center; /* Align items vertically centered */
+  margin-bottom: 1vh; /* Add margin below for spacing */
+`;
 
 const SearchContainer = styled.div`
   display: flex;
@@ -76,8 +88,6 @@ const CancelButton = styled.button`
   border: none;
 `;
 
-const TitleContainer = styled.div``;
-
 const TitleText = styled.input`
   width: 100%;
   height: 5vh;
@@ -99,21 +109,30 @@ const Content = styled.textarea`
   border-radius: 10px;
   margin-bottom: 1vh;
   margin-top: 1vh;
-`;
-
-const DangerP = styled.p`
-  margin-top: 1vh;
-  margin-bottom: 1vh;
-  font-size: 17px;
   font-weight: bold;
 `;
 
+const DangerP = styled.p`
+  margin: 1vh 0;
+  font-size: 17px; /* Adjust this size as needed */
+  font-weight: bold;
+  display: flex; /* Use flexbox for alignment */
+  align-items: center; /* Center items vertically */
+`;
+
+const Icon = styled.img`
+  width: 20px; /* Set a fixed width */
+  height: 20px; /* Set a fixed height */
+  margin-right: 8px; /* Space between icon and text */
+`;
 const MapP = styled.div`
+  weight: 100%;
   margin: 1vh;
   height: 25vh;
   border: none;
   border-radius: 10px;
   font-weight: bold;
+  touch-action: auto; /* 지도 부분은 확대/축소 가능 */
 `;
 
 const ButtonDiv = styled.p`
@@ -124,14 +143,11 @@ const ButtonDiv = styled.p`
 `;
 
 const SearchResultsContainer = styled.div`
-  position: absolute;
-  top: 20vh; /* 검색창 아래 위치 */
-  left: 5%;
-  width: 90%;
+  width: 100%;
   background: white;
   border: 1px solid #ccc;
-  border-radius: 5px;
-  z-index: 9000; /* 지도 위에 겹쳐서 표시되도록 설정 */
+  border-radius: 10px;
+  border-color: #00c99c;
 `;
 
 const ResultItem = styled.div`
@@ -156,6 +172,9 @@ function RiskMapReportPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
 
+  // 모달 관련 상태 추가
+  const [modalMessage, setModalMessage] = useState('');
+
   useEffect(() => {
     if (mapContainer.current) {
       const mapOptions = {
@@ -175,7 +194,7 @@ function RiskMapReportPage() {
         },
         (error) => {
           console.error('Geolocation error:', error);
-          alert(
+          setModalMessage(
             '사용자의 위치를 가져오는 데 실패했습니다. 기본 위치로 설정합니다.',
           );
         },
@@ -188,21 +207,58 @@ function RiskMapReportPage() {
         setLat(latMap);
         setLng(lngMap);
 
-        if (markerRef.current) {
-          markerRef.current.setMap(null);
-        }
-
-        markerRef.current = new window.naver.maps.Marker({
-          position: new window.naver.maps.LatLng(latMap, lngMap),
-          map: map.current,
-        });
+        window.naver.maps.Service.reverseGeocode(
+          {
+            coords: new window.naver.maps.LatLng(latMap, lngMap),
+          },
+          (status: number, response: any) => {
+            if (status === window.naver.maps.Service.Status.OK) {
+              const { status: geocodeStatus } = response.v2;
+              if (geocodeStatus.code === 3) {
+                setModalMessage('올바른 위치가 아닙니다.');
+                setLat(null);
+                setLng(null);
+                return; // 마커를 찍지 않고 함수 종료
+              }
+              // 마커를 찍는 로직
+              if (markerRef.current) {
+                markerRef.current.setMap(null);
+              }
+              markerRef.current = new window.naver.maps.Marker({
+                position: new window.naver.maps.LatLng(latMap, lngMap),
+                map: map.current,
+              });
+            } else {
+              console.error('Reverse Geocoding Error:', status);
+            }
+          },
+        );
       });
     }
+
+    // 지도 외의 영역에서 마우스 휠 이벤트 방지
+    const preventZoom = (e: WheelEvent) => {
+      e.preventDefault(); // 기본 스크롤 방지
+    };
+
+    // mapContainer에 이벤트 리스너 추가
+    if (mapContainer.current) {
+      mapContainer.current.addEventListener('wheel', preventZoom);
+    }
+
+    return () => {
+      // 컴포넌트 언마운트 시 이벤트 리스너 제거
+      if (mapContainer.current) {
+        mapContainer.current.removeEventListener('wheel', preventZoom);
+      }
+    };
   }, []);
 
   const handleSearch = () => {
     if (!searchQuery.trim() || searchQuery.length > 100) {
-      alert('유효하지 않은 주소입니다. 주소를 입력해 주세요 (최대 100자).');
+      setModalMessage(
+        '유효하지 않은 주소입니다. 주소를 입력해 주세요 (최대 100자).',
+      );
       return;
     }
 
@@ -210,13 +266,13 @@ function RiskMapReportPage() {
       { query: searchQuery },
       (status: number, response: any) => {
         if (status !== window.naver.maps.Service.Status.OK) {
-          alert('주소 변환에 실패했습니다.');
+          setModalMessage('주소 변환에 실패했습니다.');
           return;
         }
 
         const { addresses } = response.v2;
         if (!addresses || addresses.length === 0) {
-          alert('유효하지 않은 주소입니다.');
+          setModalMessage('유효하지 않은 주소입니다.');
           return;
         }
 
@@ -276,17 +332,21 @@ function RiskMapReportPage() {
       try {
         const result = await registDanger(dangerData);
         if (result === 200) {
-          alert('신고가 성공적으로 등록되었습니다.');
-          navigate('/risk-map'); // 신고 후 리다이렉트
+          setModalMessage('신고가 접수되었습니다');
         }
       } catch (e) {
-        alert('신고글 등록에 실패했습니다.');
+        setModalMessage('신고 등록에 실패했습니다.');
       }
     } else {
-      alert(
-        '모든 필드를 입력하고 지도를 클릭하거나 주소를 검색하여 위치를 선택하세요.',
-      );
+      setModalMessage('신고 위치를 선택하시고 제목과 내용을 채워주세요!');
     }
+  };
+
+  const handleCloseModal = () => {
+    if (modalMessage === '신고가 접수되었습니다') {
+      navigate('/risk-map'); // 신고가 접수되었을 때만 리다이렉트
+    }
+    setModalMessage('');
   };
 
   const goBack = () => {
@@ -294,82 +354,95 @@ function RiskMapReportPage() {
   };
 
   const handleCancel = () => {
-    navigate('/risk-map');
-  };
-
-  const handleResultClick = (result: any) => {
-    setLat(result.location.lat);
-    setLng(result.location.lng);
-    map.current.setCenter(
-      new window.naver.maps.LatLng(result.location.lat, result.location.lng),
-    );
-
-    if (markerRef.current) {
-      markerRef.current.setMap(null);
-    }
-
-    markerRef.current = new window.naver.maps.Marker({
-      position: new window.naver.maps.LatLng(
-        result.location.lat,
-        result.location.lng,
-      ),
-      map: map.current,
-    });
-
-    // 검색 결과 초기화
-    setSearchResults([]);
-    setSearchQuery(result.title); // 클릭한 결과 제목으로 검색창 업데이트
+    navigate(-1); // Navigate back to the previous page
   };
 
   return (
     <Container>
-      <Title>
-        <BackIcon src={backIcon} alt="back Icon" onClick={goBack} />
-        신고 등록
-      </Title>
-      <DangerP>신고 위치</DangerP>
+      <TitleContainer>
+        <BackIcon src={backIcon} onClick={goBack} />
+        <Title>의심 토지 신고하기</Title>
+      </TitleContainer>
       <SearchContainer>
         <SearchInput
           type="text"
-          placeholder="주소를 검색하세요"
+          placeholder="주소를 입력하세요." // 수정 필요
           value={searchQuery}
-          maxLength={100}
+          maxLength={30}
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyPress={handleKeyPress}
         />
         <SearchButton onClick={handleSearch}>검색</SearchButton>
       </SearchContainer>
+      {/* Render search results here */}
       {searchResults.length > 0 && (
         <SearchResultsContainer>
           {searchResults.map((result, index) => (
-            <ResultItem key={index} onClick={() => handleResultClick(result)}>
+            <ResultItem
+              key={index}
+              onClick={() => {
+                setLat(result.location.lat);
+                setLng(result.location.lng);
+                map.current.setCenter(
+                  new window.naver.maps.LatLng(
+                    result.location.lat,
+                    result.location.lng,
+                  ),
+                );
+                if (markerRef.current) {
+                  markerRef.current.setMap(null);
+                }
+                markerRef.current = new window.naver.maps.Marker({
+                  position: new window.naver.maps.LatLng(
+                    result.location.lat,
+                    result.location.lng,
+                  ),
+                  map: map.current,
+                });
+                setSearchResults([]); // 검색 결과를 초기화
+              }}
+            >
               {result.title}
             </ResultItem>
           ))}
         </SearchResultsContainer>
       )}
+      <DangerP>
+        <Icon src={mapIcon} alt="Map Icon" />
+        신고 위치
+      </DangerP>
       <MapP ref={mapContainer} />
-      <DangerP>신고 제목</DangerP>
-      <TitleContainer>
-        <TitleText
-          type="text"
-          placeholder="제목을 입력하세요(200자 이내)"
-          value={dangerTitle}
-          maxLength={200}
-          onChange={(e) => setDangerTitle(e.target.value)}
-        />
-      </TitleContainer>
-      <DangerP>신고 내용</DangerP>
+      <DangerP>
+        <Icon src={sirenIcon} alt="Siren Icon" />
+        신고 제목
+      </DangerP>
+      <TitleText
+        placeholder="제목을 입력해주세요(최대 30자)"
+        value={dangerTitle}
+        maxLength={30}
+        onChange={(e) => setDangerTitle(e.target.value)}
+      />
+      <DangerP>
+        <Icon src={speakerIcon} alt="Speaker Icon" />
+        신고 내용
+      </DangerP>
       <Content
-        placeholder="내용을 입력하세요(3000자 이내)"
+        placeholder="상세내용을 입력해주세요(최대 1400자)"
         value={dangerContent}
-        maxLength={3000}
+        maxLength={1400}
         onChange={(e) => setDangerContent(e.target.value)}
       />
       <ButtonDiv>
-        <DangerButton onClick={handleSubmit}>작성</DangerButton>
         <CancelButton onClick={handleCancel}>취소</CancelButton>
+        <DangerButton onClick={handleSubmit}>작성</DangerButton>
       </ButtonDiv>
+      {/* 모달 추가 */}
+      {modalMessage && (
+        <LandInformationRegistrationModal
+          message={modalMessage}
+          onClose={handleCloseModal}
+        />
+      )}
     </Container>
   );
 }

@@ -40,6 +40,7 @@ const ModalContainer = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   text-align: center;
   animation: ${slideIn} 0.3s ease; /* 모달 슬라이드 인 애니메이션 */
+  width: 65%;
 `;
 
 const CloseButton = styled.button`
@@ -60,8 +61,13 @@ interface LandInformationRegistrationModalProps {
 const LandInformationRegistrationModal: React.FC<
   LandInformationRegistrationModalProps
 > = ({ message, onClose }) => {
+  const handleBackgroundClick = (event: React.MouseEvent) => {
+    if (event.target === event.currentTarget) {
+      onClose();
+    }
+  };
   return (
-    <ModalBackground>
+    <ModalBackground onClick={handleBackgroundClick}>
       <ModalContainer>
         <h4>{message}</h4>
         <CloseButton onClick={onClose}>닫기</CloseButton>

@@ -61,8 +61,15 @@ const TabItem = styled.div<{ $isActive: boolean }>`
 `;
 
 const Content = styled.div`
-  padding: 20px;
+  margin-top: 10px;
   background-color: #f3f7fb;
+`;
+
+const ErrorMessageContainer = styled.div`
+  display: flex;
+  justify-content: center; // 가로 정렬
+  align-items: center; // 세로 정렬
+  height: 10vh; // 에러 메시지 컨테이너의 높이를 설정하여 반응형으로 적절히 조정
 `;
 
 function AddressSearch() {
@@ -76,7 +83,7 @@ function AddressSearch() {
 
   useEffect(() => {
     if (searchValue && (landDetail === null || landDetail === undefined)) {
-      setErrorMessage('국토교통부에서 제공하지 않는 지번 정보입니다.');
+      setErrorMessage('국토교통부의 정보 미제공 지번입니다.');
     } else {
       setErrorMessage('');
     }
@@ -101,7 +108,12 @@ function AddressSearch() {
     // @ts-ignore
     new window.daum.Postcode({
       oncomplete: (data: any) => {
-        const fullAddress = data.jibunAddress;
+        let fullAddress = '';
+        if (data.jibunAddress === '') {
+          fullAddress = data.autoJibunAddress;
+        } else {
+          fullAddress = data.jibunAddress;
+        }
         // Extract district and detailed address
         const addressParts = fullAddress.split(' ');
         const district = `${data.sigungu} ${data.bname}`;
@@ -112,6 +124,7 @@ function AddressSearch() {
             if (response[0] === undefined) {
               console.error('no Address response');
               dispatch(setLandDetail(null));
+              dispatch(setLawInfo([]));
               setSearchValue(fullAddress);
               setErrorMessage('국토교통부에서 제공하지 않는 지번 정보입니다.');
             } else {
@@ -164,7 +177,13 @@ function AddressSearch() {
           onClick={handleAddressSearch}
         />
       </SearchContainer>
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}{' '}
+      {errorMessage && (
+        <ErrorMessageContainer>
+          <p style={{ color: 'red', fontWeight: 'bold', fontSize: '1.0em' }}>
+            {errorMessage}
+          </p>
+        </ErrorMessageContainer>
+      )}
       <TabsContainer>
         <TabItem
           $isActive={activeTab === 'landInfo'}

@@ -2,17 +2,19 @@ import React from 'react';
 import styled from 'styled-components';
 import lawIcon from '../../assets/images/icon/law.png'; // 아이콘 경로 확인 필요
 
-// Ordinance 타입 정의
-interface Ordinance {
-  lawName: string;
-  lawItemNumber: string;
-  lawContent: string;
+// Item 타입 정의
+interface Item {
+  사건명: string;
+  사건번호: string;
+  사건종류명: string;
+  판례내용: string;
+  판결유형: string;
 }
 
 interface LawDetailModalProps {
   isOpen: boolean;
   onRequestClose: () => void;
-  ordinance: Ordinance;
+  item: Item;
 }
 
 const ModalOverlay = styled.div`
@@ -95,7 +97,7 @@ const CloseButton = styled.button`
 const LawDetailModal: React.FC<LawDetailModalProps> = ({
   isOpen,
   onRequestClose,
-  ordinance,
+  item,
 }) => {
   if (!isOpen) return null;
 
@@ -126,16 +128,16 @@ const LawDetailModal: React.FC<LawDetailModalProps> = ({
   };
 
   return (
-    <ModalOverlay onClick={onRequestClose}>
-      <ModalContainer onClick={(e) => e.stopPropagation()}>
+    <ModalOverlay>
+      <ModalContainer>
         <CloseButton onClick={onRequestClose}>×</CloseButton>
+        <LawName>{item.사건명}</LawName>
         <LawHeader>
           <LawIcon src={lawIcon} />
-          <ModalTitle>법령 정보</ModalTitle>
+          <ModalTitle>{item.사건종류명}</ModalTitle>
         </LawHeader>
-        <LawName>{ordinance.lawName}</LawName>
         <Divider />
-        <LawContent>{formatLawContent(ordinance.lawContent)}</LawContent>
+        <LawContent>{formatLawContent(item.판례내용)}</LawContent>
       </ModalContainer>
     </ModalOverlay>
   );

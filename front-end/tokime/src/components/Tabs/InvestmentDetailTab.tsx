@@ -13,6 +13,8 @@ import roadIcon from '../../assets/images/landInfo/road.png';
 import scaleIcon from '../../assets/images/landInfo/scale.png';
 import useIcon from '../../assets/images/landInfo/use.png';
 import NaverMapProps from './NaverMapProps';
+import { deleteInvestDetail } from '../../api/landInvestAxios';
+import DeleteModal from '../modals/DeleteModal';
 
 const BackIcon = styled.img`
   cursor: pointer;
@@ -80,6 +82,7 @@ const InvestmentDetailTab: React.FC<{
   const navigate = useNavigate();
 
   const [showInfo, setShowInfo] = useState<{ [key: string]: boolean }>({});
+  const [showModal, setShowModal] = useState(false); // 모달 표시 상태
 
   const handleBackClick = () => {
     navigate('/investment');
@@ -98,6 +101,24 @@ const InvestmentDetailTab: React.FC<{
 
       return newShowInfo; // 새로운 상태를 반환
     });
+  };
+  const handleDeleteClick = () => {
+    setShowModal(true); // 모달 열기
+  };
+
+  const confirmDelete = async () => {
+    if (investmentInfoProp) {
+      const result = await deleteInvestDetail(
+        investmentInfoProp.investmentPlannedLandId.toString(),
+      );
+      if (result) {
+        navigate('/investment');
+      }
+    }
+    setShowModal(false); // 모달 닫기
+  };
+  const cancelDelete = () => {
+    setShowModal(false); // 모달 닫기
   };
 
   const getLandUseStatusDescription = (landUseStatus: string) => {
@@ -293,7 +314,11 @@ const InvestmentDetailTab: React.FC<{
             },
             {
               label: '토지이용상황',
-              value: investmentInfoProp?.landUseStatus,
+              value: investmentInfoProp?.landUseStatus || (
+                <span style={{ color: 'red' }}>
+                  국토교통부에서 제공하는 정보가 없습니다.
+                </span>
+              ),
               tooltip: getLandUseStatusDescription(
                 investmentInfoProp?.landUseStatus || '',
               ),
@@ -302,7 +327,11 @@ const InvestmentDetailTab: React.FC<{
             },
             {
               label: '경사도',
-              value: investmentInfoProp?.landGradient,
+              value: investmentInfoProp?.landGradient || (
+                <span style={{ color: 'red' }}>
+                  국토교통부에서 제공하는 정보가 없습니다.
+                </span>
+              ),
               tooltip: getGradientDescription(
                 investmentInfoProp?.landGradient || '',
               ),
@@ -311,7 +340,11 @@ const InvestmentDetailTab: React.FC<{
             },
             {
               label: '도로접면',
-              value: investmentInfoProp?.landRoad,
+              value: investmentInfoProp?.landRoad || (
+                <span style={{ color: 'red' }}>
+                  국토교통부에서 제공하는 정보가 없습니다.
+                </span>
+              ),
               tooltip: getRoadAccessDescription(
                 investmentInfoProp?.landRoad || '',
               ),
@@ -320,7 +353,13 @@ const InvestmentDetailTab: React.FC<{
             },
             {
               label: '공시지가',
-              value: `㎡당 ${investmentInfoProp?.landPrice.toLocaleString()} 원`,
+              value: investmentInfoProp?.landPrice ? (
+                `㎡당 ${investmentInfoProp?.landPrice.toLocaleString()} 원`
+              ) : (
+                <span style={{ color: 'red' }}>
+                  국토교통부에서 제공하는 정보가 없습니다.
+                </span>
+              ),
               tooltip:
                 '공시지가는 정부가 매년 전국의 토지에 대해 공시하는 표준적인 땅값입니다. 주로 국토교통부에서 발표하며 세금 부과, 부동산 거래, 보상 평가 등의 기준이 되는 중요한 자료입니다. 다만, 공시지가는 토지의 거래 가격과는 다소 차이가 있을 수 있습니다.',
               key: `landPrice-${investmentInfoProp?.investmentPlannedLandId}`,
@@ -409,7 +448,17 @@ const InvestmentDetailTab: React.FC<{
             </div>
           ))}
         </InfoBox>
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <SmallButton color="#ff4d4d" onClick={handleDeleteClick}>
+            삭제
+          </SmallButton>
+        </div>
       </div>
+      <DeleteModal // 모달 추가
+        isVisible={showModal}
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+      />
     </div>
   );
 };

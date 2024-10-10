@@ -25,7 +25,7 @@ const BackIcon = styled.img`
 const MapBox = styled.div`
   height: 200px;
   margin-top: 1vh;
-  margin-bottom: 3vh;
+  margin-bottom: 1vh;
   border: 2px solid #ccc;
   border-radius: 8px;
   background-color: #f0f0f0;
@@ -469,6 +469,7 @@ const LandDetailTab: React.FC = () => {
                 </p>
               </div>
             ))}
+
             {authCookie && (
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <button
@@ -480,7 +481,7 @@ const LandDetailTab: React.FC = () => {
                     color: '#fff',
                     border: '#00C99C',
                     padding: 'calc(0.5vw + 0.5vh)',
-                    margin: 'calc(1vw + 1vh)',
+                    margin: 'calc(1vw)',
                     borderRadius: 'calc(1vw + 1vh)',
                   }}
                   onClick={handleInvestClick}
@@ -493,18 +494,26 @@ const LandDetailTab: React.FC = () => {
         </div>
       ) : (
         // 선택된 상세 정보가 없으면
-        <div style={{ textAlign: 'center', marginTop: '20px', opacity: 0.85 }}>
+        <div
+          style={{
+            textAlign: 'center',
+            marginTop: '3vh',
+            opacity: 0.85,
+          }}
+        >
           <img
             src={nodataimg}
             alt="No data available"
-            style={{ width: '300px', height: 'auto' }} // 이미지 크기 조정
+            style={{ width: '50vw', height: 'auto', opacity: 0.65 }}
           />
           <div
             style={{
               color: '#27C384',
               fontWeight: 'bold',
-              marginTop: '10px',
+              marginTop: '1vh',
               fontSize: '1.5em',
+              wordBreak: 'keep-all',
+              whiteSpace: 'normal',
             }}
           >
             <p>원하는 토지를 검색해보세요!</p>
