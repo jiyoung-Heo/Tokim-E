@@ -3,8 +3,6 @@ import { createGlobalStyle } from 'styled-components';
 // 전역 스타일 정의
 const GlobalStyle = createGlobalStyle`
   * {
-    margin: 0;
-    padding: 0;
     box-sizing: border-box;
   }
 
@@ -19,11 +17,12 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    display: flex;
-    justify-content: center;
+    margin: 0;
+    padding: 3vh 5vw;
     align-items: flex-start;
     min-height: 100vh;
   }
+
 `;
 
 export default GlobalStyle;

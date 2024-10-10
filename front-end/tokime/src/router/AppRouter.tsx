@@ -1,12 +1,13 @@
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import StartPage from '../pages/StartPage';
 import MainPage from '../pages/MainPage';
 import AddressSearch from '../pages/AddressSearch';
 import LandPurchaseKnowledge from '../pages/LandPurchaseKnowledge';
 import LandTerms from '../pages/LandTerms';
 import LandTermDetail from '../pages/LandTermDetail';
-import MyPage from '../pages/MyPage';
+import StoryAnalysis from '../pages/StoryAnalysis';
+import StoryAnalysisResult from '../pages/StoryAnalysisResult'; // 새로 추가된 페이지
 import InvestmentPage from '../pages/InvestmentPage';
 import InvestmentRegisterPage from '../pages/InvestmentRegisterPage';
 import InvestmentDetailPage from '../pages/InvestmentDetailPage'; // 투자 예정지 상세 페이지 추가
@@ -15,6 +16,8 @@ import LoginRequiredPage from '../pages/LoginRequiredPage';
 import RiskMapPage from '../pages/RiskMapPage'; // 새로 추가
 import Layout from '../components/layouts/layout'; // Layout 추가
 import RiskMapReportPage from '../pages/RiskMapReportPage';
+import LandScorePage from '../pages/LandScorePage';
+import ProtectedRoute from './ProtectedRoute';
 
 function AppRouter() {
   return (
@@ -63,43 +66,75 @@ function AppRouter() {
         }
       />
       <Route
-        path="/my-page"
+        path="/story-analysis"
         element={
-          <Layout>
-            <MyPage />
-          </Layout>
+          <ProtectedRoute
+            element={
+              <Layout>
+                <StoryAnalysis />
+              </Layout>
+            }
+          />
+        } // 보호된 라우트
+      />
+      <Route
+        path="/story-analysis/:result"
+        element={
+          <ProtectedRoute
+            element={
+              <Layout>
+                <StoryAnalysisResult /> {/* 분석 결과 페이지 */}
+              </Layout>
+            }
+          />
         }
       />
       <Route
         path="/investment"
         element={
-          <Layout>
-            <InvestmentPage />
-          </Layout>
+          <ProtectedRoute
+            element={
+              <Layout>
+                <InvestmentPage />
+              </Layout>
+            }
+          />
         }
       />
       <Route
         path="/investment-register"
         element={
-          <Layout>
-            <InvestmentRegisterPage />
-          </Layout>
+          <ProtectedRoute
+            element={
+              <Layout>
+                <InvestmentRegisterPage />
+              </Layout>
+            }
+          />
         }
       />
       <Route
-        path="/investment-detail"
+        path="/investment-detail/:invest"
         element={
-          <Layout>
-            <InvestmentDetailPage />
-          </Layout>
+          <ProtectedRoute
+            element={
+              <Layout>
+                <InvestmentDetailPage />
+              </Layout>
+            }
+          />
         }
       />
       <Route
         path="/land-purchase-quiz"
         element={
-          <Layout>
-            <LandPurchaseQuiz />
-          </Layout>
+          <ProtectedRoute
+            element={
+              <Layout>
+                <LandPurchaseQuiz />
+              </Layout>
+            }
+          />
         }
       />
       <Route
@@ -118,6 +153,16 @@ function AppRouter() {
           </Layout>
         }
       />
+      <Route
+        path="/land-score"
+        element={
+          <Layout>
+            <LandScorePage />
+          </Layout>
+        }
+      />
+      <Route path="*" element={<Navigate to="/main" replace />} />{' '}
+      {/* 모든 잘못된 경로를 /main으로 리디렉션 */}
     </Routes>
   );
 }

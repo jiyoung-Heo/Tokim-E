@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { RootState } from '../redux/store';
 import KakaoIcon from '../assets/images/icon/kakao.svg'; // 이미지 import
 import GoogleIcon from '../assets/images/icon/Google.png'; // 이미지 import
 import TokimeIcon from '../assets/images/icon/Tokime.png'; // 이미지 import
 import LogoImage from '../assets/images/Tokimlogo.png'; // 로고 이미지 import
+import { persistor } from '../redux/reduxStore';
 
 // 이미지와 버튼 스타일 정의
 const StartPageContainer = styled.div`
@@ -11,7 +15,7 @@ const StartPageContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 90vh;
 `;
 
 const Logo = styled.img`
@@ -27,6 +31,7 @@ const Title = styled.h1`
   font-weight: 800; /* 굵기 강제 설정 */
   text-align: center;
 `;
+const BackIcon = styled.img``;
 
 const SubTitle = styled.p`
   font-size: 15px;
@@ -67,9 +72,25 @@ const Icon = styled.img`
   left: 10px; /* 왼쪽에서 10px 떨어짐 */
 `;
 
+function getCookieValue(name: string): string | null {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    const cookieValue = parts.pop();
+    if (cookieValue) {
+      return cookieValue.split(';').shift() || null; // split이나 shift가 undefined일 경우 null 반환
+    }
+  }
+  return null;
+}
+
 function StartPage() {
-  const kakaoLoginUrl = `api/oauth2/authorization/kakao`;
-  const googleLoginUrl = `api/oauth2/authorization/google`;
+  const userInfo = useSelector((state: RootState) => state.user);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const kakaoLoginUrl = `${process.env.REACT_APP_API_URL}/oauth2/authorization/kakao`;
+  const googleLoginUrl = `${process.env.REACT_APP_API_URL}/oauth2/authorization/google`;
 
   const handleKakaoLogin = () => {
     window.location.href = kakaoLoginUrl;
@@ -80,8 +101,18 @@ function StartPage() {
   };
 
   const handleGuestLogin = () => {
+    persistor.purge();
+    dispatch({ type: 'RESET_ALL' });
     window.location.href = '/main';
   };
+
+  useEffect(() => {
+    const authCookie = getCookieValue('Authorization');
+    if (authCookie !== null) {
+      navigate('/main');
+    }
+    return undefined;
+  }, [userInfo.email, navigate]);
 
   return (
     <StartPageContainer>
