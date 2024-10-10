@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { registDanger } from '../api/dangerAxios';
 import LandInformationRegistrationModal from '../components/modals/LandInformationRegistrationModal';
 import backIcon from '../assets/images/icon/left-actionable.png';
+import mapIcon from '../assets/images/icon/icon-map.png';
+import sirenIcon from '../assets/images/icon/icon-siren.png';
+import speakerIcon from '../assets/images/icon/icon-speaker.png';
 
 // 필요한 스타일 정의
 const Container = styled.div`
@@ -106,16 +109,24 @@ const Content = styled.textarea`
   border-radius: 10px;
   margin-bottom: 1vh;
   margin-top: 1vh;
-`;
-
-const DangerP = styled.p`
-  margin-top: 1vh;
-  margin-bottom: 1vh;
-  font-size: 17px;
   font-weight: bold;
 `;
 
+const DangerP = styled.p`
+  margin: 1vh 0;
+  font-size: 17px; /* Adjust this size as needed */
+  font-weight: bold;
+  display: flex; /* Use flexbox for alignment */
+  align-items: center; /* Center items vertically */
+`;
+
+const Icon = styled.img`
+  width: 20px; /* Set a fixed width */
+  height: 20px; /* Set a fixed height */
+  margin-right: 8px; /* Space between icon and text */
+`;
 const MapP = styled.div`
+  weight: 100%;
   margin: 1vh;
   height: 25vh;
   border: none;
@@ -204,7 +215,7 @@ function RiskMapReportPage() {
             if (status === window.naver.maps.Service.Status.OK) {
               const { status: geocodeStatus } = response.v2;
               if (geocodeStatus.code === 3) {
-                setModalMessage('없는 결과입니다.');
+                setModalMessage('올바른 위치가 아닙니다.');
                 setLat(null);
                 setLng(null);
                 return; // 마커를 찍지 않고 함수 종료
@@ -396,16 +407,25 @@ function RiskMapReportPage() {
           ))}
         </SearchResultsContainer>
       )}
-      <DangerP>신고 위치</DangerP>
+      <DangerP>
+        <Icon src={mapIcon} alt="Map Icon" />
+        신고 위치
+      </DangerP>
       <MapP ref={mapContainer} />
-      <DangerP>신고 제목</DangerP>
+      <DangerP>
+        <Icon src={sirenIcon} alt="Siren Icon" />
+        신고 제목
+      </DangerP>
       <TitleText
         placeholder="제목을 입력해주세요(최대 30자)"
         value={dangerTitle}
         maxLength={30}
         onChange={(e) => setDangerTitle(e.target.value)}
       />
-      <DangerP>신고 내용</DangerP>
+      <DangerP>
+        <Icon src={speakerIcon} alt="Speaker Icon" />
+        신고 내용
+      </DangerP>
       <Content
         placeholder="상세내용을 입력해주세요(최대 1400자)"
         value={dangerContent}
