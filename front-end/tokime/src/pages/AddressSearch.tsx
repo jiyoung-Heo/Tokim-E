@@ -65,6 +65,13 @@ const Content = styled.div`
   background-color: #f3f7fb;
 `;
 
+const ErrorMessageContainer = styled.div`
+  display: flex;
+  justify-content: center; // 가로 정렬
+  align-items: center; // 세로 정렬
+  height: 10vh; // 에러 메시지 컨테이너의 높이를 설정하여 반응형으로 적절히 조정
+`;
+
 function AddressSearch() {
   const [activeTab, setActiveTab] = useState('landInfo');
   const [searchValue, setSearchValue] = useState('');
@@ -76,7 +83,7 @@ function AddressSearch() {
 
   useEffect(() => {
     if (searchValue && (landDetail === null || landDetail === undefined)) {
-      setErrorMessage('국토교통부에서 제공하지 않는 지번 정보입니다.');
+      setErrorMessage('국토교통부의 정보 미제공 지번입니다.');
     } else {
       setErrorMessage('');
     }
@@ -170,7 +177,13 @@ function AddressSearch() {
           onClick={handleAddressSearch}
         />
       </SearchContainer>
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}{' '}
+      {errorMessage && (
+        <ErrorMessageContainer>
+          <p style={{ color: 'red', fontWeight: 'bold', fontSize: '1.2em' }}>
+            {errorMessage}
+          </p>
+        </ErrorMessageContainer>
+      )}
       <TabsContainer>
         <TabItem
           $isActive={activeTab === 'landInfo'}
