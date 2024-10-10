@@ -319,6 +319,7 @@ const RiskMapPage: React.FC = () => {
                       display: 'flex',
                       alignItems: 'center',
                       marginTop: '5px',
+                      whiteSpace: 'pre-line', // 줄바꿈을 반영
                     }}
                   >
                     <img
