@@ -113,8 +113,6 @@ const InvestmentDetailTab: React.FC<{
       );
       if (result) {
         navigate('/investment');
-      } else {
-        alert('삭제에 실패했습니다.');
       }
     }
     setShowModal(false); // 모달 닫기
