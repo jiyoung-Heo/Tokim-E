@@ -272,7 +272,8 @@ const StoryAnalysisResult = () => {
     setIsPreviousStoryModalOpen(false);
   };
   const goBack = () => {
-    navigate(-1);
+    // navigate(-1);
+    navigate('/story-analysis');
   };
 
   useEffect(() => {
