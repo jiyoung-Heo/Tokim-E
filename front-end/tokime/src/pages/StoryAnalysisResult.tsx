@@ -54,6 +54,7 @@ const StoryContainer = styled.div`
   white-space: pre-wrap;
   font-size: 4vw;
   color: #333333;
+  word-break: break-word; /* 단어가 너무 길 경우 줄바꿈 */
 `;
 
 const PreviousStoryButton = styled.button`
@@ -137,7 +138,7 @@ const NewsContent = styled.a`
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-
+  word-break: break-word; /* 긴 영어 단어 줄바꿈 처리 */
   &:hover {
     text-decoration: underline;
   }
@@ -218,7 +219,7 @@ const LawTitle = styled.div`
   font-size: 4vw;
   font-weight: bold;
   color: #333333;
-  word-break: keep-all;
+  word-break: break-word; /* 긴 단어 줄바꿈 처리 */
   white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;
