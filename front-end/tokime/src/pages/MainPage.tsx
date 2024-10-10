@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { useSwipeable } from 'react-swipeable';
 import SearchIcon from '../assets/images/icon/searchmapicon.png'; // 각 아이콘 이미지
 import RiskIcon from '../assets/images/icon/dangermapicon.png';
 import DictionaryIcon from '../assets/images/icon/dictionary.png';
@@ -147,6 +148,7 @@ function getCookieValue(name: string): string | null {
 function MainPage() {
   const dispatch = useDispatch();
   const [currentCarousel, setCurrentCarousel] = useState(0); // 현재 캐러셀 인덱스
+
   const carouselData: CarouselData[] = [
     {
       to: '/land-purchase-quiz',
@@ -161,6 +163,17 @@ function MainPage() {
       imageSrc: CarouselImage2,
     },
   ];
+  // 스와이프 핸들러 설정
+  const handlers = useSwipeable({
+    onSwipedLeft: () =>
+      setCurrentCarousel((prev) =>
+        prev === carouselData.length - 1 ? 0 : prev + 1,
+      ),
+    onSwipedRight: () =>
+      setCurrentCarousel((prev) =>
+        prev === 0 ? carouselData.length - 1 : prev - 1,
+      ),
+  });
 
   useEffect(() => {
     const authCookie = getCookieValue('Authorization');
@@ -200,7 +213,6 @@ function MainPage() {
   return (
     <Container>
       <Logo src={TokimLogo} alt="Tokim Logo" />
-
       <LargeIconGrid>
         <LargeIconBox to="/address-search">
           <LargeIconTitle>지번 검색</LargeIconTitle>
@@ -213,7 +225,6 @@ function MainPage() {
           <LargeIcon src={RiskIcon} alt="위험지도" />
         </LargeIconBox>
       </LargeIconGrid>
-
       <SmallIconGrid>
         <SmallIconBox to="/land-terms">
           <SmallIconTitle>토지 용어 사전</SmallIconTitle>
@@ -240,14 +251,18 @@ function MainPage() {
           <SmallIcon src={InvestmentIcon} alt="투자 예정지" />
         </SmallIconBox>
       </SmallIconGrid>
-
       {/* 현재 캐러셀 아이템 */}
-      <Carousel
-        to={carouselData[currentCarousel].to}
-        bgColor={carouselData[currentCarousel].bgColor}
-        content={carouselData[currentCarousel].content}
-        imageSrc={carouselData[currentCarousel].imageSrc}
-      />
+      <div {...handlers}>
+        {' '}
+        {/* 추가된 부분 */}
+        <Carousel
+          to={carouselData[currentCarousel].to}
+          bgColor={carouselData[currentCarousel].bgColor}
+          content={carouselData[currentCarousel].content}
+          imageSrc={carouselData[currentCarousel].imageSrc}
+        />
+      </div>{' '}
+      {/* 추가된 부분 */}
     </Container>
   );
 }

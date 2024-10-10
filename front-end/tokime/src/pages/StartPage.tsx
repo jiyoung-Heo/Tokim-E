@@ -15,7 +15,7 @@ const StartPageContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 90vh;
 `;
 
 const Logo = styled.img`
@@ -31,6 +31,7 @@ const Title = styled.h1`
   font-weight: 800; /* 굵기 강제 설정 */
   text-align: center;
 `;
+const BackIcon = styled.img``;
 
 const SubTitle = styled.p`
   font-size: 15px;

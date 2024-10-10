@@ -19,8 +19,8 @@ const NaverMapProps: React.FC<NaverMapPropsProps> = ({ landAddress }) => {
   const [hasError, setHasError] = useState(false);
   const addressParts = landAddress.split(' ');
 
-  const district = `${addressParts[1]} ${addressParts[2]}`;
-  const address = addressParts.slice(3).join(' ');
+  const district = addressParts.slice(1, -1).join(' '); // 1번째부터 마지막 전까지
+  const address = addressParts[addressParts.length - 1]; // 마지막 요소
 
   useEffect(() => {
     const loadNaverMapApi = () => {
@@ -65,7 +65,7 @@ const NaverMapProps: React.FC<NaverMapPropsProps> = ({ landAddress }) => {
         const timestamp = new Date().getTime();
         markerImageUrl += `?t=${timestamp}`;
 
-        console.log(markerImageUrl);
+        // console.log(markerImageUrl);
         // 마커가 이미 존재하는지 확인
         if (markerRef.current) {
           // 기존 마커가 존재하면 업데이트
@@ -81,7 +81,7 @@ const NaverMapProps: React.FC<NaverMapPropsProps> = ({ landAddress }) => {
             scaledSize: new window.naver.maps.Size(30, 30),
           },
         });
-        console.log(markerRef.current);
+        // console.log(markerRef.current);
       }
     };
 
@@ -105,20 +105,21 @@ const NaverMapProps: React.FC<NaverMapPropsProps> = ({ landAddress }) => {
           const landData = await getSearchLandInfo(district, address);
           if (landData && landData.length > 0) {
             const { landDanger } = landData[0];
-            console.log(
-              `Coordinates: x=${x}, y=${y}, Land danger: ${landDanger}`,
-            );
+            // console.log(
+            //   `Coordinates: x=${x}, y=${y}, Land danger: ${landDanger}`,
+            // );
             initMap({ y, x }, landDanger);
           } else {
-            console.error('지번 정보를 찾을 수 없습니다.');
-            setHasError(true);
+            initMap({ y, x }, 0);
+            // console.error('지번 정보를 찾을 수 없습니다.');
+            // setHasError(true);
           }
         } else {
-          console.error('주소를 찾을 수 없습니다:', data.errorMessage);
+          // console.error('주소를 찾을 수 없습니다:', data.errorMessage);
           setHasError(true);
         }
       } catch (error) {
-        console.error('Fetch 오류 발생:', error);
+        // console.error('Fetch 오류 발생:', error);
         setHasError(true);
       }
     };

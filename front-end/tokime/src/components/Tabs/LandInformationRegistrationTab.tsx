@@ -149,7 +149,7 @@ function LandInformationRegistrationTab({
   const [errorMessage, setErrorMessage] = useState(''); // 에러 메시지 상태 추가
   const maxLandScale = landInfo
     ? Math.floor(landInfo.landScale / 3.3)
-    : Number.MAX_SAFE_INTEGER;
+    : 2000000000;
 
   const openModal = (message: string) => {
     setModalMessage(message);
@@ -277,11 +277,12 @@ function LandInformationRegistrationTab({
             const value = e.target.value === '' ? '' : e.target.value;
             setExpectedLandNickname(typeof value === 'string' ? value : ''); // 빈 문자열 또는 0 이상인 정수만 허용, 최대값은 안전한 정수 범위 내
           }}
-          placeholder="예: 대전시청"
+          placeholder="최대 10글자"
+          maxLength={10} // 여기에 추가: 최대 10글자 제한
         />
       </LandInfoFieldContainer>
       <LandInfoFieldContainer>
-        <LandInfoFieldLabel>예정 평수</LandInfoFieldLabel>
+        <LandInfoFieldLabel>구매 평수</LandInfoFieldLabel>
         <UserSearchInput
           type="number"
           min="1"
@@ -298,14 +299,14 @@ function LandInformationRegistrationTab({
             );
           }}
           placeholder={
-            maxLandScale === Number.MAX_SAFE_INTEGER
+            maxLandScale === 2000000000
               ? '구매 예정 평수를 입력하세요.'
               : `최대 입력 가능 값: ${maxLandScale} 평`
           }
         />
       </LandInfoFieldContainer>
       <LandInfoFieldContainer>
-        <LandInfoFieldLabel>예정 가격</LandInfoFieldLabel>
+        <LandInfoFieldLabel>구매 가격</LandInfoFieldLabel>
         <UserSearchInput
           type="number"
           min="0"
@@ -325,7 +326,7 @@ function LandInformationRegistrationTab({
         />
       </LandInfoFieldContainer>
       <LandInfoFieldContainer>
-        <LandInfoFieldLabel>예상 평당가</LandInfoFieldLabel>
+        <LandInfoFieldLabel>평당가</LandInfoFieldLabel>
         <UserSearchInput
           value={
             Number(expectedArea) > 0 && Number(expectedPrice) > 0

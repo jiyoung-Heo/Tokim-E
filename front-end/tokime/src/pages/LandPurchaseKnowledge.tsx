@@ -92,7 +92,8 @@ function LandPurchaseKnowledge() {
   const navigate = useNavigate(); // useNavigate 훅 사용
 
   const goBack = () => {
-    navigate(-1); // 이전 페이지로 이동
+    // navigate(-1); // 이전 페이지로 이동
+    navigate('/main');
   };
 
   return (

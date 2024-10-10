@@ -4,12 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { getDangerInfo } from '../api/dangerAxios';
 import backIcon from '../assets/images/icon/left-actionable.png';
 import searchIcon from '../assets/images/icon/search.svg';
+import RiskMapModal from '../components/modals/RiskMapModal';
 
-// 스타일드 컴포넌트 정의
 const Container = styled.div`
   width: 100%;
   height: 100%;
   background: #f3f7fb;
+  touch-action: none; /* 확대/축소 비활성화 */
 `;
 
 const Title = styled.h2`
@@ -30,7 +31,7 @@ const SearchContainer = styled.div`
   padding: 10px;
   background-color: #f3f7fb;
   display: flex;
-  align-items: center; // 세로 중앙 정렬
+  align-items: center;
 `;
 
 const SearchInput = styled.input`
@@ -49,10 +50,13 @@ const SearchIcon = styled.img`
 `;
 
 const RegistContainer = styled.div`
-  position: relative; // relative로 변경
-  margin-top: 3vh; // 리스트와의 간격
-  z-index: 800; // 다른 요소들과 겹치지 않도록 z-index 설정
-  margin-left: 15vw;
+  position: relative;
+  margin-top: 3vh;
+  z-index: 800;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  justify-content: center;
 `;
 
 const RegisterButton = styled.button`
@@ -73,23 +77,36 @@ const RegisterButton = styled.button`
 const MapContainer = styled.div`
   width: 100%;
   height: 55vh;
+  touch-action: auto; /* 지도 부분은 확대/축소 가능 */
+`;
+
+const MarkerListContainer = styled.div`
+  max-height: 30vh;
+  overflow-y: auto;
+  margin: 10px 0;
+  border: 1px solid #27c384;
+  border-radius: 5px;
+  background-color: #fff;
 `;
 
 const MarkerList = styled.ul`
   list-style: none;
   padding: 0;
+  margin: 0;
 `;
 
 const MarkerItem = styled.li`
   padding: 10px;
-  margin: 5px 0;
   background-color: #fff;
-  border: 1px solid #27c384;
-  border-radius: 5px;
   cursor: pointer;
+  border-bottom: 1px solid #27c384;
 
   &:hover {
     background-color: #f0f0f0;
+  }
+
+  &:last-child {
+    border-bottom: none;
   }
 `;
 
@@ -99,6 +116,10 @@ const RiskMapPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [markers, setMarkers] = useState<any[]>([]);
   const [filteredMarkers, setFilteredMarkers] = useState<any[]>([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedMarker, setSelectedMarker] = useState<any>(null);
+  const [listVisible, setListVisible] = useState(false);
+  const listRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
 
   useEffect(() => {
@@ -127,13 +148,13 @@ const RiskMapPage: React.FC = () => {
                 center: new window.naver.maps.LatLng(latitude, longitude),
                 zoom: 14,
                 draggable: true,
-                zoomControl: true,
+                zoomControl: false,
                 scaleControl: true,
                 minZoom: 6,
                 maxZoom: 25,
               });
               mapRef.current = map;
-              resolve(true); // Resolve the promise after map is initialized
+              resolve(true);
             },
             (error) => {
               console.error('위치 정보 가져오기 실패:', error);
@@ -141,13 +162,13 @@ const RiskMapPage: React.FC = () => {
                 center: new window.naver.maps.LatLng(37.5665, 126.978),
                 zoom: 14,
                 draggable: true,
-                zoomControl: true,
+                zoomControl: false,
                 scaleControl: true,
                 minZoom: 6,
                 maxZoom: 25,
               });
               mapRef.current = map;
-              resolve(true); // Resolve the promise after map is initialized
+              resolve(true);
             },
           );
         }
@@ -167,96 +188,14 @@ const RiskMapPage: React.FC = () => {
         map: mapRef.current,
         icon: {
           url: 'markers/report.png',
-          scaledSize: new window.naver.maps.Size(30, 30), // 마커 크기
+          scaledSize: new window.naver.maps.Size(30, 30),
         },
       });
 
-      const infoWindow = new window.naver.maps.InfoWindow({
-        content: `
-          <div id="infoWindow-${lat}-${lng}" style="position: relative; padding:10px; max-width:300px; border-radius:10px; border: 1px solid #27C384; background-color: #fff;">
-            <h4 style="text-align: center; font-size: 18px; color: #333;"><${dangerTitle}></h4>
-            <hr style="border: 0; height: 1px; background-color: #ccc; margin: 10px 0;">
-            <p style="color: #777; font-size: 14px; margin: 0;">주소: 불러오는 중...</p>
-            <hr style="border: 0; height: 1px; background-color: #ccc; margin: 10px 0;">
-            <p style="color: #555; font-size: 14px;">신고 내용: ${dangerContent}</p>
-            <div style="position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 10px solid #27C384;"></div>
-          </div>
-        `,
-        backgroundColor: 'transparent',
-        borderColor: '#27C384',
-        borderWidth: '1px',
-        anchorSize: new window.naver.maps.Size(0, 0),
-        pixelOffset: new window.naver.maps.Point(-100, -200), // 초기 값 설정
-      });
-
-      // 마커 클릭 이벤트
       window.naver.maps.Event.addListener(marker, 'click', () => {
-        // 인포윈도우가 열리기 전에 요소 크기를 계산해서 pixelOffset을 조정함
-        setTimeout(() => {
-          const infoWindowElement = document.getElementById(
-            `infoWindow-${lat}-${lng}`,
-          );
-          if (infoWindowElement) {
-            const rect = infoWindowElement.getBoundingClientRect();
-            const newPixelOffset = new window.naver.maps.Point(
-              -(rect.width / 2),
-              -(rect.height + 10),
-            ); // 요소의 크기에 따라 pixelOffset 재설정
-            infoWindow.setOptions({ pixelOffset: newPixelOffset });
-          }
-        }, 0);
-
-        infoWindow.open(mapRef.current, marker);
+        setSelectedMarker({ lat, lng, dangerTitle, dangerContent });
+        setModalOpen(true);
       });
-
-      window.naver.maps.Event.addListener(mapRef.current, 'click', () => {
-        infoWindow.close();
-      });
-
-      if (
-        window.naver.maps.Service &&
-        window.naver.maps.Service.reverseGeocode
-      ) {
-        window.naver.maps.Service.reverseGeocode(
-          { coords: new window.naver.maps.LatLng(lat, lng) },
-          (status: any, response: any) => {
-            if (status === window.naver.maps.Service.Status.OK) {
-              const address =
-                response.v2.address.jibunAddress ||
-                response.v2.address.roadAddress;
-              const newContent = `
-                <div id="infoWindow-${lat}-${lng}" style="position: relative; padding:10px; max-width:300px; border-radius:10px; border: 1px solid #27C384; background-color: #fff;">
-                  <h4 style="text-align: center; font-size: 18px; color: #333;"><${dangerTitle}></h4>
-                  <hr style="border: 0; height: 1px; background-color: #ccc; margin: 10px 0;">
-                  <p style="color: #777; font-size: 14px; margin: 0;">주소: ${address}</p>
-                  <hr style="border: 0; height: 1px; background-color: #ccc; margin: 10px 0;">
-                  <p style="color: #555; font-size: 14px;">신고 내용: ${dangerContent}</p>
-                  <div style="position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 10px solid #27C384;"></div>
-                </div>
-              `;
-              infoWindow.setContent(newContent);
-
-              setTimeout(() => {
-                const infoWindowElement = document.getElementById(
-                  `infoWindow-${lat}-${lng}`,
-                );
-                if (infoWindowElement) {
-                  const rect = infoWindowElement.getBoundingClientRect();
-                  const newPixelOffset = new window.naver.maps.Point(
-                    -(rect.width / 2),
-                    -(rect.height + 10),
-                  );
-                  infoWindow.setOptions({ pixelOffset: newPixelOffset });
-                }
-              }, 0);
-            } else {
-              console.error('역지오코딩 실패:', status);
-            }
-          },
-        );
-      } else {
-        console.error('Naver Maps Service가 정의되지 않았습니다.');
-      }
     };
 
     const fetchData = async () => {
@@ -268,7 +207,7 @@ const RiskMapPage: React.FC = () => {
             const { lat, lng, dangerTitle, dangerContent } = danger;
             createMarker(lat, lng, dangerTitle, dangerContent);
           });
-          setFilteredMarkers([]); // 초기 필터링 목록을 빈 배열로 설정
+          setFilteredMarkers([]);
         } else {
           console.error('위험 신고 데이터를 가져오지 못했습니다.');
         }
@@ -285,35 +224,66 @@ const RiskMapPage: React.FC = () => {
       });
   }, []);
 
+  // Close list if click is outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (listRef.current && !listRef.current.contains(event.target as Node)) {
+        setListVisible(false);
+      }
+    };
+
+    const handleMapClick = (event: MouseEvent) => {
+      if (
+        mapRef.current &&
+        !mapContainer.current?.contains(event.target as Node)
+      ) {
+        mapRef.current.setOptions({ zoomControl: false }); // Disable zoom controls
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handleMapClick);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('mousedown', handleMapClick);
+    };
+  }, [listRef]);
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
     setSearchTerm(term);
-    // 마커 제목이나 내용에 검색어가 포함된 경우 필터링
     const filtered = markers.filter(
       (marker) =>
         marker.dangerTitle.toLowerCase().includes(term.toLowerCase()) ||
         marker.dangerContent.toLowerCase().includes(term.toLowerCase()),
     );
     setFilteredMarkers(filtered);
+    setListVisible(filtered.length > 0);
   };
 
   const handleMarkerClick = (marker: any) => {
     const { lat, lng } = marker;
     mapRef.current.setCenter(new window.naver.maps.LatLng(lat, lng));
     mapRef.current.setZoom(15);
+    setListVisible(false);
   };
 
   const handleRegister = () => {
-    // 작성 버튼 클릭 시 등록 로직 추가
-    navigate('./report'); // 등록 페이지로 이동
+    navigate('./report');
   };
 
   return (
     <Container>
       <Title>
-        <BackIcon src={backIcon} alt="뒤로가기" onClick={() => navigate(-1)} />
+        <BackIcon
+          src={backIcon}
+          alt="뒤로가기"
+          onClick={() => navigate('/main')}
+        />
         위험 신고 지도
       </Title>
+      <MapContainer ref={mapContainer} />
       <SearchContainer>
         <SearchInput
           type="text"
@@ -322,23 +292,62 @@ const RiskMapPage: React.FC = () => {
           value={searchTerm}
           onChange={handleSearch}
         />
-        <SearchIcon src={searchIcon} alt="검색 아이콘" />
       </SearchContainer>
-      <MapContainer ref={mapContainer} />
-      <MarkerList>
-        {filteredMarkers.length > 0 &&
-          filteredMarkers.map((marker, index) => (
-            <MarkerItem key={index} onClick={() => handleMarkerClick(marker)}>
-              <strong>{marker.dangerTitle}</strong>
-              <p>{marker.dangerContent}</p>
-            </MarkerItem>
-          ))}
-      </MarkerList>
+      {listVisible && (
+        <MarkerListContainer ref={listRef}>
+          <MarkerList>
+            {filteredMarkers.length > 0 &&
+              filteredMarkers.map((marker, index) => (
+                <MarkerItem
+                  key={index}
+                  onClick={() => handleMarkerClick(marker)}
+                >
+                  <strong style={{ display: 'flex', alignItems: 'center' }}>
+                    <img
+                      src="/icons/icon-siren.png"
+                      alt="사이렌 아이콘"
+                      style={{
+                        marginRight: '5px',
+                        width: '20px',
+                        height: '20px',
+                      }}
+                    />
+                    신고 제목 : {marker.dangerTitle}
+                  </strong>
+                  <p
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      marginTop: '5px',
+                      whiteSpace: 'pre-line', // 줄바꿈을 반영
+                    }}
+                  >
+                    <img
+                      src="/icons/icon-speaker.png"
+                      alt="스피커 아이콘"
+                      style={{
+                        marginRight: '5px',
+                        width: '20px',
+                        height: '20px',
+                      }}
+                    />
+                    신고 내용 : {marker.dangerContent}
+                  </p>
+                </MarkerItem>
+              ))}
+          </MarkerList>
+        </MarkerListContainer>
+      )}
       <RegistContainer>
         <RegisterButton onClick={handleRegister}>
           기획부동산 의심 토지 신고하기
         </RegisterButton>
       </RegistContainer>
+      <RiskMapModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        markerData={selectedMarker}
+      />
     </Container>
   );
 };

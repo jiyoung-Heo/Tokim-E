@@ -122,7 +122,7 @@ const ListItem = styled.li`
 // 별칭검색상자
 const SearchBox = styled.div`
   height: 5vh;
-  width: 60%; /* 너비 조정 */
+  width: 85vw; /* 너비 조정 */
   background: #ffffff;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 10px;
@@ -208,19 +208,23 @@ const Invest = styled.div`
   font-family: 'KoddiUD OnGothic';
 `;
 
-// 별칭
-const NickName = styled.p`
+// 주소
+const Address = styled.p`
   margin: 0;
   color: #b48a28;
   font-size: 14px;
+  word-break: keep-all; / 단어가 중간에 끊기지 않도록 설정 /
+  white-space: normal;
 `;
 
-// 주소
-const Address = styled.p`
+// 별칭
+const NickName = styled.p`
   margin: 0;
   font-weight: 900;
   font-family: 'Pretendard';
   font-size: 19px;
+  word-break: keep-all; / 단어가 중간에 끊기지 않도록 설정 /
+  white-space: normal;
 `;
 
 // 위험정도나타내줄곳
@@ -322,8 +326,9 @@ function InvestmentPage() {
     setSelectedOption(label);
     setIsOpen(false);
   };
-  // 초성 추출 함수
-  const getChosung = (word: string) => {
+
+  // 초성 추출 함수 (리스트 형태로 반환)
+  const getChosungArray = (word: string) => {
     const CHOSUNG = [
       'ㄱ',
       'ㄲ',
@@ -346,41 +351,41 @@ function InvestmentPage() {
       'ㅎ',
     ];
 
-    // 자모만 입력된 경우 처리
-    if (CHOSUNG.includes(word)) {
-      return word; // 초성 리스트에 포함된 자모 그대로 반환
-    }
-
-    const unicode = word.charCodeAt(0) - 44032; // 한글의 유니코드 시작 값
-    const chosungIndex = Math.floor(unicode / 588); // 초성 계산
-
-    return CHOSUNG[chosungIndex]; // 초성 반환
+    return [...word].map((char) => {
+      const unicode = char.charCodeAt(0) - 44032; // 한글의 유니코드 시작 값
+      if (unicode < 0 || unicode > 11171) return ''; // 유효하지 않은 경우
+      const chosungIndex = Math.floor(unicode / 588); // 초성 계산
+      return CHOSUNG[chosungIndex]; // 초성 반환
+    });
   };
-  // 초성만 입력된 경우인지 확인하는 함수
-  const isChosungOnly = (word: string) => {
-    const CHOSUNG = [
-      'ㄱ',
-      'ㄲ',
-      'ㄴ',
-      'ㄷ',
-      'ㄸ',
-      'ㄹ',
-      'ㅁ',
-      'ㅂ',
-      'ㅃ',
-      'ㅅ',
-      'ㅆ',
-      'ㅇ',
-      'ㅈ',
-      'ㅉ',
-      'ㅊ',
-      'ㅋ',
-      'ㅌ',
-      'ㅍ',
-      'ㅎ',
-    ];
 
-    return [...word].every((char) => CHOSUNG.includes(char));
+  const filterByChosung = (items: any[], search: string) => {
+    const searchChosungs = getChosungArray(search); // 입력된 초성 배열
+
+    return items.filter((invest) => {
+      // invest가 유효한지 확인
+      if (!invest || typeof invest.landNickname !== 'string') {
+        return false; // invest가 유효하지 않거나 landNickname이 문자열이 아닌 경우 필터링
+      }
+
+      const { landNickname } = invest; // 비구조화 할당으로 landNickname 가져오기
+      const landChosungs = getChosungArray(landNickname); // 토지 이름의 초성 배열
+
+      // 입력된 초성이 landNickname의 초성의 시작 부분에서 정확히 일치하는지 확인
+      // searchChosungs.length와 landChosungs.length를 비교하여 길이 체크
+      if (searchChosungs.length > landChosungs.length) {
+        return false; // 입력된 초성이 더 길면 필터링
+      }
+
+      // 초성이 일치하는지 확인
+      for (let i = 0; i < searchChosungs.length; i += 1) {
+        if (landChosungs[i] !== searchChosungs[i]) {
+          return false; // 초성이 일치하지 않으면 필터링
+        }
+      }
+
+      return true; // 모든 초성이 일치하면 true 반환
+    });
   };
 
   // 등록 버튼 클릭 시 투자 예정지 등록 페이지로 이동
@@ -388,7 +393,8 @@ function InvestmentPage() {
     navigate('/investment-register'); // 투자 예정지 등록 페이지 경로로 이동
   };
   const goBack = () => {
-    navigate(-1); // 이전 페이지로 이동
+    // navigate(-1); // 이전 페이지로 이동
+    navigate('/main');
   };
 
   useEffect(() => {
@@ -399,13 +405,14 @@ function InvestmentPage() {
       }
     };
     fetchInvestmentData();
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     const fetchInvestmentFilterData = async () => {
       if (selectedOption === '전국') {
         const data = await getAllInvestLand();
         if (data) {
+          // console.log(data);
           setAllInvest(data);
         }
       } else {
@@ -422,15 +429,8 @@ function InvestmentPage() {
     if (searchAlias === '') {
       setFilterInvest(allInvest);
       // 초성만 입력된 검색
-    } else if (isChosungOnly(searchAlias)) {
-      setFilterInvest(
-        allInvest.filter(
-          (invest) =>
-            getChosung(invest.landNickname) === getChosung(searchAlias),
-        ),
-      );
     } else {
-      // 단어검색
+      // 단어 검색
       setFilterInvest(
         allInvest.filter((invest) => invest.landNickname.includes(searchAlias)),
       );
@@ -438,7 +438,7 @@ function InvestmentPage() {
   }, [allInvest, searchAlias]);
 
   const handleDetailClick = (detail: any) => {
-    console.log(detail);
+    // console.log(detail);
     dispatch(setLandDetail(detail));
     // 라우터 이동
     navigate(`/investment-detail/${detail.investmentPlannedLandId}`);
@@ -451,36 +451,11 @@ function InvestmentPage() {
         나의 투자 예정지
       </Title>
       <SearchContainer>
-        <DropdownContainer>
-          <DropdownHeader onClick={toggleDropdown}>
-            {selectedOption}
-            <span>{isOpen ? '▲' : '▼'}</span>
-          </DropdownHeader>
-          {isOpen && (
-            <DropdownListContainer>
-              <DropdownList>
-                {options.map((group, index) => (
-                  <React.Fragment key={index}>
-                    <OptGroupLabel>{group.label}</OptGroupLabel>
-                    {group.options.map((option) => (
-                      <ListItem
-                        key={option.value}
-                        onClick={() => handleOptionClick(option.label)}
-                      >
-                        {option.label}
-                      </ListItem>
-                    ))}
-                  </React.Fragment>
-                ))}
-              </DropdownList>
-            </DropdownListContainer>
-          )}
-        </DropdownContainer>
         <SearchBox>
           <SearchIcon src={searchIcon} alt="search" />
           <SearchInput
             type="text"
-            placeholder="별칭 검색"
+            placeholder="부지명 검색"
             value={searchAlias}
             onChange={(e) => setSearchAlias(e.target.value)}
           />
@@ -501,10 +476,10 @@ function InvestmentPage() {
                   <NaverMapProps landAddress={invest.landAddress} />
                 </NaverMap>
                 <Invest onClick={() => handleDetailClick(invest)}>
-                  <Address> {invest.landAddress}</Address>
-                  <NickName>{invest.landNickname}</NickName>
+                  <NickName>{invest.landNickname || '부지명 없음'}</NickName>
+                  <Address>{invest.landAddress}</Address>
                   <WarningScore>
-                    {invest.landDanger === 1 ? (
+                    {invest.landDanger === 2 ? (
                       <>
                         <img
                           src={okIcon}
@@ -513,14 +488,14 @@ function InvestmentPage() {
                         />
                         <span style={{ color: '#27c384' }}>안정적인 토지</span>
                       </>
-                    ) : invest.landDanger === 2 ? (
+                    ) : invest.landDanger === 0 ? (
                       <>
                         <img
                           src={dangerIcon}
                           alt="높음 위험"
                           style={{ width: '14px', marginRight: '5px' }}
                         />
-                        <span style={{ color: 'red' }}>투자에 주의!</span>
+                        <span style={{ color: 'red' }}>투자에 위험!</span>
                       </>
                     ) : (
                       <>
@@ -529,7 +504,7 @@ function InvestmentPage() {
                           alt="중간 위험"
                           style={{ width: '14px', marginRight: '5px' }}
                         />
-                        <span style={{ color: '#27c384' }}>안정적인 토지</span>
+                        <span style={{ color: '#27c384' }}>투자에 주의!</span>
                       </>
                     )}
                   </WarningScore>
