@@ -60,7 +60,7 @@ public class InvestmentPlannedLand {
     private Integer plannedLandPyeong;
 
     @Column
-    private Integer plannedLandPrice;
+    private Long plannedLandPrice;
 
     @Column
     private String landNickname;

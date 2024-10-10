@@ -27,7 +27,7 @@ public class InvestmentPlannedLandDTO {
     private Date landUpdatedAt;
     private String landStory;
     private Integer plannedLandPyeong;
-    private Integer plannedLandPrice;
+    private Long plannedLandPrice;
     private Integer checkedCount;
     private List<Integer> checklistIds; ;
     private String landNickname;
