@@ -314,7 +314,11 @@ const InvestmentDetailTab: React.FC<{
             },
             {
               label: '토지이용상황',
-              value: investmentInfoProp?.landUseStatus,
+              value: investmentInfoProp?.landUseStatus || (
+                <span style={{ color: 'red' }}>
+                  국토교통부에서 제공하는 정보가 없습니다.
+                </span>
+              ),
               tooltip: getLandUseStatusDescription(
                 investmentInfoProp?.landUseStatus || '',
               ),
@@ -323,7 +327,11 @@ const InvestmentDetailTab: React.FC<{
             },
             {
               label: '경사도',
-              value: investmentInfoProp?.landGradient,
+              value: investmentInfoProp?.landGradient || (
+                <span style={{ color: 'red' }}>
+                  국토교통부에서 제공하는 정보가 없습니다.
+                </span>
+              ),
               tooltip: getGradientDescription(
                 investmentInfoProp?.landGradient || '',
               ),
@@ -332,7 +340,11 @@ const InvestmentDetailTab: React.FC<{
             },
             {
               label: '도로접면',
-              value: investmentInfoProp?.landRoad,
+              value: investmentInfoProp?.landRoad || (
+                <span style={{ color: 'red' }}>
+                  국토교통부에서 제공하는 정보가 없습니다.
+                </span>
+              ),
               tooltip: getRoadAccessDescription(
                 investmentInfoProp?.landRoad || '',
               ),
@@ -341,7 +353,13 @@ const InvestmentDetailTab: React.FC<{
             },
             {
               label: '공시지가',
-              value: `㎡당 ${investmentInfoProp?.landPrice.toLocaleString()} 원`,
+              value: investmentInfoProp?.landPrice ? (
+                `㎡당 ${investmentInfoProp?.landPrice.toLocaleString()} 원`
+              ) : (
+                <span style={{ color: 'red' }}>
+                  국토교통부에서 제공하는 정보가 없습니다.
+                </span>
+              ),
               tooltip:
                 '공시지가는 정부가 매년 전국의 토지에 대해 공시하는 표준적인 땅값입니다. 주로 국토교통부에서 발표하며 세금 부과, 부동산 거래, 보상 평가 등의 기준이 되는 중요한 자료입니다. 다만, 공시지가는 토지의 거래 가격과는 다소 차이가 있을 수 있습니다.',
               key: `landPrice-${investmentInfoProp?.investmentPlannedLandId}`,
