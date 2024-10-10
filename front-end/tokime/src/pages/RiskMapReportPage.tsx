@@ -9,6 +9,7 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   background: #f3f7fb;
+  touch-action: none;
 `;
 
 const Title = styled.h2`
@@ -119,6 +120,7 @@ const MapP = styled.div`
   border: none;
   border-radius: 10px;
   font-weight: bold;
+  touch-action: auto; /* 지도 부분은 확대/축소 가능 */
 `;
 
 const ButtonDiv = styled.p`
