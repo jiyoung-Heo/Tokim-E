@@ -59,6 +59,10 @@ const ModalContent = styled.div`
     ${blink} 1s infinite; /* 확대 + 깜박이는 애니메이션 */
 `;
 
+const Modaldesribe = styled.p`
+  color: red;
+`;
+
 const Button = styled.button<{ color?: string }>`
   padding: 0.5rem 1rem;
   margin: 0.5rem;
@@ -67,10 +71,6 @@ const Button = styled.button<{ color?: string }>`
   background-color: ${(props) => props.color || '#007bff'};
   color: white;
   cursor: pointer;
-
-  &:hover {
-    opacity: 0.8;
-  }
 `;
 
 interface ModalProps {
@@ -90,11 +90,13 @@ const DeleteModal: React.FC<ModalProps> = ({
     <ModalOverlay>
       <ModalContent>
         <h4>⚠️ 정말로 삭제하시겠습니까?</h4>
-        <p>삭제한 데이터는 복구할 수 없습니다.</p>
+        <Modaldesribe>삭제한 데이터는 복구할 수 없습니다.</Modaldesribe>
         <Button color="#ff4d4d" onClick={onConfirm}>
           확인
         </Button>
-        <Button onClick={onCancel}>취소</Button>
+        <Button color="black" onClick={onCancel}>
+          취소
+        </Button>
       </ModalContent>
     </ModalOverlay>
   );
