@@ -23,9 +23,9 @@ const BackIcon = styled.img`
 `;
 
 const MapBox = styled.div`
-  height: 180px;
+  height: 200px;
   margin-top: 1vh;
-  margin-bottom: 3vh;
+  margin-bottom: 1vh;
   border: 2px solid #ccc;
   border-radius: 8px;
   background-color: #f0f0f0;
@@ -402,8 +402,7 @@ const LandDetailTab: React.FC = () => {
               <div key={item.key}>
                 <p
                   style={{
-                    display: 'flex', // 플렉스박스 적용
-                    alignItems: 'center', // 세로 가운데 정렬
+                    position: 'relative',
                     fontWeight: 'bold',
                     fontSize: 'calc(1vw + 1vh)',
                   }}
@@ -429,9 +428,6 @@ const LandDetailTab: React.FC = () => {
                       marginLeft: '2vw',
                       width: 'calc(1vw + 1vh)',
                       height: 'calc(1vw + 1vh)',
-                      display: 'flex', // 버튼 내부 내용도 플렉스 정렬
-                      alignItems: 'center', // 세로 가운데 정렬
-                      justifyContent: 'center', // 가로 가운데 정렬
                     }}
                     onClick={() => toggleInfo(item.key)}
                     aria-label={`${item.label} 정보`}
@@ -484,8 +480,8 @@ const LandDetailTab: React.FC = () => {
                     backgroundColor: '#00C99C',
                     color: '#fff',
                     border: '#00C99C',
-                    // padding: 'calc(0.5vw + 0.5vh)',
-                    margin: 'calc(0.5vw + 0.5vh)',
+                    padding: 'calc(0.5vw + 0.5vh)',
+                    margin: 'calc(1vw)',
                     borderRadius: 'calc(1vw + 1vh)',
                   }}
                   onClick={handleInvestClick}
