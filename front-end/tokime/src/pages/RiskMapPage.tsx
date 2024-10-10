@@ -10,6 +10,7 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   background: #f3f7fb;
+  touch-action: none; /* 확대/축소 비활성화 */
 `;
 
 const Title = styled.h2`
@@ -76,6 +77,7 @@ const RegisterButton = styled.button`
 const MapContainer = styled.div`
   width: 100%;
   height: 55vh;
+  touch-action: auto; /* 지도 부분은 확대/축소 가능 */
 `;
 
 const MarkerListContainer = styled.div`
