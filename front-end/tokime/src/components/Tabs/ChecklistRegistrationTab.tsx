@@ -450,7 +450,6 @@ const ChecklistRegistrationTab: React.FC<ChecklistRegistrationTabProps> = ({
                       alt={`Unchecked ${item.index + 1}`}
                     />
                     <UncheckedTitle>{titles[index]}</UncheckedTitle>
-                    <WarningIcon src={symbol} alt="Warning Icon" />
                   </UncheckedItem>
                 ))
               : null}
