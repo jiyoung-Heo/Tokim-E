@@ -17,14 +17,14 @@ const ModalBackground = styled.div`
 
 // 모달 컨테이너 스타일
 const ModalContainer = styled.div`
-  position: relative; /* X 버튼 위치를 위해 relative 추가 */
+  position: relative;
   width: 80%;
   max-height: 70vh;
   background: white;
   border-radius: 10px;
   padding: 20px;
   overflow-y: auto;
-  z-index: 1001; /* ModalBackground보다 높게 설정 */
+  z-index: 1001;
 `;
 
 // 닫기 버튼 스타일 (X 버튼)
@@ -57,6 +57,10 @@ const StoryItem = styled.div`
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
+
+  /* 영어 단어가 너무 길어질 때 처리 */
+  word-break: break-word;
+  overflow-wrap: break-word;
 
   &:hover {
     background-color: #e0f7fa;
