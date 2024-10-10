@@ -504,7 +504,7 @@ const LandDetailTab: React.FC = () => {
           <img
             src={nodataimg}
             alt="No data available"
-            style={{ width: '50vw', height: 'auto', opacity: 0.65 }} // 이미지 크기 조정
+            style={{ width: '50vw', height: 'auto', opacity: 0.65 }}
           />
           <div
             style={{
