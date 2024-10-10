@@ -117,8 +117,9 @@ const NaverMap: React.FC = () => {
             // );
             initMap({ y, x }, landDanger);
           } else {
-            console.error('지번 정보를 찾을 수 없습니다.');
-            setHasError(true); // 오류 상태 업데이트
+            initMap({ y, x }, 0);
+            // console.error('지번 정보를 찾을 수 없습니다.');
+            // setHasError(true); // 오류 상태 업데이트
           }
         } else {
           console.error('주소를 찾을 수 없습니다:', data.errorMessage);
