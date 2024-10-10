@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { registDanger } from '../api/dangerAxios';
+import LandInformationRegistrationModal from '../components/modals/LandInformationRegistrationModal';
 import backIcon from '../assets/images/icon/left-actionable.png';
 
 // 필요한 스타일 정의
@@ -160,6 +161,9 @@ function RiskMapReportPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
 
+  // 모달 관련 상태 추가
+  const [modalMessage, setModalMessage] = useState('');
+
   useEffect(() => {
     if (mapContainer.current) {
       const mapOptions = {
@@ -179,7 +183,7 @@ function RiskMapReportPage() {
         },
         (error) => {
           console.error('Geolocation error:', error);
-          alert(
+          setModalMessage(
             '사용자의 위치를 가져오는 데 실패했습니다. 기본 위치로 설정합니다.',
           );
         },
@@ -200,7 +204,7 @@ function RiskMapReportPage() {
             if (status === window.naver.maps.Service.Status.OK) {
               const { status: geocodeStatus } = response.v2;
               if (geocodeStatus.code === 3) {
-                alert('위치에 대한 결과가 없습니다. 마커를 찍을 수 없습니다.');
+                setModalMessage('없는 결과입니다.');
                 setLat(null);
                 setLng(null);
                 return; // 마커를 찍지 않고 함수 종료
@@ -241,7 +245,9 @@ function RiskMapReportPage() {
 
   const handleSearch = () => {
     if (!searchQuery.trim() || searchQuery.length > 100) {
-      alert('유효하지 않은 주소입니다. 주소를 입력해 주세요 (최대 100자).');
+      setModalMessage(
+        '유효하지 않은 주소입니다. 주소를 입력해 주세요 (최대 100자).',
+      );
       return;
     }
 
@@ -249,13 +255,13 @@ function RiskMapReportPage() {
       { query: searchQuery },
       (status: number, response: any) => {
         if (status !== window.naver.maps.Service.Status.OK) {
-          alert('주소 변환에 실패했습니다.');
+          setModalMessage('주소 변환에 실패했습니다.');
           return;
         }
 
         const { addresses } = response.v2;
         if (!addresses || addresses.length === 0) {
-          alert('유효하지 않은 주소입니다.');
+          setModalMessage('유효하지 않은 주소입니다.');
           return;
         }
 
@@ -315,17 +321,21 @@ function RiskMapReportPage() {
       try {
         const result = await registDanger(dangerData);
         if (result === 200) {
-          alert('신고가 성공적으로 등록되었습니다.');
-          navigate('/risk-map'); // 신고 후 리다이렉트
+          setModalMessage('신고가 접수되었습니다');
         }
       } catch (e) {
-        alert('신고글 등록에 실패했습니다.');
+        setModalMessage('신고 등록에 실패했습니다.');
       }
     } else {
-      alert(
-        '모든 필드를 입력하고 지도를 클릭하거나 주소를 검색하여 위치를 선택하세요.',
-      );
+      setModalMessage('신고 위치를 선택하시고 제목과 내용을 채워주세요!');
     }
+  };
+
+  const handleCloseModal = () => {
+    if (modalMessage === '신고가 접수되었습니다') {
+      navigate('/risk-map'); // 신고가 접수되었을 때만 리다이렉트
+    }
+    setModalMessage('');
   };
 
   const goBack = () => {
@@ -345,7 +355,7 @@ function RiskMapReportPage() {
       <SearchContainer>
         <SearchInput
           type="text"
-          placeholder="주소를 입력하세요(장소 검색 불가?)" // 수정 필요
+          placeholder="주소를 입력하세요." // 수정 필요
           value={searchQuery}
           maxLength={30}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -406,6 +416,13 @@ function RiskMapReportPage() {
         <CancelButton onClick={handleCancel}>취소</CancelButton>
         <DangerButton onClick={handleSubmit}>작성</DangerButton>
       </ButtonDiv>
+      {/* 모달 추가 */}
+      {modalMessage && (
+        <LandInformationRegistrationModal
+          message={modalMessage}
+          onClose={handleCloseModal}
+        />
+      )}
     </Container>
   );
 }
