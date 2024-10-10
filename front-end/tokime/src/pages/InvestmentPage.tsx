@@ -393,7 +393,8 @@ function InvestmentPage() {
     navigate('/investment-register'); // 투자 예정지 등록 페이지 경로로 이동
   };
   const goBack = () => {
-    navigate(-1); // 이전 페이지로 이동
+    // navigate(-1); // 이전 페이지로 이동
+    navigate('/main');
   };
 
   useEffect(() => {
