@@ -93,9 +93,7 @@ const RiskMapTab: React.FC = () => {
               });
 
               // 마커 클릭 이벤트 설정
-              naver.maps.Event.addListener(newMarker, 'click', () => {
-                alert(`위치: ${data.addresses[0].jibunAddress}`);
-              });
+              naver.maps.Event.addListener(newMarker, 'click', () => {});
 
               setMarker(newMarker); // 새 마커 상태 업데이트
               map.setCenter(
