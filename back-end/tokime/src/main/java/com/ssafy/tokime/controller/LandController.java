@@ -7,6 +7,8 @@ import com.ssafy.tokime.model.Law;
 import com.ssafy.tokime.service.LandService;
 import com.ssafy.tokime.service.LawService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,8 @@ import java.util.List;
 @RequestMapping("/land")
 @RequiredArgsConstructor
 public class LandController {
+    private static final Logger logger = LoggerFactory.getLogger(LandController.class);
+
     private final LandService landService;
 
     private final LawService lawService;
@@ -69,7 +73,8 @@ public class LandController {
                 // address만 입력했을 때
                 lands = landService.searchByAddress(address.trim(),pageable);
             } else {
-                // 둘 다 입력했을 때
+                logger.info("test"+district+" "+address);
+                // 둘 다 입력했을 때j
                 lands = landService.searchLands(district.trim(), address.trim(),pageable);
             }
         } catch (IllegalArgumentException e) {
