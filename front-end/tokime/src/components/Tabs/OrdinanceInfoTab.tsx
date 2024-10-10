@@ -13,8 +13,8 @@ import multiply from '../../assets/images/icon/Multiply.png'; // x아이콘
 
 // 스타일 정의
 const LawInfoContainer = styled.div`
-  width: 80vw; // 반응형 크기 설정
-  height: 20vh;
+  width: 100%; // 반응형 크기 설정
+  height: 15vh;
   background-color: #ffffff;
   border-radius: 10px;
   padding: 10px;
