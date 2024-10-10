@@ -1,8 +1,13 @@
-# Tokim-E
-토지매입사기방지서비스
+
+
+<div align="center">
+<h1>토지매입사기방지서비스</h1>
+<h3> Tokim-E </h3>
+![tokime.png](/front-end/tokime/public/icons/icon-192.png)
+</div>
 
 ## 기술 스택, 빌드 버전 및 기타 도구
-![image.png](exec/Tokim-E서버구조도.png)
+![image.png](/exec/Tokim-E서버구조도.png)
 
 ### Frontend
 - 언어 : Javascript
@@ -66,25 +71,27 @@ docker run --name resis -d -p 6379:6379 redis
 
 a. default.conf
 파일 위치는 컨테이너 내부 기준 /etc/nginx/conf.d/default.conf \
-[default.conf](exec/default.conf)
-[default.conf](exec/default2.conf)
+1번서버\
+[default.conf](/exec/default.conf)\
+2번서버\
+[default2.conf](/exec/default2.conf)
 
 ### 부록 - Frontend,Backend Dockerfile, jenkinsfile
 
 1. Frontend Dockerfile \
-[Frontend Dockerfile](front-end/tokime/dockerfile)
+[Frontend Dockerfile](/front-end/tokime/dockerfile)
 2. Frontend Jenkinsfile \
-[Frontend Jenkinsfile](front-end/tokime/jenkinsfile)
+[Frontend Jenkinsfile](/front-end/tokime/jenkinsfile)
 3. Backend Dockerfile \
-[Backend Dockerfile](back-end/tokime/dockerfile)
+[Backend Dockerfile](/back-end/tokime/dockerfile)
 4. Backend Jenkinsfile \
-[Backend Jenkinsfile](back-end/tokime/jenkinsfile)
+[Backend Jenkinsfile](/back-end/tokime/jenkinsfile)
 
 ## 환경변수 설정
 
 ### 1. Frontend
 a. frontend 설정파일 \
-경로: front-end/tokime/.env
+경로: /front-end/tokime/.env
 ``` yaml
 REACT_APP_API_URL={백엔드서버url}
 REACT_APP_CUSTOM_KEY={사용자key}
@@ -97,7 +104,7 @@ REACT_APP_OPEN_AI_KEY={openai}
 ```
 ### 2. Backend
 a. backend 설정파일 폴더 \
-경로: back-end/tokime/.env
+경로: /back-end/tokime/.env
 ``` yaml
 PORT={실행포트}
 # mysql
@@ -132,7 +139,7 @@ SWAGGER_DOCS=
 
 a. 백엔드 설정파일\ 
 
-[Backend env file](back-end/tokime/.env)
+[Backend env file](/back-end/tokime/.env)
 
 client-id, client-secret, redirect-uri, authorization_uri, token_uri, user-info-uri 등의 auth 코드, access 토근 발급에 필요한 정보를 입력.
 
@@ -144,7 +151,7 @@ client-id, client-secret, redirect-uri, authorization_uri, token_uri, user-info-
 
 npm install openai 을 해서 외부 라이브러리를 설치.
 
-a. 프론트엔드 설정파일[Frontend env file](front-end/koplaydev/.env)
+a. 프론트엔드 설정파일[Frontend env file](/front-end/koplaydev/.env)
 OPEN_AI_KEY에 본인의 OPENAI API 키를 입력.
 
 
@@ -153,7 +160,7 @@ OPEN_AI_KEY에 본인의 OPENAI API 키를 입력.
 지번검색과 투자예정지의 주소 검색에 활용한다.
 사용자가 직접 모든 주소를 입력하지 않거나, 잘못된 오타를 입력하더라도 유사한 주소를 추천할 수 있다. 또한, 도로명 주소와 지번 주소를 모두 제공하기 때문에 사용자가 어떤 주소를 입력하던지 국토교통부에서 제공하는 데이터가 존재하는 주소라면 데이터를 제공해 줄 수 있다.
 
-a. 프론트엔드 설정파일[Frontend index.html file](front-end/public/index.html)
+a. 프론트엔드 설정파일[Frontend index.html file](/front-end/public/index.html)
 index.html의 헤드 태그 안에 <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script> 넣어서 사용.
 b. 프론트엔드 실행파일
 new window.daum.Postcode를 사용해서 검색창 실행
@@ -181,7 +188,7 @@ new window.daum.Postcode를 사용해서 검색창 실행
   - 지도의 클릭이벤트를 통해 마커를 찍고 경위도 좌표를 설정하는 기능
   - 지도 클릭시 reverse geocoding 기능을 활용해서 유효하지 않은 주소(외국, 바다)는 마커가 찍히지 않도록 함
 
-a. 프론트엔드 설정파일[Frontend index.html file](front-end/public/index.html)
+a. 프론트엔드 설정파일[Frontend index.html file](/front-end/public/index.html)
 index.html의 헤드 태그 안에 <script
       type="text/javascript"
       src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=%REACT_APP_NAVERMAP_API_KEY%&submodules=geocoder"
@@ -190,7 +197,7 @@ index.html의 헤드 태그 안에 <script
 - ncpClientId = 네이버 맵 api의 clientId key
 - submodules = 네이버 맵 api 기술문서에서 제공하는 서브모듈 작성
 
-[Frontend env file](frontend/tokime/.env)
+[Frontend env file](/frontend/tokime/.env)
 
 - REACT_APP_NAVERMAP_API_KEY에 네이버 맵 api의 clientId key 입력
 - REACT_APP_NAVERMAP_SECRET_KEY에 네이버 맵 api의 secret key 입력
