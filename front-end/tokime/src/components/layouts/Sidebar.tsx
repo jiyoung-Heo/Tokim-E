@@ -17,7 +17,7 @@ import logoutAxios from '../../api/logoutAxios';
 import { persistor } from '../../redux/reduxStore';
 import withdrawAxios from '../../api/withdrawAxios';
 
-const Overlay = styled.div<{ isOpen: boolean }>`
+const Overlay = styled.div<{ $isOpen: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -25,7 +25,7 @@ const Overlay = styled.div<{ isOpen: boolean }>`
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.1);
   display: ${(props) =>
-    props.isOpen ? 'block' : 'none'}; /* 사이드바가 열리면 보이게 */
+    props.$isOpen ? 'block' : 'none'}; /* 사이드바가 열리면 보이게 */
   z-index: 900;
 `;
 
@@ -317,7 +317,10 @@ function Sidebar() {
         $isOpen={isSidebarOpen}
       />
       {/* 오버레이 추가 */}
-      <Overlay isOpen={isSidebarOpen} onClick={() => setIsSidebarOpen(false)} />
+      <Overlay
+        $isOpen={isSidebarOpen}
+        onClick={() => setIsSidebarOpen(false)}
+      />
 
       {userInfo.name !== '' ? (
         <SidebarContainer ref={sidebarRef} $isOpen={isSidebarOpen}>
