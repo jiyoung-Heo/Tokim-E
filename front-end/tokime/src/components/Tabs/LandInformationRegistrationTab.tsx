@@ -149,7 +149,7 @@ function LandInformationRegistrationTab({
   const [errorMessage, setErrorMessage] = useState(''); // 에러 메시지 상태 추가
   const maxLandScale = landInfo
     ? Math.floor(landInfo.landScale / 3.3)
-    : Number.MAX_SAFE_INTEGER;
+    : 2000000000;
 
   const openModal = (message: string) => {
     setModalMessage(message);
@@ -299,7 +299,7 @@ function LandInformationRegistrationTab({
             );
           }}
           placeholder={
-            maxLandScale === Number.MAX_SAFE_INTEGER
+            maxLandScale === 2000000000
               ? '구매 예정 평수를 입력하세요.'
               : `최대 입력 가능 값: ${maxLandScale} 평`
           }
