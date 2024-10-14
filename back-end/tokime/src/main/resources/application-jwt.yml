@@ -1,0 +1,10 @@
+spring:
+  jwt:
+    secret: ${JWT_SECRET}
+    # access token 만료시간
+    # 1000 *60 * 30 = 30분
+    expires: 86400000
+    #expires: 2000
+    # refresh token 만료시간
+    # 60 * 60 * 24 * 14 = 14일
+    refresh-expires: 1209600
