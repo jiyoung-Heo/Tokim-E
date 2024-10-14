@@ -1,0 +1,4 @@
+server:
+    url:
+     front: ${FRONT_HOST}
+     back: ${BACK_HOST}
